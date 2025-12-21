@@ -13,14 +13,31 @@ class WordCard {
     required this.tabooWords,
     this.category = "Genel",
     this.isCustom = false,
-  }) : id = id ?? "${word}_${DateTime.now().microsecondsSinceEpoch}";
+  }) : id = id ?? _buildStableId(word, category);
+}
+
+String _buildStableId(String word, String category) {
+  String sanitize(String v) {
+    return v
+        .replaceAll(RegExp(r'[^A-Za-z0-9ÇĞİÖŞÜçğıöşü]+'), "_")
+        .replaceAll(RegExp(r'_+'), "_")
+        .trim()
+        .toUpperCase();
+  }
+
+  return "${sanitize(category)}_${sanitize(word)}";
 }
 
 class RoundEvent {
   final WordCard card;
   final CardStatus status;
+  final bool timedOut;
 
-  RoundEvent({required this.card, required this.status});
+  RoundEvent({
+    required this.card,
+    required this.status,
+    this.timedOut = false,
+  });
 }
 
 // --- DUMMY DATA ---

@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'models.dart';
 
 class GameProvider extends ChangeNotifier {
@@ -11,24 +15,37 @@ class GameProvider extends ChangeNotifier {
   bool musicEnabled = true;
   bool vibrationEnabled = true;
   bool tutorialTipShown = false;
+  bool highContrast = false;
+  bool reducedMotion = false;
+  bool onboardingSeen = false;
+  bool hydrated = false;
+  SharedPreferences? _prefs;
+  bool _audioFailed = false;
+  bool _audioInitAttempted = false;
+  final Map<String, String> _copiedAudioPaths = {};
 
   // --- Profanity Filter List (Basic) ---
   final List<String> _badWords = [
     "GÖT",
+    "GÖTLEK",
+    "GÖTVEREN",
     "SİK",
+    "SİKİK",
+    "SİKİM",
+    "SİKİŞ",
+    "SİKERİM",
+    "SİKİYORUM",
     "AM",
+    "AMCIK",
     "OROSPU",
     "İBNE",
     "PİÇ",
     "YARRAK",
-    "SAÇMA",
-    "SALAK",
-    "GERİZEKALI",
+    "YARAK",
     "YAVŞAK",
     "AMK",
     "SİKTİR",
     "OÇ",
-    "MAL",
   ];
 
   // --- Category & Word Data ---
@@ -39,9 +56,9 @@ class GameProvider extends ChangeNotifier {
     "Yemek",
     "Sanat",
     "Teknoloji",
-    "Doga",
+    "Doğa",
     "Tarih",
-    "Ozel",
+    "Özel",
   ];
   Set<String> selectedCategories = {
     "Genel",
@@ -50,7 +67,7 @@ class GameProvider extends ChangeNotifier {
     "Yemek",
     "Sanat",
     "Teknoloji",
-    "Doga",
+    "Doğa",
     "Tarih",
   };
   Set<String> disabledCardIds = {};
@@ -98,9 +115,92 @@ class GameProvider extends ChangeNotifier {
   List<RoundEvent> roundHistory = [];
   List<WordCard> _activeDeck = [];
 
+  Future<void> _hydrate() async {
+    _prefs = await SharedPreferences.getInstance();
+    soundEnabled = _prefs?.getBool("soundEnabled") ?? soundEnabled;
+    musicEnabled = _prefs?.getBool("musicEnabled") ?? musicEnabled;
+    vibrationEnabled = _prefs?.getBool("vibrationEnabled") ?? vibrationEnabled;
+    highContrast = _prefs?.getBool("highContrast") ?? highContrast;
+    reducedMotion = _prefs?.getBool("reducedMotion") ?? reducedMotion;
+    onboardingSeen = _prefs?.getBool("onboardingSeen") ?? onboardingSeen;
+    tutorialTipShown = _prefs?.getBool("tutorialTipShown") ?? tutorialTipShown;
+    teamAName = _prefs?.getString("teamAName") ?? teamAName;
+    teamBName = _prefs?.getString("teamBName") ?? teamBName;
+    teamA = _prefs?.getStringList("teamA") ?? teamA;
+    teamB = _prefs?.getStringList("teamB") ?? teamB;
+    _roundTime = _prefs?.getInt("roundTime") ?? _roundTime;
+    _targetScore = _prefs?.getInt("targetScore") ?? _targetScore;
+    _allowRepeats = _prefs?.getBool("allowRepeats") ?? _allowRepeats;
+    selectedCategories =
+        (_prefs?.getStringList("selectedCategories") ?? selectedCategories)
+            .toSet();
+    disabledCardIds =
+        (_prefs?.getStringList("disabledCardIds") ?? disabledCardIds).toSet();
+    try {
+      final rawCustom = _prefs?.getString("customCards");
+      if (rawCustom != null) {
+        final decoded = jsonDecode(rawCustom) as List<dynamic>;
+        customCards = decoded
+            .map((e) => WordCard(
+                  id: e["id"] as String?,
+                  word: e["word"] as String,
+                  tabooWords: List<String>.from(e["tabooWords"] as List),
+                  category: e["category"] as String? ?? "Özel",
+                  isCustom: e["isCustom"] as bool? ?? true,
+                ))
+            .toList();
+      }
+    } catch (_) {
+      customCards = [];
+    }
+    _syncDisabledWithCategories();
+    hydrated = true;
+    notifyListeners();
+    if (musicEnabled) {
+      ensureAudioInitialized();
+    }
+  }
+
+  void _persist() {
+    if (_prefs == null) return;
+    _prefs!.setBool("soundEnabled", soundEnabled);
+    _prefs!.setBool("musicEnabled", musicEnabled);
+    _prefs!.setBool("vibrationEnabled", vibrationEnabled);
+    _prefs!.setBool("highContrast", highContrast);
+    _prefs!.setBool("reducedMotion", reducedMotion);
+    _prefs!.setBool("tutorialTipShown", tutorialTipShown);
+    _prefs!.setBool("onboardingSeen", onboardingSeen);
+    _prefs!.setString("teamAName", teamAName);
+    _prefs!.setString("teamBName", teamBName);
+    _prefs!.setStringList("teamA", teamA);
+    _prefs!.setStringList("teamB", teamB);
+    _prefs!.setInt("roundTime", _roundTime);
+    _prefs!.setInt("targetScore", _targetScore);
+    _prefs!.setBool("allowRepeats", _allowRepeats);
+    _prefs!.setStringList("selectedCategories", selectedCategories.toList());
+    _prefs!.setStringList("disabledCardIds", disabledCardIds.toList());
+    _prefs!.setString(
+      "customCards",
+      jsonEncode(
+        customCards
+            .map(
+              (c) => {
+                "id": c.id,
+                "word": c.word,
+                "tabooWords": c.tabooWords,
+                "category": c.category,
+                "isCustom": c.isCustom,
+              },
+            )
+            .toList(),
+      ),
+    );
+  }
+
   GameProvider() {
     _musicPlayer = AudioPlayer()..setReleaseMode(ReleaseMode.loop);
     _sfxPlayer = AudioPlayer()..setReleaseMode(ReleaseMode.stop);
+    _hydrate();
   }
 
   // --- Getters ---
@@ -134,22 +234,35 @@ class GameProvider extends ChangeNotifier {
   // --- INPUT VALIDATION ---
   // Returns formatted clean string or null if invalid
   String? validateInput(String input) {
-    String clean = input.trim().toUpperCase();
+    String clean = _turkishUpper(input.trim());
     if (clean.isEmpty || containsProhibitedWords(clean)) return null;
+    if (!RegExp(r'^[A-ZÇĞİÖŞÜ ]+$').hasMatch(clean)) return null;
     return clean;
   }
 
   bool containsProhibitedWords(String input) {
-    String upper = input.toUpperCase();
+    final upper = _turkishUpper(input);
+    final words = upper.split(RegExp(r'[^A-ZÇĞİÖŞÜ0-9]+'));
     for (var bad in _badWords) {
-      if (upper.contains(bad)) return true;
+      if (words.contains(bad)) return true;
     }
     return false;
+  }
+
+  void applyCategoryChanges(
+    Set<String> selected,
+    Set<String> disabledIds,
+  ) {
+    selectedCategories = selected;
+    disabledCardIds = disabledIds;
+    _persist();
+    notifyListeners();
   }
 
   // --- ACTIONS ---
   void toggleSound(bool val) {
     soundEnabled = val;
+    _persist();
     notifyListeners();
   }
 
@@ -157,25 +270,48 @@ class GameProvider extends ChangeNotifier {
     musicEnabled = val;
     ensureAudioInitialized();
     _updateMusicState();
+    _persist();
     notifyListeners();
   }
 
   void toggleVibration(bool val) {
     vibrationEnabled = val;
+    _persist();
+    if (val) HapticFeedback.heavyImpact();
+    notifyListeners();
+  }
+
+  void toggleHighContrast(bool val) {
+    highContrast = val;
+    _persist();
+    notifyListeners();
+  }
+
+  void toggleReducedMotion(bool val) {
+    reducedMotion = val;
+    _persist();
     notifyListeners();
   }
 
   void toggleRepeats(bool val) {
     _allowRepeats = val;
+    _persist();
     notifyListeners();
   }
 
   void toggleCategory(String cat) {
+    final ids = _idsForCategory(cat);
     if (selectedCategories.contains(cat)) {
-      if (selectedCategories.length > 1) selectedCategories.remove(cat);
+      if (selectedCategories.length > 1) {
+        selectedCategories.remove(cat);
+        disabledCardIds.addAll(ids);
+      }
     } else {
       selectedCategories.add(cat);
+      disabledCardIds.removeWhere(ids.contains);
     }
+    _syncDisabledWithCategories();
+    _persist();
     notifyListeners();
   }
 
@@ -185,32 +321,159 @@ class GameProvider extends ChangeNotifier {
     } else {
       disabledCardIds.add(cardId);
     }
+    _persist();
     notifyListeners();
   }
 
-  void addCustomCard(String word, List<String> taboos) {
-    String? cleanWord = validateInput(word);
-    if (cleanWord != null) {
-      // Clean taboos
-      List<String> cleanTaboos = taboos
-          .map((e) => validateInput(e) ?? "")
-          .where((e) => e.isNotEmpty)
-          .toList();
-      customCards.add(
-        WordCard(
-          word: cleanWord,
-          tabooWords: cleanTaboos,
-          category: "Ozel",
-          isCustom: true,
-        ),
-      );
-      notifyListeners();
+  Set<String> _idsForCategory(String cat) {
+    return allCards.where((w) => w.category == cat).map((w) => w.id).toSet();
+  }
+
+  void _syncDisabledWithCategories() {
+    for (final card in allCards) {
+      if (!selectedCategories.contains(card.category)) {
+        disabledCardIds.add(card.id);
+      }
     }
+  }
+
+  String _turkishUpper(String input) {
+    return input
+        .split('')
+        .map(
+          (c) => c == 'i'
+              ? 'İ'
+              : c == 'ı'
+                  ? 'I'
+                  : c.toUpperCase(),
+        )
+        .join();
+  }
+
+  String _capitalizeFirst(String input) {
+    final trimmed = input.trim();
+    if (trimmed.isEmpty) return "";
+    final lower = trimmed.toLowerCase();
+    return "${lower[0].toUpperCase()}${lower.substring(1)}";
+  }
+
+  String _stableId(String word, String category) {
+    String sanitize(String v) {
+      return v
+          .replaceAll(RegExp(r'[^A-Za-z0-9ÇĞİÖŞÜçğıöşü]+'), "_")
+          .replaceAll(RegExp(r'_+'), "_")
+          .trim()
+          .toUpperCase();
+    }
+
+    return "${sanitize(category)}_${sanitize(word)}";
+  }
+
+  String? addCustomCard(String word, List<String> taboos) {
+    if (word.trim().isEmpty) return "Kelime boş olamaz";
+    if (containsProhibitedWords(word)) return "Uygunsuz kelime tespit edildi";
+    if (word.trim().length > 16) return "Kelime en fazla 16 karakter olabilir";
+    String? cleanWord = validateInput(word);
+    if (cleanWord == null) return "Kelime geçersiz";
+    final cleanTaboos = taboos
+        .map((e) => validateInput(e) ?? "")
+        .where((e) => e.isNotEmpty)
+        .toList();
+    if (cleanTaboos.any((t) => containsProhibitedWords(t))) {
+      return "Uygunsuz tabu kelimesi tespit edildi";
+    }
+    if (cleanTaboos.length < 5) {
+      return "5 tabu kelime girmelisin";
+    }
+    if (cleanTaboos.toSet().length < 5) {
+      return "Tabu kelimeleri benzersiz olmalı";
+    }
+    final id = _stableId(cleanWord, "Özel");
+    if (_idsForCategory("Özel").contains(id)) {
+      return "Bu kelime zaten var";
+    }
+    final formattedTaboos =
+        cleanTaboos.take(5).map(_capitalizeFirst).toList(growable: false);
+    cleanWord = _capitalizeFirst(cleanWord);
+    customCards.add(
+      WordCard(
+        id: id,
+        word: cleanWord,
+        tabooWords: formattedTaboos,
+        category: "Özel",
+        isCustom: true,
+      ),
+    );
+    _persist();
+    notifyListeners();
+    return null;
+  }
+
+  void removeCustomCard(String id) {
+    customCards.removeWhere((c) => c.id == id);
+    disabledCardIds.remove(id);
+    _persist();
+    notifyListeners();
+  }
+
+  String? updateCustomCard(
+    WordCard original,
+    String newWord,
+    List<String> taboos,
+  ) {
+    if (newWord.trim().isEmpty) return "Kelime boş olamaz";
+    if (containsProhibitedWords(newWord)) return "Uygunsuz kelime tespit edildi";
+    if (newWord.trim().length > 16) {
+      return "Kelime en fazla 16 karakter olabilir";
+    }
+    String? cleanWord = validateInput(newWord);
+    if (cleanWord == null) return "Kelime geçersiz";
+
+    final cleanTaboos = taboos
+        .map((e) => validateInput(e) ?? "")
+        .where((e) => e.isNotEmpty)
+        .toList();
+    if (cleanTaboos.length < 5) return "5 tabu kelime girmelisin";
+    if (cleanTaboos.any((t) => containsProhibitedWords(t))) {
+      return "Uygunsuz tabu kelimesi tespit edildi";
+    }
+    if (cleanTaboos.toSet().length < 5) {
+      return "Tabu kelimeleri benzersiz olmalı";
+    }
+
+    final newId = _stableId(cleanWord, "Özel");
+    if (newId != original.id && _idsForCategory("Özel").contains(newId)) {
+      return "Bu kelime zaten var";
+    }
+
+    final formattedTaboos =
+        cleanTaboos.take(5).map(_capitalizeFirst).toList(growable: false);
+    cleanWord = _capitalizeFirst(cleanWord);
+
+    final bool wasDisabled = disabledCardIds.contains(original.id);
+    customCards.removeWhere((c) => c.id == original.id);
+    disabledCardIds.remove(original.id);
+    customCards.add(
+      WordCard(
+        id: newId,
+        word: cleanWord,
+        tabooWords: formattedTaboos,
+        category: "Özel",
+        isCustom: true,
+      ),
+    );
+    if (wasDisabled) {
+      disabledCardIds.add(newId);
+    }
+    _persist();
+    notifyListeners();
+    return null;
   }
 
   void updateSettings({int? time, int? score}) {
     if (time != null) _roundTime = time;
     if (score != null) _targetScore = score;
+    _persist();
     notifyListeners();
   }
 
@@ -227,6 +490,7 @@ class GameProvider extends ChangeNotifier {
     } else {
       teamBName = valid;
     }
+    _persist();
     notifyListeners();
     return null;
   }
@@ -252,8 +516,59 @@ class GameProvider extends ChangeNotifier {
     } else {
       teamB.add(valid);
     }
+    _persist();
     notifyListeners();
     return null;
+  }
+
+  String randomPlayerName() {
+    final options = [
+      "ARDA",
+      "EGE",
+      "MERT",
+      "ASYA",
+      "ELLA",
+      "LARA",
+      "EMRE",
+      "ARAS",
+      "EGEA",
+      "ALYA",
+      "LINA",
+      "ENES",
+      "ALP",
+      "ARIN",
+      "EDA",
+      "ELLAH",
+    ];
+    final existing = {...teamA.map((e) => e.toUpperCase()), ...teamB.map((e) => e.toUpperCase())};
+    final available = options.where((n) => !existing.contains(n)).toList();
+    final list = available.isNotEmpty ? available : options;
+    return list[Random().nextInt(list.length)];
+  }
+
+  String randomTeamName(bool forTeamA) {
+    final List<String> pool = [
+      "LIGHTNING",
+      "EAGLES",
+      "STORM",
+      "PANTHERS",
+      "ROCKETS",
+      "PHOENIX",
+      "PIRATES",
+      "SAMURAI",
+      "WAVES",
+      "METEORS",
+      "RANGERS",
+      "FALCONS",
+    ];
+    pool.shuffle(Random());
+    final otherName = (forTeamA ? teamBName : teamAName).toUpperCase();
+    for (final name in pool) {
+      if (name.toUpperCase() != otherName) {
+        return name;
+      }
+    }
+    return "TEAM ${Random().nextInt(90) + 10}";
   }
 
   void removePlayer(String name, bool fromTeamA) {
@@ -262,6 +577,7 @@ class GameProvider extends ChangeNotifier {
     } else {
       teamB.remove(name);
     }
+    _persist();
     notifyListeners();
   }
 
@@ -291,6 +607,7 @@ class GameProvider extends ChangeNotifier {
     _cooldownActive = false;
     _cooldownTimer?.cancel();
     _resetDeck();
+    _persist();
     notifyListeners();
   }
 
@@ -318,15 +635,31 @@ class GameProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void abortCurrentRound() {
+    _timer?.cancel();
+    _cooldownTimer?.cancel();
+    _cooldownActive = false;
+    timeLeft = 0;
+    currentCard = null;
+    roundHistory.clear();
+    notifyListeners();
+  }
+
   void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (timeLeft > 0) {
-        timeLeft--;
+      if (timeLeft <= 1) {
+        timeLeft = 0;
         notifyListeners();
-      } else {
         endRound();
+        return;
       }
+
+      timeLeft--;
+      if (vibrationEnabled && timeLeft <= 10 && timeLeft > 0) {
+        HapticFeedback.lightImpact();
+      }
+      notifyListeners();
     });
   }
 
@@ -337,6 +670,17 @@ class GameProvider extends ChangeNotifier {
     timeLeft = 0;
     if (vibrationEnabled) HapticFeedback.heavyImpact();
     _playSfx("taboo");
+
+    if (currentCard != null) {
+      roundHistory.add(
+        RoundEvent(
+          card: currentCard!,
+          status: CardStatus.pass,
+          timedOut: true,
+        ),
+      );
+      currentCard = null;
+    }
 
     if (_targetScore != -1) {
       if (teamAScore >= _targetScore && teamAScore > teamBScore) {
@@ -411,7 +755,7 @@ class GameProvider extends ChangeNotifier {
     } else {
       teamBScore++;
     }
-    if (vibrationEnabled) HapticFeedback.lightImpact();
+    if (vibrationEnabled) HapticFeedback.mediumImpact();
     _playSfx("correct");
     _logEvent(CardStatus.correct);
     nextCard();
@@ -434,7 +778,7 @@ class GameProvider extends ChangeNotifier {
     if (!_beginCooldown()) return;
     if (currentPasses > 0) {
       currentPasses--;
-      if (vibrationEnabled) HapticFeedback.selectionClick();
+      if (vibrationEnabled) HapticFeedback.mediumImpact();
       _playSfx("pass");
       _logEvent(CardStatus.pass);
       nextCard();
@@ -449,21 +793,87 @@ class GameProvider extends ChangeNotifier {
 
   void markTutorialTipSeen() {
     tutorialTipShown = true;
+    _persist();
     notifyListeners();
   }
 
+  void completeOnboarding() {
+    onboardingSeen = true;
+    _persist();
+    notifyListeners();
+  }
+
+  Future<String> _ensureAudioFile(String assetPath) async {
+    if (_copiedAudioPaths.containsKey(assetPath)) {
+      return _copiedAudioPaths[assetPath]!;
+    }
+    final data = await rootBundle.load("assets/$assetPath");
+    final dir = await getTemporaryDirectory();
+    final safeName = assetPath.replaceAll("/", "_");
+    final file = File("${dir.path}/$safeName");
+    if (!await file.exists()) {
+      await file.writeAsBytes(
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+        flush: true,
+      );
+    }
+    _copiedAudioPaths[assetPath] = file.path;
+    return file.path;
+  }
+
   Future<void> ensureAudioInitialized() async {
-    if (_audioReady) return;
+    if (_audioReady || _audioFailed || _audioInitAttempted) return;
+    _audioInitAttempted = true;
     _audioReady = true;
-    await _musicPlayer.setSource(AssetSource("audio/music_loop.wav"));
-    await _musicPlayer.setVolume(musicEnabled ? 0.3 : 0);
-    if (musicEnabled) {
-      await _musicPlayer.resume();
+    try {
+      if (kIsWeb) {
+        String sourceName = "audio/music_loop.mp3";
+        try {
+          await rootBundle.load("assets/$sourceName");
+        } catch (_) {
+          sourceName = "audio/music_loop.wav";
+        }
+        await _musicPlayer.setSource(AssetSource(sourceName));
+        await _musicPlayer.setVolume(musicEnabled ? 0.3 : 0);
+        if (musicEnabled) {
+          await _musicPlayer.resume();
+        }
+      } else {
+        String sourceName = "audio/music_loop.mp3";
+        // fallback to wav if mp3 missing
+        try {
+          await rootBundle.load("assets/$sourceName");
+        } catch (_) {
+          sourceName = "audio/music_loop.wav";
+        }
+        final musicPath = await _ensureAudioFile(sourceName);
+        await _musicPlayer.setSource(DeviceFileSource(musicPath));
+        await _musicPlayer.setVolume(musicEnabled ? 0.3 : 0);
+        if (musicEnabled) {
+          await _musicPlayer.resume();
+        }
+      }
+    } on PlatformException catch (e) {
+      _audioReady = false;
+      _audioFailed = true;
+      _audioInitAttempted = true;
+      debugPrint("Audio init failed: $e");
+      musicEnabled = false;
+      soundEnabled = false;
+      notifyListeners();
+    } catch (e) {
+      _audioReady = false;
+      _audioFailed = true;
+      _audioInitAttempted = true;
+      debugPrint("Audio init failed: $e");
+      musicEnabled = false;
+      soundEnabled = false;
+      notifyListeners();
     }
   }
 
   Future<void> _updateMusicState() async {
-    if (!_audioReady) return;
+    if (!_audioReady || _audioFailed) return;
     if (musicEnabled) {
       await _musicPlayer.setVolume(0.35);
       if (_musicPlayer.state != PlayerState.playing) {
@@ -475,9 +885,29 @@ class GameProvider extends ChangeNotifier {
   }
 
   Future<void> _playSfx(String name) async {
-    if (!soundEnabled || !_audioReady) return;
-    await _sfxPlayer.stop();
-    await _sfxPlayer.play(AssetSource("audio/$name.wav"));
+    if (!soundEnabled || !_audioReady || _audioFailed) return;
+    try {
+      String sourceName = "audio/$name.mp3";
+      try {
+        await rootBundle.load("assets/$sourceName");
+      } catch (_) {
+        sourceName = "audio/$name.wav";
+      }
+      await _sfxPlayer.stop();
+      if (kIsWeb) {
+        await _sfxPlayer.play(AssetSource(sourceName));
+      } else {
+        final sfxPath = await _ensureAudioFile(sourceName);
+        await _sfxPlayer.play(DeviceFileSource(sfxPath));
+      }
+    } on PlatformException catch (e) {
+      debugPrint("SFX failed: $e");
+      _audioReady = false;
+      _audioFailed = true;
+      soundEnabled = false;
+      musicEnabled = false;
+      notifyListeners();
+    }
   }
 
   Future<void> playClick() async {
