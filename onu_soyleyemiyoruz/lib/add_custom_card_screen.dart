@@ -53,8 +53,10 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
     _wordFocus.requestFocus();
   }
 
-  void _handleSave({required bool exitAfter}) {
+  Future<void> _handleSave({required bool exitAfter}) async {
     final game = Provider.of<GameProvider>(context, listen: false);
+    await game.playClick();
+    if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
     if (_wordController.text.trim().length > 16) {
       _showSnack(messenger, "Kelime en fazla 16 karakter olabilir");
@@ -234,7 +236,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                       const SizedBox(height: 20),
                       if (_editing) ...[
                         ElevatedButton(
-                          onPressed: () => _handleSave(exitAfter: true),
+                        onPressed: () => _handleSave(exitAfter: true),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.amber,
                             foregroundColor: Colors.black,
@@ -245,9 +247,14 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        OutlinedButton(
-                          onPressed: () => Navigator.pop(context),
+                      const SizedBox(height: 10),
+                      OutlinedButton(
+                      onPressed: () async {
+                        await Provider.of<GameProvider>(context, listen: false)
+                            .playClick();
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
+                      },
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: Colors.redAccent,
@@ -260,8 +267,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: ElevatedButton(
-                                onPressed: () => _handleSave(exitAfter: true),
+                            child: ElevatedButton(
+                              onPressed: () => _handleSave(exitAfter: true),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.amber,
                                   foregroundColor: Colors.black,
@@ -276,8 +283,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                             ),
                             const SizedBox(width: 10),
                             Expanded(
-                              child: ElevatedButton(
-                                onPressed: () => _handleSave(exitAfter: false),
+                            child: ElevatedButton(
+                              onPressed: () => _handleSave(exitAfter: false),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.greenAccent,
                                   foregroundColor: Colors.black,
@@ -295,7 +302,12 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                         ),
                         const SizedBox(height: 10),
                         OutlinedButton(
-                          onPressed: () => Navigator.pop(context),
+                        onPressed: () async {
+                          await Provider.of<GameProvider>(context, listen: false)
+                              .playClick();
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
+                        },
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: Colors.redAccent,

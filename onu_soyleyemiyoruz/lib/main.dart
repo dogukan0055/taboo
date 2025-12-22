@@ -233,7 +233,11 @@ class _MenuButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         elevation: 5,
       ),
-      onPressed: onTap,
+      onPressed: () async {
+        await Provider.of<GameProvider>(context, listen: false).playClick();
+        if (!context.mounted) return;
+        onTap();
+      },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -839,11 +843,15 @@ class TeamManagerPanel extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
+            onPressed: () {
+              game.playClick();
+              Navigator.pop(dialogContext);
+            },
             child: const Text("İptal"),
           ),
           ElevatedButton(
             onPressed: () {
+              game.playClick();
               final error = game.setTeamName(isTeamA, c.text);
               if (error != null) {
                 _showSnack(messenger, error);
@@ -874,7 +882,7 @@ class TeamManagerPanel extends StatelessWidget {
           children: [
             TextField(
               controller: c,
-              maxLength: 12,
+              maxLength: 16,
               textCapitalization: TextCapitalization.words,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(
@@ -898,11 +906,15 @@ class TeamManagerPanel extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
+            onPressed: () {
+              game.playClick();
+              Navigator.pop(dialogContext);
+            },
             child: const Text("İptal"),
           ),
           ElevatedButton(
             onPressed: () {
+              game.playClick();
               final err = game.addPlayer(c.text, isTeamA);
               if (err != null) {
                 _showSnack(messenger, err);
@@ -1408,16 +1420,19 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                   children: game.availableCategories.map((cat) {
                     List<WordCard> words = wordsMap[cat] ?? [];
                     bool isCatSelected = _selectedCategories.contains(cat);
-                    final int activeCount =
-                        words.where((w) => !_disabledIds.contains(w.id)).length;
+                    final int activeCount = words
+                        .where((w) => !_disabledIds.contains(w.id))
+                        .length;
                     final bool isPartial =
-                        !isCatSelected && activeCount > 0 && activeCount < words.length;
+                        !isCatSelected &&
+                        activeCount > 0 &&
+                        activeCount < words.length;
 
                     final Color titleColor = isCatSelected
                         ? Colors.amber
                         : isPartial
-                            ? Colors.lightBlueAccent
-                            : Colors.white;
+                        ? Colors.lightBlueAccent
+                        : Colors.white;
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 10),
@@ -1437,6 +1452,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                                 value: isCatSelected,
                                 activeThumbColor: Colors.green,
                                 onChanged: (_) => setState(() {
+                                  game.playClick();
                                   if (isCatSelected) {
                                     _selectedCategories.remove(cat);
                                     for (final w in words) {
@@ -1456,8 +1472,8 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                                 color: isCatSelected
                                     ? Colors.amber
                                     : isPartial
-                                        ? Colors.lightBlueAccent
-                                        : Colors.white54,
+                                    ? Colors.lightBlueAccent
+                                    : Colors.white54,
                               ),
                             ],
                           ),
@@ -1502,7 +1518,11 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                                             Icons.remove_red_eye,
                                             color: Colors.white70,
                                           ),
-                                          onPressed: () => _showCardPreview(context, w),
+                                          onPressed: () async {
+                                            await game.playClick();
+                                            if (!context.mounted) return;
+                                            _showCardPreview(context, w);
+                                          },
                                         ),
                                         if (isCustom)
                                           IconButton(
@@ -1511,16 +1531,19 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                                               color: Colors.white70,
                                             ),
                                             onPressed: () async {
+                                              await game.playClick();
+                                              if (!context.mounted) return;
                                               final updated =
                                                   await Navigator.push<String>(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      AddCustomCardScreen(
-                                                    existingCard: w,
-                                                  ),
-                                                ),
-                                              );
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          AddCustomCardScreen(
+                                                            existingCard: w,
+                                                          ),
+                                                    ),
+                                                  );
+                                              if (!context.mounted) return;
                                               if (updated != null) {
                                                 setState(() {});
                                                 _showSnack(
@@ -1537,6 +1560,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                                               color: Colors.redAccent,
                                             ),
                                             onPressed: () {
+                                              game.playClick();
                                               game.removeCustomCard(w.id);
                                               setState(() {
                                                 _disabledIds.remove(w.id);
@@ -1549,22 +1573,30 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                                           ),
                                         Switch(
                                           value: !isDisabled,
-                                          activeColor: Colors.amber,
+                                          activeThumbColor: Colors.amber,
                                           onChanged: (val) => setState(() {
+                                            game.playClick();
                                             if (val) {
                                               _disabledIds.remove(w.id);
                                             } else {
                                               _disabledIds.add(w.id);
                                             }
-                                            final allEnabled = words
-                                                .every((cw) => !_disabledIds.contains(cw.id));
+                                            final allEnabled = words.every(
+                                              (cw) =>
+                                                  !_disabledIds.contains(cw.id),
+                                            );
                                             if (allEnabled) {
                                               _selectedCategories.add(cat);
                                             } else {
-                                              final allDisabled = words
-                                                  .every((cw) => _disabledIds.contains(cw.id));
+                                              final allDisabled = words.every(
+                                                (cw) => _disabledIds.contains(
+                                                  cw.id,
+                                                ),
+                                              );
                                               if (allDisabled &&
-                                                  _selectedCategories.contains(cat)) {
+                                                  _selectedCategories.contains(
+                                                    cat,
+                                                  )) {
                                                 _selectedCategories.remove(cat);
                                               }
                                             }
@@ -1578,10 +1610,16 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                             ),
                             if (cat == "Özel")
                               Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(12, 10, 12, 16),
+                                padding: const EdgeInsets.fromLTRB(
+                                  12,
+                                  10,
+                                  12,
+                                  16,
+                                ),
                                 child: ElevatedButton.icon(
                                   onPressed: () async {
+                                    await game.playClick();
+                                    if (!context.mounted) return;
                                     final added = await Navigator.push<String>(
                                       context,
                                       MaterialPageRoute(
@@ -1589,6 +1627,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                                             const AddCustomCardScreen(),
                                       ),
                                     );
+                                    if (!context.mounted) return;
                                     if (added != null) {
                                       _showSnack(
                                         messenger,
@@ -1617,7 +1656,9 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await game.playClick();
+                    if (!context.mounted) return;
                     game.applyCategoryChanges(
                       _selectedCategories,
                       _disabledIds,
@@ -1923,7 +1964,9 @@ class RoundStartScreen extends StatelessWidget {
                                 game.teamAName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(color: Colors.blueAccent),
+                                style: const TextStyle(
+                                  color: Colors.blueAccent,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -2000,9 +2043,7 @@ class RoundStartScreen extends StatelessWidget {
                     game.startRound();
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const GamePlayScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const GamePlayScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -2074,7 +2115,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     var game = Provider.of<GameProvider>(context);
     _reduceMotion = game.reducedMotion;
     _updateBlink(game.timeLeft);
-    if (game.timeLeft == 0) {
+    if (!game.isPaused && !game.abortedToMenu && game.timeLeft == 0) {
       final navigator = Navigator.of(context);
       Future.microtask(() {
         navigator.pushReplacement(
@@ -2207,6 +2248,143 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     }
   }
 
+  void _onPausePressed(GameProvider game) {
+    game.pauseGame();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF421B7A), Color(0xFF2E0F57)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: 18,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 18),
+              const Icon(
+                Icons.pause_circle_filled,
+                color: Colors.amber,
+                size: 46,
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "DURDURULDU",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 20,
+                  letterSpacing: 1,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  "Oyunu durdurdun. Devam edebilir veya ana menüye dönebilirsin.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Divider(
+                height: 1,
+                thickness: 1,
+                color: Colors.white24,
+                indent: 16,
+                endIndent: 16,
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          game.playClick();
+                          Navigator.pop(dialogCtx);
+                          game.resumeGame();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "DEVAM ET",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          game.playClick();
+                          Navigator.pop(dialogCtx);
+                          game.abortCurrentRound();
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (_) => const MainMenuScreen(),
+                            ),
+                            (route) => false,
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          side: const BorderSide(
+                            color: Colors.redAccent,
+                            width: 1.4,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "ANA MENÜYE DÖN",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+        ),
+      ),
+    ).then((_) {
+      if (game.isPaused) {
+        game.resumeGame();
+      }
+    });
+  }
+
   @override
   void dispose() {
     _blink.dispose();
@@ -2225,7 +2403,12 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             icon: game.soundEnabled ? Icons.volume_up : Icons.volume_off,
             label: game.soundEnabled ? "Ses Açık" : "Ses Kapalı",
             isActive: game.soundEnabled,
-            onTap: () => game.toggleSound(!game.soundEnabled),
+            onTap: () async {
+              if (!game.soundEnabled) {
+                await game.playClick();
+              }
+              game.toggleSound(!game.soundEnabled);
+            },
           ),
           _buildFeedbackToggle(
             icon: game.vibrationEnabled ? Icons.vibration : Icons.phone_android,
@@ -2251,7 +2434,11 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     required VoidCallback onTap,
   }) {
     return InkWell(
-      onTap: onTap,
+      onTap: () async {
+        await Provider.of<GameProvider>(context, listen: false).playClick();
+        if (!context.mounted) return;
+        onTap();
+      },
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -2303,24 +2490,49 @@ class _GamePlayScreenState extends State<GamePlayScreen>
               ),
             ),
             Container(
-              width: 70,
+              width: 82,
               height: 70,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                border: Border.all(color: Colors.deepPurple, width: 4),
-              ),
-              alignment: Alignment.center,
-              child: FadeTransition(
-                opacity: _blink,
-                child: Text(
-                  "${game.timeLeft}",
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      border: Border.all(color: Colors.deepPurple, width: 4),
+                    ),
+                    alignment: Alignment.center,
+                    child: FadeTransition(
+                      opacity: _blink,
+                      child: Text(
+                        "${game.timeLeft}",
+                        style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    right: -4,
+                    top: -4,
+                    child: IconButton(
+                      icon: const Icon(Icons.pause_circle_filled),
+                      color: Colors.black,
+                      iconSize: 26,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () async {
+                        await game.playClick();
+                        _onPausePressed(game);
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(
@@ -3309,37 +3521,58 @@ class SettingsSheet extends StatelessWidget {
                 title: const Text("Müzik"),
                 secondary: const Icon(Icons.music_note),
                 value: game.musicEnabled,
-                onChanged: game.toggleMusic,
+                onChanged: (val) async {
+                  await game.playClick();
+                  game.toggleMusic(val);
+                },
               ),
               SwitchListTile(
                 title: const Text("Ses Efektleri"),
                 secondary: const Icon(Icons.surround_sound),
                 value: game.soundEnabled,
-                onChanged: game.toggleSound,
+                onChanged: (val) async {
+                  if (val) {
+                    await game.playClick();
+                  }
+                  game.toggleSound(val);
+                },
               ),
               SwitchListTile(
                 title: const Text("Titreşim"),
                 secondary: const Icon(Icons.vibration),
                 value: game.vibrationEnabled,
-                onChanged: game.toggleVibration,
+                onChanged: (val) async {
+                  await game.playClick();
+                  game.toggleVibration(val);
+                },
               ),
               SwitchListTile(
                 title: const Text("Yüksek Kontrast"),
                 secondary: const Icon(Icons.contrast),
                 value: game.highContrast,
-                onChanged: game.toggleHighContrast,
+                onChanged: (val) async {
+                  await game.playClick();
+                  game.toggleHighContrast(val);
+                },
               ),
               SwitchListTile(
                 title: const Text("Az Animasyon"),
                 secondary: const Icon(Icons.motion_photos_off),
                 value: game.reducedMotion,
-                onChanged: game.toggleReducedMotion,
+                onChanged: (val) async {
+                  await game.playClick();
+                  game.toggleReducedMotion(val);
+                },
               ),
               const SizedBox(height: 6),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () async {
+                    await game.playClick();
+                    if (!context.mounted) return;
+                    Navigator.pop(context);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
                     padding: const EdgeInsets.all(14),

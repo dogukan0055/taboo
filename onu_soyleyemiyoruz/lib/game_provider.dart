@@ -75,7 +75,7 @@ class GameProvider extends ChangeNotifier {
 
   // --- Game Config ---
   int _roundTime = 60;
-  int _targetScore = 20;
+  int _targetScore = 50;
   bool _allowRepeats = false;
 
   // --- Teams & Players ---
@@ -105,6 +105,8 @@ class GameProvider extends ChangeNotifier {
   int currentPasses = 0;
   final int maxPasses = 3;
   int timeLeft = 0;
+  bool isPaused = false;
+  bool abortedToMenu = false;
   Timer? _timer;
   WordCard? currentCard;
 
@@ -141,13 +143,15 @@ class GameProvider extends ChangeNotifier {
       if (rawCustom != null) {
         final decoded = jsonDecode(rawCustom) as List<dynamic>;
         customCards = decoded
-            .map((e) => WordCard(
-                  id: e["id"] as String?,
-                  word: e["word"] as String,
-                  tabooWords: List<String>.from(e["tabooWords"] as List),
-                  category: e["category"] as String? ?? "Özel",
-                  isCustom: e["isCustom"] as bool? ?? true,
-                ))
+            .map(
+              (e) => WordCard(
+                id: e["id"] as String?,
+                word: e["word"] as String,
+                tabooWords: List<String>.from(e["tabooWords"] as List),
+                category: e["category"] as String? ?? "Özel",
+                isCustom: e["isCustom"] as bool? ?? true,
+              ),
+            )
             .toList();
       }
     } catch (_) {
@@ -249,10 +253,7 @@ class GameProvider extends ChangeNotifier {
     return false;
   }
 
-  void applyCategoryChanges(
-    Set<String> selected,
-    Set<String> disabledIds,
-  ) {
+  void applyCategoryChanges(Set<String> selected, Set<String> disabledIds) {
     selectedCategories = selected;
     disabledCardIds = disabledIds;
     _persist();
@@ -344,8 +345,8 @@ class GameProvider extends ChangeNotifier {
           (c) => c == 'i'
               ? 'İ'
               : c == 'ı'
-                  ? 'I'
-                  : c.toUpperCase(),
+              ? 'I'
+              : c.toUpperCase(),
         )
         .join();
   }
@@ -392,8 +393,10 @@ class GameProvider extends ChangeNotifier {
     if (_idsForCategory("Özel").contains(id)) {
       return "Bu kelime zaten var";
     }
-    final formattedTaboos =
-        cleanTaboos.take(5).map(_capitalizeFirst).toList(growable: false);
+    final formattedTaboos = cleanTaboos
+        .take(5)
+        .map(_capitalizeFirst)
+        .toList(growable: false);
     cleanWord = _capitalizeFirst(cleanWord);
     customCards.add(
       WordCard(
@@ -422,7 +425,9 @@ class GameProvider extends ChangeNotifier {
     List<String> taboos,
   ) {
     if (newWord.trim().isEmpty) return "Kelime boş olamaz";
-    if (containsProhibitedWords(newWord)) return "Uygunsuz kelime tespit edildi";
+    if (containsProhibitedWords(newWord)) {
+      return "Uygunsuz kelime tespit edildi";
+    }
     if (newWord.trim().length > 16) {
       return "Kelime en fazla 16 karakter olabilir";
     }
@@ -446,8 +451,10 @@ class GameProvider extends ChangeNotifier {
       return "Bu kelime zaten var";
     }
 
-    final formattedTaboos =
-        cleanTaboos.take(5).map(_capitalizeFirst).toList(growable: false);
+    final formattedTaboos = cleanTaboos
+        .take(5)
+        .map(_capitalizeFirst)
+        .toList(growable: false);
     cleanWord = _capitalizeFirst(cleanWord);
 
     final bool wasDisabled = disabledCardIds.contains(original.id);
@@ -498,6 +505,7 @@ class GameProvider extends ChangeNotifier {
   String? addPlayer(String name, bool toTeamA) {
     if (name.trim().isEmpty) return "İsim boş olamaz";
     if (containsProhibitedWords(name)) return "Uygunsuz isim tespit edildi";
+    if (name.trim().length > 16) return "İsim en fazla 16 karakter olabilir";
 
     String? valid = validateInput(name);
     if (valid == null) return "İsim geçersiz";
@@ -523,24 +531,34 @@ class GameProvider extends ChangeNotifier {
 
   String randomPlayerName() {
     final options = [
-      "ARDA",
-      "EGE",
-      "MERT",
-      "ASYA",
-      "ELLA",
-      "LARA",
-      "EMRE",
-      "ARAS",
-      "EGEA",
-      "ALYA",
-      "LINA",
-      "ENES",
-      "ALP",
-      "ARIN",
-      "EDA",
-      "ELLAH",
+      "Şeyci",
+      "Buzzer Mağduru",
+      "Dil Sürçmesi",
+      "Yasak Avcısı",
+      "Anlatamayan",
+      "Son Anda Söyledi",
+      "WordMaster",
+      "TabuBoss",
+      "QuickMind",
+      "NoBuzzer",
+      "FastTalker",
+      "SilentBrain",
+      "Kaptan",
+      "Anlatıcı",
+      "Tahminci",
+      "Joker",
+      "Sessiz Oyuncu",
+      "Stratejist",
+      "Yasaklı Kahraman",
+      "Kelime Büyücüsü",
+      "Dil Ninja",
+      "Buzzer Lordu",
+      "Anlam Ustası",
     ];
-    final existing = {...teamA.map((e) => e.toUpperCase()), ...teamB.map((e) => e.toUpperCase())};
+    final existing = {
+      ...teamA.map((e) => e.toUpperCase()),
+      ...teamB.map((e) => e.toUpperCase()),
+    };
     final available = options.where((n) => !existing.contains(n)).toList();
     final list = available.isNotEmpty ? available : options;
     return list[Random().nextInt(list.length)];
@@ -548,18 +566,31 @@ class GameProvider extends ChangeNotifier {
 
   String randomTeamName(bool forTeamA) {
     final List<String> pool = [
-      "LIGHTNING",
-      "EAGLES",
-      "STORM",
-      "PANTHERS",
-      "ROCKETS",
-      "PHOENIX",
-      "PIRATES",
-      "SAMURAI",
-      "WAVES",
-      "METEORS",
-      "RANGERS",
-      "FALCONS",
+      "Yasaklılar",
+      "Dili Sürçenler",
+      "Tabu Canavarları",
+      "Kelime Avcıları",
+      "Buzzer Kaçakları",
+      "Anlatamayanlar",
+      "Son Saniyeciler",
+      "Şeyciler",
+      "Dilim Yandı",
+      "Söyleyemediklerimiz",
+      "Yanlışlıkla Söyledik",
+      "Ağızdan Kaçtı",
+      "Yasak Ama Güzel",
+      "Beyin Fırtınası",
+      "Kelime Cambazları",
+      "Anlam Avcıları",
+      "Çağrışımcılar",
+      "İma Edenler",
+      "Sessiz Anlatıcılar",
+      "Kelime Kralları",
+      "Tabu Elite",
+      "Finalistler",
+      "Rakipsizler",
+      "Hızlı ve Yasaklı",
+      "Son Turcular",
     ];
     pool.shuffle(Random());
     final otherName = (forTeamA ? teamBName : teamAName).toUpperCase();
@@ -627,6 +658,8 @@ class GameProvider extends ChangeNotifier {
     roundHistory.clear();
     endedByCards = false;
     endMessage = null;
+    isPaused = false;
+    abortedToMenu = false;
     nextCard();
     ensureAudioInitialized();
     _updateMusicState();
@@ -639,15 +672,17 @@ class GameProvider extends ChangeNotifier {
     _timer?.cancel();
     _cooldownTimer?.cancel();
     _cooldownActive = false;
-    timeLeft = 0;
+    timeLeft = -1;
     currentCard = null;
     roundHistory.clear();
+    abortedToMenu = true;
     notifyListeners();
   }
 
   void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (isPaused) return;
       if (timeLeft <= 1) {
         timeLeft = 0;
         notifyListeners();
@@ -673,11 +708,7 @@ class GameProvider extends ChangeNotifier {
 
     if (currentCard != null) {
       roundHistory.add(
-        RoundEvent(
-          card: currentCard!,
-          status: CardStatus.pass,
-          timedOut: true,
-        ),
+        RoundEvent(card: currentCard!, status: CardStatus.pass, timedOut: true),
       );
       currentCard = null;
     }
@@ -922,5 +953,20 @@ class GameProvider extends ChangeNotifier {
     _musicPlayer.dispose();
     _sfxPlayer.dispose();
     super.dispose();
+  }
+
+  void pauseGame() {
+    if (isPaused) return;
+    isPaused = true;
+    _timer?.cancel();
+    _timer = null;
+    notifyListeners();
+  }
+
+  void resumeGame() {
+    if (!isPaused) return;
+    isPaused = false;
+    _startTimer();
+    notifyListeners();
   }
 }
