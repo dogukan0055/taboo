@@ -12,16 +12,21 @@ class _DiceRollDialogState extends State<DiceRollDialog>
   late AnimationController _ctrl;
   int _displayDiceA = 1;
   int _displayDiceB = 1;
+  late final bool _reduceMotion;
 
   @override
   void initState() {
     super.initState();
+    _reduceMotion =
+        Provider.of<GameProvider>(context, listen: false).reducedMotion;
     _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2000),
+      duration: _reduceMotion
+          ? const Duration(milliseconds: 1)
+          : const Duration(milliseconds: 2000),
     );
     _ctrl.addListener(() {
-      if (_ctrl.isAnimating) {
+      if (_ctrl.isAnimating && !_reduceMotion) {
         setState(() {
           _displayDiceA = Random().nextInt(6) + 1;
           _displayDiceB = Random().nextInt(6) + 1;
@@ -37,7 +42,11 @@ class _DiceRollDialogState extends State<DiceRollDialog>
         _displayDiceA = game.teamADice;
         _displayDiceB = game.teamBDice;
       });
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(
+        _reduceMotion
+            ? const Duration(milliseconds: 400)
+            : const Duration(seconds: 2),
+        () {
         if (!mounted) return;
         Navigator.pop(context);
         Navigator.push(

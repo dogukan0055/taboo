@@ -172,7 +172,11 @@ class _GamePlayScreenState extends State<GamePlayScreen>
   }
 
   void _updateBlink(int timeLeft) {
-    if (_reduceMotion) return;
+    if (_reduceMotion) {
+      if (_blink.isAnimating) _blink.stop();
+      _blink.value = 1;
+      return;
+    }
     if (timeLeft > 0 && timeLeft <= 10) {
       final ms = (120 + timeLeft * 40).clamp(120, 600);
       if (_blink.duration?.inMilliseconds != ms) {
@@ -502,7 +506,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     bool isActive,
   ) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
+      duration: _reduceMotion ? Duration.zero : const Duration(milliseconds: 300),
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: isActive ? color.withValues(alpha: 0.8) : Colors.transparent,
@@ -533,7 +537,10 @@ class _GamePlayScreenState extends State<GamePlayScreen>
               fontWeight: FontWeight.w900,
               fontSize: 26,
               shadows: isActive
-                  ? [const BoxShadow(blurRadius: 10, color: Colors.black45)]
+                  ? [
+                      if (!_reduceMotion)
+                        const BoxShadow(blurRadius: 10, color: Colors.black45),
+                    ]
                   : [],
             ),
           ),
@@ -550,7 +557,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
-        boxShadow: [const BoxShadow(blurRadius: 20, color: Colors.black45)],
+        boxShadow: _reduceMotion
+            ? []
+            : [const BoxShadow(blurRadius: 20, color: Colors.black45)],
       ),
       child: Column(
         children: [
@@ -690,14 +699,22 @@ class _BouncingButtonState extends State<BouncingButton>
     return GestureDetector(
       onTapDown: (_) {
         if (widget.disabled) return;
-        _c.forward();
+        if (!reduceMotion) {
+          _c.forward();
+        }
       },
       onTapUp: (_) {
         if (widget.disabled) return;
-        _c.reverse();
+        if (!reduceMotion) {
+          _c.reverse();
+        }
         widget.onTap();
       },
-      onTapCancel: () => _c.reverse(),
+      onTapCancel: () {
+        if (!reduceMotion) {
+          _c.reverse();
+        }
+      },
       child: ScaleTransition(
         scale: reduceMotion ? const AlwaysStoppedAnimation(1.0) : _s,
         child: Column(
@@ -713,13 +730,15 @@ class _BouncingButtonState extends State<BouncingButton>
                         : widget.color,
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 4),
-                    boxShadow: [
-                      const BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 5),
-                      ),
-                    ],
+                    boxShadow: reduceMotion
+                        ? []
+                        : [
+                            const BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 10,
+                              offset: Offset(0, 5),
+                            ),
+                          ],
                   ),
                   child: Icon(widget.icon, color: Colors.white, size: 30),
                 ),

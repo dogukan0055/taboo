@@ -6,6 +6,7 @@ class GameOverScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var game = Provider.of<GameProvider>(context, listen: false);
+    final reduceMotion = game.reducedMotion;
     final GlobalKey boundaryKey = GlobalKey();
     Future<void> shareSummary() async {
       try {
@@ -99,13 +100,18 @@ class GameOverScreen extends StatelessWidget {
                         child: Text(
                           game.gameWinner ?? "BERABERE",
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.amber,
                             fontSize: 40,
                             fontWeight: FontWeight.w900,
-                            shadows: [
-                              BoxShadow(color: Colors.black, blurRadius: 20),
-                            ],
+                            shadows: reduceMotion
+                                ? []
+                                : const [
+                                    BoxShadow(
+                                      color: Colors.black,
+                                      blurRadius: 20,
+                                    ),
+                                  ],
                           ),
                         ),
                       ),

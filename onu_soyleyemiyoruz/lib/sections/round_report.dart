@@ -7,6 +7,7 @@ class RoundReportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var game = Provider.of<GameProvider>(context);
+    final reduceMotion = game.reducedMotion;
     final correctList = game.roundHistory
         .where((e) => e.status == CardStatus.correct)
         .toList();
@@ -107,9 +108,13 @@ class RoundReportScreen extends StatelessWidget {
                 Expanded(
                   child: TabBarView(
                     children: [
-                      _buildSimpleCardList(correctList, Colors.green),
-                      _buildSimpleCardList(tabooList, Colors.red),
-                      _buildSimpleCardList(passList, Colors.blue),
+                      _buildSimpleCardList(
+                        correctList,
+                        Colors.green,
+                        reduceMotion,
+                      ),
+                      _buildSimpleCardList(tabooList, Colors.red, reduceMotion),
+                      _buildSimpleCardList(passList, Colors.blue, reduceMotion),
                     ],
                   ),
                 ),
@@ -184,7 +189,11 @@ class RoundReportScreen extends StatelessWidget {
   );
 
   // SIMPLE RECTANGLE CARD
-  Widget _buildSimpleCardList(List<RoundEvent> events, Color color) {
+  Widget _buildSimpleCardList(
+    List<RoundEvent> events,
+    Color color,
+    bool reduceMotion,
+  ) {
     if (events.isEmpty) {
       return Center(
         child: Text("Kart yok", style: TextStyle(color: Colors.grey[500])),
@@ -217,13 +226,15 @@ class RoundReportScreen extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.2),
               width: 1,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.14),
-                blurRadius: 8,
-                offset: const Offset(0, 5),
-              ),
-            ],
+            boxShadow: reduceMotion
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.14),
+                      blurRadius: 8,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
           ),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: LayoutBuilder(

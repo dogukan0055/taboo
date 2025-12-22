@@ -50,14 +50,10 @@ class MainMenuScreen extends StatelessWidget {
                 label: "AYARLAR",
                 color: Colors.teal,
                 onTap: () {
-                  final reduceMotion = Provider.of<GameProvider>(
-                    context,
-                    listen: false,
-                  ).reducedMotion;
                   showModalBottomSheet(
                     context: context,
                     backgroundColor: Colors.transparent,
-                    enableDrag: !reduceMotion,
+                    enableDrag: true,
                     builder: (_) => const SettingsSheet(),
                   );
                 },
