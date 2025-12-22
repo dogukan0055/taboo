@@ -1,0 +1,815 @@
+part of '../main.dart';
+
+// --- 4. GAMEPLAY SCREEN ---
+class GamePlayScreen extends StatefulWidget {
+  const GamePlayScreen({super.key});
+  @override
+  State<GamePlayScreen> createState() => _GamePlayScreenState();
+}
+
+class _GamePlayScreenState extends State<GamePlayScreen>
+    with SingleTickerProviderStateMixin {
+  final List<Widget> _floatingTexts = [];
+  late AnimationController _blink;
+  bool _reduceMotion = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _blink = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+      lowerBound: 0.35,
+      upperBound: 1,
+    )..value = 1;
+  }
+
+  void _showFloatingText(String text, Color color) {
+    if (_reduceMotion) return;
+    final UniqueKey key = UniqueKey();
+    setState(() {
+      _floatingTexts.add(
+        _FloatingTextItem(
+          key: key,
+          text: text,
+          color: color,
+          onComplete: () {
+            setState(() {
+              _floatingTexts.removeWhere((element) => element.key == key);
+            });
+          },
+        ),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var game = Provider.of<GameProvider>(context);
+    _reduceMotion = game.reducedMotion;
+    _updateBlink(game.timeLeft);
+    if (!game.isPaused && !game.abortedToMenu && game.timeLeft == 0) {
+      final navigator = Navigator.of(context);
+      Future.microtask(() {
+        navigator.pushReplacement(
+          MaterialPageRoute(builder: (_) => const RoundReportScreen()),
+        );
+      });
+    }
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        showDialog(
+          context: context,
+          builder: (dialogCtx) => AlertDialog(
+            title: const Text("Oyundan çıkılsın mı?"),
+            content: const Text("Oyunu bırakmak üzeresiniz. Emin misiniz?"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogCtx),
+                child: const Text("Vazgeç"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(dialogCtx);
+                  game.abortCurrentRound();
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                ),
+                child: const Text("Oyundan Çık"),
+              ),
+            ],
+          ),
+        );
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            GameBackground(
+              child: Column(
+                children: [
+                  _buildScoreHeader(game),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: AnimatedSwitcher(
+                        duration: _reduceMotion
+                            ? Duration.zero
+                            : const Duration(milliseconds: 300),
+                        child: _buildCardContent(game.currentCard),
+                      ),
+                    ),
+                  ),
+                  _buildFeedbackToggles(game),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        BouncingButton(
+                          icon: Icons.close,
+                          color: Colors.red,
+                          label: "TABU",
+                          disabled: game.isCoolingDown,
+                          onTap: () {
+                            _showFloatingText("TABU!", Colors.redAccent);
+                            game.actionTaboo();
+                          },
+                        ),
+                        game.currentPasses > 0
+                            ? BouncingButton(
+                                icon: Icons.skip_next,
+                                color: Colors.blue,
+                                label: "PAS",
+                                badgeText: "${game.currentPasses}",
+                                disabled: game.isCoolingDown,
+                                onTap: () {
+                                  _showFloatingText("PAS", Colors.blueAccent);
+                                  game.actionPass();
+                                },
+                              )
+                            : Opacity(
+                                opacity: 0.5,
+                                child: BouncingButton(
+                                  icon: Icons.skip_next,
+                                  color: Colors.grey,
+                                  label: "PAS",
+                                  badgeText: "0",
+                                  disabled: true,
+                                  onTap: () {},
+                                ),
+                              ),
+                        BouncingButton(
+                          icon: Icons.check,
+                          color: Colors.green,
+                          label: "DOĞRU",
+                          disabled: game.isCoolingDown,
+                          onTap: () {
+                            _showFloatingText("DOĞRU!", Colors.greenAccent);
+                            game.actionCorrect();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ..._floatingTexts,
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _updateBlink(int timeLeft) {
+    if (_reduceMotion) return;
+    if (timeLeft > 0 && timeLeft <= 10) {
+      final ms = (120 + timeLeft * 40).clamp(120, 600);
+      if (_blink.duration?.inMilliseconds != ms) {
+        _blink.duration = Duration(milliseconds: ms);
+      }
+      if (!_blink.isAnimating) {
+        _blink.repeat(reverse: true);
+      }
+    } else {
+      if (_blink.isAnimating) _blink.stop();
+      _blink.value = 1;
+    }
+  }
+
+  void _onPausePressed(GameProvider game) {
+    game.pauseGame();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF421B7A), Color(0xFF2E0F57)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: 18,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 18),
+              const Icon(
+                Icons.pause_circle_filled,
+                color: Colors.amber,
+                size: 46,
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "DURDURULDU",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 20,
+                  letterSpacing: 1,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  "Oyunu durdurdun. Devam edebilir veya ana menüye dönebilirsin.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Divider(
+                height: 1,
+                thickness: 1,
+                color: Colors.white24,
+                indent: 16,
+                endIndent: 16,
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          game.playClick();
+                          Navigator.pop(dialogCtx);
+                          game.resumeGame();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "DEVAM ET",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          game.playClick();
+                          Navigator.pop(dialogCtx);
+                          game.abortCurrentRound();
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (_) => const MainMenuScreen(),
+                            ),
+                            (route) => false,
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          side: const BorderSide(
+                            color: Colors.redAccent,
+                            width: 1.4,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "ANA MENÜYE DÖN",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+        ),
+      ),
+    ).then((_) {
+      if (game.isPaused) {
+        game.resumeGame();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _blink.dispose();
+    super.dispose();
+  }
+
+  Widget _buildFeedbackToggles(GameProvider game) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 6),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 10,
+        runSpacing: 8,
+        children: [
+          _buildFeedbackToggle(
+            icon: game.soundEnabled ? Icons.volume_up : Icons.volume_off,
+            label: game.soundEnabled ? "Ses Açık" : "Ses Kapalı",
+            isActive: game.soundEnabled,
+            onTap: () async {
+              if (!game.soundEnabled) {
+                await game.playClick();
+              }
+              game.toggleSound(!game.soundEnabled);
+            },
+          ),
+          _buildFeedbackToggle(
+            icon: game.vibrationEnabled ? Icons.vibration : Icons.phone_android,
+            label: game.vibrationEnabled ? "Titreşim Açık" : "Titreşim Kapalı",
+            isActive: game.vibrationEnabled,
+            onTap: () => game.toggleVibration(!game.vibrationEnabled),
+          ),
+          _buildFeedbackToggle(
+            icon: Icons.style,
+            label: "Kalan: ${game.remainingCards} Kart",
+            isActive: false,
+            onTap: () {},
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeedbackToggle({
+    required IconData icon,
+    required String label,
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: () async {
+        await Provider.of<GameProvider>(context, listen: false).playClick();
+        if (!context.mounted) return;
+        onTap();
+      },
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: isActive
+              ? Colors.white.withValues(alpha: 0.2)
+              : Colors.black26,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isActive ? Colors.amber : Colors.white24,
+            width: 1.2,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 18, color: Colors.white),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScoreHeader(GameProvider game) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+      child: Container(
+        height: 90,
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.45),
+          borderRadius: BorderRadius.circular(40),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: _buildTeamScoreItem(
+                game.teamAName,
+                game.teamAScore,
+                Colors.blueAccent,
+                game.isTeamATurn,
+              ),
+            ),
+            Container(
+              width: 82,
+              height: 70,
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      border: Border.all(color: Colors.deepPurple, width: 4),
+                    ),
+                    alignment: Alignment.center,
+                    child: FadeTransition(
+                      opacity: _blink,
+                      child: Text(
+                        "${game.timeLeft}",
+                        style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: -4,
+                    top: -4,
+                    child: IconButton(
+                      icon: const Icon(Icons.pause_circle_filled),
+                      color: Colors.black,
+                      iconSize: 26,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () async {
+                        await game.playClick();
+                        _onPausePressed(game);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: _buildTeamScoreItem(
+                game.teamBName,
+                game.teamBScore,
+                Colors.redAccent,
+                !game.isTeamATurn,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTeamScoreItem(
+    String name,
+    int score,
+    Color color,
+    bool isActive,
+  ) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      decoration: BoxDecoration(
+        color: isActive ? color.withValues(alpha: 0.8) : Colors.transparent,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                name,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                  fontSize: 14,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          Text(
+            "$score",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              fontSize: 26,
+              shadows: isActive
+                  ? [const BoxShadow(blurRadius: 10, color: Colors.black45)]
+                  : [],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCardContent(WordCard? card) {
+    if (card == null) return Container(key: const ValueKey("empty"));
+    return Container(
+      key: ValueKey(card.id),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [const BoxShadow(blurRadius: 20, color: Colors.black45)],
+      ),
+      child: Column(
+        children: [
+          Container(
+            height: 60,
+            decoration: const BoxDecoration(
+              color: Colors.deepPurple,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              card.category.toUpperCase(),
+              style: const TextStyle(
+                color: Colors.white38,
+                letterSpacing: 2,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final double wordSize = (constraints.biggest.shortestSide * 0.1)
+                    .clamp(16.0, 30.0);
+                final double tabooSize =
+                    (constraints.biggest.shortestSide * 0.06).clamp(11.0, 18.0);
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              card.word,
+                              style: TextStyle(
+                                fontSize: wordSize,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.black87,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 0, bottom: 2),
+                      child: Divider(thickness: 2, indent: 8, endIndent: 8),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: card.tabooWords
+                            .map(
+                              (t) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 2,
+                                  horizontal: 6,
+                                ),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    t,
+                                    style: TextStyle(
+                                      fontSize: tabooSize,
+                                      color: Colors.grey[700],
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BouncingButton extends StatefulWidget {
+  final IconData icon;
+  final Color color;
+  final String label;
+  final String? badgeText;
+  final VoidCallback onTap;
+  final bool disabled;
+  const BouncingButton({
+    super.key,
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.onTap,
+    this.badgeText,
+    this.disabled = false,
+  });
+  @override
+  State<BouncingButton> createState() => _BouncingButtonState();
+}
+
+class _BouncingButtonState extends State<BouncingButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _c;
+  late Animation<double> _s;
+  @override
+  void initState() {
+    super.initState();
+    _c = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _s = Tween<double>(begin: 1.0, end: 0.9).animate(_c);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reduceMotion = Provider.of<GameProvider>(
+      context,
+      listen: false,
+    ).reducedMotion;
+    return GestureDetector(
+      onTapDown: (_) {
+        if (widget.disabled) return;
+        _c.forward();
+      },
+      onTapUp: (_) {
+        if (widget.disabled) return;
+        _c.reverse();
+        widget.onTap();
+      },
+      onTapCancel: () => _c.reverse(),
+      child: ScaleTransition(
+        scale: reduceMotion ? const AlwaysStoppedAnimation(1.0) : _s,
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: widget.disabled
+                        ? widget.color.withValues(alpha: 0.5)
+                        : widget.color,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 4),
+                    boxShadow: [
+                      const BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Icon(widget.icon, color: Colors.white, size: 30),
+                ),
+                if (widget.badgeText != null)
+                  Positioned(
+                    right: 6,
+                    top: 6,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.black12),
+                      ),
+                      child: Text(
+                        widget.badgeText!,
+                        style: TextStyle(
+                          color: widget.color,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              widget.label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+}
+
+class _FloatingTextItem extends StatefulWidget {
+  final String text;
+  final Color color;
+  final VoidCallback onComplete;
+  const _FloatingTextItem({
+    super.key,
+    required this.text,
+    required this.color,
+    required this.onComplete,
+  });
+  @override
+  State<_FloatingTextItem> createState() => _FloatingTextItemState();
+}
+
+class _FloatingTextItemState extends State<_FloatingTextItem>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _c;
+  late Animation<Offset> _p;
+  @override
+  void initState() {
+    super.initState();
+    _c = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _p = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(0, -2.0),
+    ).animate(CurvedAnimation(parent: _c, curve: Curves.easeOutBack));
+    _c.forward().then((_) => widget.onComplete());
+  }
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: SlideTransition(
+      position: _p,
+      child: FadeTransition(
+        opacity: Tween<double>(
+          begin: 1,
+          end: 0,
+        ).animate(CurvedAnimation(parent: _c, curve: const Interval(0.6, 1))),
+        child: Text(
+          widget.text,
+          style: TextStyle(
+            fontSize: 50,
+            fontWeight: FontWeight.w900,
+            color: widget.color,
+            shadows: const [BoxShadow(blurRadius: 10, color: Colors.black45)],
+          ),
+        ),
+      ),
+    ),
+  );
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+}
