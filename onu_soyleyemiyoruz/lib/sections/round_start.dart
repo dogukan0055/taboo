@@ -25,7 +25,11 @@ class RoundStartScreen extends StatelessWidget {
           foregroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(Icons.exit_to_app),
-            onPressed: () => _confirmExitToMenu(context, force: true),
+            onPressed: () async {
+              await Provider.of<GameProvider>(context, listen: false).playClick();
+              if (!context.mounted) return;
+              _confirmExitToMenu(context, force: true);
+            },
           ),
         ),
         body: SafeArea(

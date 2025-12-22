@@ -56,6 +56,14 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
         systemOverlayStyle: SystemUiOverlayStyle.light,
         foregroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () async {
+            await game.playClick();
+            if (!context.mounted) return;
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: GameBackground(
         child: Column(

@@ -76,7 +76,12 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () async {
+              await Provider.of<GameProvider>(context, listen: false)
+                  .playClick();
+              if (!context.mounted) return;
+              Navigator.pop(context);
+            },
             child: const Text("Anladım"),
           ),
         ],
@@ -96,6 +101,14 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
         systemOverlayStyle: SystemUiOverlayStyle.light,
         foregroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () async {
+            await Provider.of<GameProvider>(context, listen: false).playClick();
+            if (!context.mounted) return;
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: GameBackground(
         child: Scrollbar(

@@ -146,7 +146,12 @@ class GameOverScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
                     ElevatedButton.icon(
-                      onPressed: shareSummary,
+                      onPressed: () async {
+                        await Provider.of<GameProvider>(context, listen: false)
+                            .playClick();
+                        if (!context.mounted) return;
+                        await shareSummary();
+                      },
                       icon: const Icon(Icons.share),
                       label: const Text(
                         "Paylaş",
@@ -163,7 +168,10 @@ class GameOverScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 26),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        await Provider.of<GameProvider>(context, listen: false)
+                            .playClick();
+                        if (!context.mounted) return;
                         game.startGame();
                         game.rollDice();
                         Navigator.of(context).pushReplacement(
@@ -190,7 +198,10 @@ class GameOverScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        await Provider.of<GameProvider>(context, listen: false)
+                            .playClick();
+                        if (!context.mounted) return;
                         Navigator.of(
                           context,
                         ).popUntil((route) => route.isFirst);

@@ -211,6 +211,14 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () async {
+            await Provider.of<GameProvider>(context, listen: false).playClick();
+            if (!context.mounted) return;
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Container(
         decoration: const BoxDecoration(

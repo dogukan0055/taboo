@@ -15,7 +15,6 @@ class GameProvider extends ChangeNotifier {
   bool musicEnabled = true;
   bool vibrationEnabled = true;
   bool tutorialTipShown = false;
-  bool highContrast = false;
   bool reducedMotion = false;
   bool onboardingSeen = false;
   bool hydrated = false;
@@ -122,7 +121,6 @@ class GameProvider extends ChangeNotifier {
     soundEnabled = _prefs?.getBool("soundEnabled") ?? soundEnabled;
     musicEnabled = _prefs?.getBool("musicEnabled") ?? musicEnabled;
     vibrationEnabled = _prefs?.getBool("vibrationEnabled") ?? vibrationEnabled;
-    highContrast = _prefs?.getBool("highContrast") ?? highContrast;
     reducedMotion = _prefs?.getBool("reducedMotion") ?? reducedMotion;
     onboardingSeen = _prefs?.getBool("onboardingSeen") ?? onboardingSeen;
     tutorialTipShown = _prefs?.getBool("tutorialTipShown") ?? tutorialTipShown;
@@ -170,7 +168,6 @@ class GameProvider extends ChangeNotifier {
     _prefs!.setBool("soundEnabled", soundEnabled);
     _prefs!.setBool("musicEnabled", musicEnabled);
     _prefs!.setBool("vibrationEnabled", vibrationEnabled);
-    _prefs!.setBool("highContrast", highContrast);
     _prefs!.setBool("reducedMotion", reducedMotion);
     _prefs!.setBool("tutorialTipShown", tutorialTipShown);
     _prefs!.setBool("onboardingSeen", onboardingSeen);
@@ -279,12 +276,6 @@ class GameProvider extends ChangeNotifier {
     vibrationEnabled = val;
     _persist();
     if (val) HapticFeedback.heavyImpact();
-    notifyListeners();
-  }
-
-  void toggleHighContrast(bool val) {
-    highContrast = val;
-    _persist();
     notifyListeners();
   }
 

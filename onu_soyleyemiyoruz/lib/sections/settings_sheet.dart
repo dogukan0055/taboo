@@ -62,17 +62,8 @@ class SettingsSheet extends StatelessWidget {
                 },
               ),
               SwitchListTile(
-                title: const Text("Yüksek Kontrast"),
-                secondary: const Icon(Icons.contrast),
-                value: game.highContrast,
-                onChanged: (val) async {
-                  await game.playClick();
-                  game.toggleHighContrast(val);
-                },
-              ),
-              SwitchListTile(
-                title: const Text("Az Animasyon"),
-                secondary: const Icon(Icons.motion_photos_off),
+                title: const Text("Performans Modu"),
+                secondary: const Icon(Icons.speed),
                 value: game.reducedMotion,
                 onChanged: (val) async {
                   await game.playClick();

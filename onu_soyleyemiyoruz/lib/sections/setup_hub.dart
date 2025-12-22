@@ -41,6 +41,14 @@ class _SetupHubScreenState extends State<SetupHubScreen>
         systemOverlayStyle: SystemUiOverlayStyle.light,
         foregroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () async {
+            await game.playClick();
+            if (!context.mounted) return;
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: GameBackground(
         child: LayoutBuilder(
@@ -206,7 +214,9 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          await game.playClick();
+                          if (!context.mounted) return;
                           if (game.teamA.length < 2 || game.teamB.length < 2) {
                             String msg = "";
                             if (game.teamA.length < 2) {
@@ -277,7 +287,12 @@ class _SetupHubScreenState extends State<SetupHubScreen>
           children: options.map((opt) {
             bool isSelected = opt == currentValue;
             return GestureDetector(
-              onTap: () => onSelect(opt),
+              onTap: () async {
+                await Provider.of<GameProvider>(context, listen: false)
+                    .playClick();
+                if (!context.mounted) return;
+                onSelect(opt);
+              },
               child: AnimatedContainer(
                 duration: reduceMotion
                     ? Duration.zero
@@ -369,7 +384,15 @@ class TeamManagerPanel extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: onClose ?? () => Navigator.pop(context),
+                onPressed: () async {
+                  await game.playClick();
+                  if (!context.mounted) return;
+                  if (onClose != null) {
+                    onClose!();
+                  } else {
+                    Navigator.pop(context);
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.amber,
                   padding: const EdgeInsets.all(14),
@@ -456,7 +479,11 @@ class TeamManagerPanel extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.edit, color: Colors.white70, size: 28),
-                onPressed: () => _showEditTeamName(context, game, isTeamA),
+                onPressed: () async {
+                  await game.playClick();
+                  if (!context.mounted) return;
+                  _showEditTeamName(context, game, isTeamA);
+                },
               ),
             ],
           ),
@@ -482,7 +509,9 @@ class TeamManagerPanel extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      await game.playClick();
+                      if (!context.mounted) return;
                       game.removePlayer(p, isTeamA);
                       final upperName = _turkishUpper(p);
                       _showSnack(
@@ -508,7 +537,11 @@ class TeamManagerPanel extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           InkWell(
-            onTap: () => _showAddPlayer(context, game, isTeamA),
+            onTap: () async {
+              await game.playClick();
+              if (!context.mounted) return;
+              _showAddPlayer(context, game, isTeamA);
+            },
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -552,7 +585,8 @@ class TeamManagerPanel extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                onPressed: () {
+                onPressed: () async {
+                  await game.playClick();
                   final suggestion = game.randomTeamName(isTeamA);
                   c.text = suggestion;
                   c.selection = TextSelection.collapsed(offset: c.text.length);
@@ -615,7 +649,8 @@ class TeamManagerPanel extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                onPressed: () {
+                onPressed: () async {
+                  await game.playClick();
                   final suggestion = game.randomPlayerName();
                   c.text = suggestion;
                   c.selection = TextSelection.collapsed(offset: c.text.length);

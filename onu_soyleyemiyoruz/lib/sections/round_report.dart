@@ -41,7 +41,12 @@ class RoundReportScreen extends StatelessWidget {
             automaticallyImplyLeading: false,
             leading: IconButton(
               icon: const Icon(Icons.exit_to_app, color: Colors.black87),
-              onPressed: () => _confirmExitToMenu(context, force: true),
+              onPressed: () async {
+                await Provider.of<GameProvider>(context, listen: false)
+                    .playClick();
+                if (!context.mounted) return;
+                _confirmExitToMenu(context, force: true);
+              },
             ),
             bottom: const TabBar(
               isScrollable: false,
@@ -122,7 +127,10 @@ class RoundReportScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        await Provider.of<GameProvider>(context, listen: false)
+                            .playClick();
+                        if (!context.mounted) return;
                         if (game.allCardsUsed || game.gameWinner != null) {
                           Navigator.pushReplacement(
                             context,

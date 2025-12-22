@@ -34,6 +34,14 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () async {
+            await game.playClick();
+            if (!context.mounted) return;
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: GameBackground(
         child: Column(
@@ -71,7 +79,11 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () async {
+                    await game.playClick();
+                    if (!context.mounted) return;
+                    Navigator.pop(context);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber,
                     padding: const EdgeInsets.all(16),
@@ -114,7 +126,9 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
                 ),
               ),
               TextButton.icon(
-                onPressed: () {
+                onPressed: () async {
+                  await game.playClick();
+                  if (!context.mounted) return;
                   final suggestion = game.randomTeamName(isTeamA);
                   final error = game.setTeamName(isTeamA, suggestion);
                   if (error != null) {
@@ -131,7 +145,11 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.edit, color: Colors.white70, size: 28),
-                onPressed: () => _showEditTeamName(context, game, isTeamA),
+                onPressed: () async {
+                  await game.playClick();
+                  if (!context.mounted) return;
+                  _showEditTeamName(context, game, isTeamA);
+                },
               ),
             ],
           ),
@@ -157,7 +175,9 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      await game.playClick();
+                      if (!context.mounted) return;
                       game.removePlayer(p, isTeamA);
                       final upperName = _turkishUpper(p);
                       _showSnack(
@@ -183,7 +203,11 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
           ),
           const SizedBox(height: 10),
           InkWell(
-            onTap: () => _showAddPlayer(context, game, isTeamA),
+            onTap: () async {
+              await game.playClick();
+              if (!context.mounted) return;
+              _showAddPlayer(context, game, isTeamA);
+            },
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -225,7 +249,8 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                onPressed: () {
+                onPressed: () async {
+                  await game.playClick();
                   final suggestion = game.randomTeamName(isTeamA);
                   c.text = suggestion;
                   c.selection = TextSelection.collapsed(offset: c.text.length);
@@ -238,7 +263,8 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
         ),
         actions: [
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              await game.playClick();
               final error = game.setTeamName(isTeamA, c.text);
               if (error != null) {
                 _showSnack(messenger, error);
@@ -276,7 +302,8 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                onPressed: () {
+                onPressed: () async {
+                  await game.playClick();
                   final suggestion = game.randomPlayerName();
                   c.text = suggestion;
                   c.selection = TextSelection.collapsed(offset: c.text.length);
@@ -289,7 +316,8 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
         ),
         actions: [
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              await game.playClick();
               if (c.text.trim().isEmpty) {
                 _showSnack(messenger, "İsim boş olamaz");
                 return;

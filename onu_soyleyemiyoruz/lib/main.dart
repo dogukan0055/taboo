@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
           ),
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.deepPurple,
-            brightness: game.highContrast ? Brightness.dark : Brightness.light,
+            brightness: Brightness.light,
           ),
           pageTransitionsTheme: pageTransitions,
         );
@@ -234,11 +234,21 @@ Future<bool> _confirmExitToMenu(
           content: const Text("Oyundan çıkmak istediğine emin misin?"),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context, false),
+              onPressed: () async {
+                await Provider.of<GameProvider>(context, listen: false)
+                    .playClick();
+                if (!context.mounted) return;
+                Navigator.pop(context, false);
+              },
               child: const Text("HAYIR"),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
+              onPressed: () async {
+                await Provider.of<GameProvider>(context, listen: false)
+                    .playClick();
+                if (!context.mounted) return;
+                Navigator.pop(context, true);
+              },
               child: const Text("EVET"),
             ),
           ],
@@ -256,4 +266,3 @@ Future<bool> _confirmExitToMenu(
 
   return false;
 }
-

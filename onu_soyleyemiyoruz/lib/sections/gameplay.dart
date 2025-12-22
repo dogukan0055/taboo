@@ -67,11 +67,17 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             content: const Text("Oyunu bırakmak üzeresiniz. Emin misiniz?"),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(dialogCtx),
+                onPressed: () async {
+                  await game.playClick();
+                  if (!context.mounted) return;
+                  Navigator.pop(dialogCtx);
+                },
                 child: const Text("Vazgeç"),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  await game.playClick();
+                  if (!context.mounted) return;
                   Navigator.pop(dialogCtx);
                   game.abortCurrentRound();
                   Navigator.of(context).pop();
