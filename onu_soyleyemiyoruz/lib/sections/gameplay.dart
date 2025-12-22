@@ -216,7 +216,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             children: [
               const SizedBox(height: 18),
               const Icon(
-                Icons.pause_circle_filled,
+                Icons.pause_circle_outline,
                 color: Colors.amber,
                 size: 46,
               ),
@@ -282,7 +282,6 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                       width: double.infinity,
                       child: OutlinedButton(
                         onPressed: () {
-                          game.playClick();
                           Navigator.pop(dialogCtx);
                           game.abortCurrentRound();
                           Navigator.of(context).pushAndRemoveUntil(
@@ -344,10 +343,11 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             isActive: game.soundEnabled,
             onTap: () async {
               if (!game.soundEnabled) {
-                await game.playClick();
+                await game.playClick(force: true);
               }
               game.toggleSound(!game.soundEnabled);
             },
+            playClickOnTap: false,
           ),
           _buildFeedbackToggle(
             icon: game.vibrationEnabled ? Icons.vibration : Icons.phone_android,
@@ -371,11 +371,18 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     required String label,
     required bool isActive,
     required VoidCallback onTap,
+    bool playClickOnTap = true,
+    bool forceClick = false,
   }) {
     return InkWell(
       onTap: () async {
-        await Provider.of<GameProvider>(context, listen: false).playClick();
-        if (!context.mounted) return;
+        if (playClickOnTap) {
+          await Provider.of<GameProvider>(
+            context,
+            listen: false,
+          ).playClick(force: forceClick);
+          if (!context.mounted) return;
+        }
         onTap();
       },
       borderRadius: BorderRadius.circular(20),

@@ -22,6 +22,9 @@ class GameProvider extends ChangeNotifier {
   bool _audioFailed = false;
   bool _audioInitAttempted = false;
   final Map<String, String> _copiedAudioPaths = {};
+  String? _currentSfxName;
+  final Map<String, DateTime> _lastSfxAt = {};
+  static const Duration _sfxMinGap = Duration(milliseconds: 250);
 
   // --- Profanity Filter List (Basic) ---
   final List<String> _badWords = [
@@ -667,6 +670,8 @@ class GameProvider extends ChangeNotifier {
     currentCard = null;
     roundHistory.clear();
     abortedToMenu = true;
+    _sfxPlayer.stop();
+    _currentSfxName = null;
     notifyListeners();
   }
 
@@ -906,9 +911,18 @@ class GameProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> _playSfx(String name) async {
-    if (!soundEnabled || !_audioReady || _audioFailed) return;
+  Future<void> _playSfx(String name, {bool force = false}) async {
+    if ((!soundEnabled && !force) || !_audioReady || _audioFailed) return;
+    final now = DateTime.now();
+    final last = _lastSfxAt[name];
+    if (last != null && now.difference(last) < _sfxMinGap) return;
+    if (_currentSfxName == name &&
+        _sfxPlayer.state == PlayerState.playing) {
+      return;
+    }
     try {
+      _lastSfxAt[name] = now;
+      _currentSfxName = name;
       String sourceName = "audio/$name.mp3";
       try {
         await rootBundle.load("assets/$sourceName");
@@ -922,19 +936,29 @@ class GameProvider extends ChangeNotifier {
         final sfxPath = await _ensureAudioFile(sourceName);
         await _sfxPlayer.play(DeviceFileSource(sfxPath));
       }
+      _sfxPlayer.onPlayerComplete.first.then((_) {
+        if (_currentSfxName == name) {
+          _currentSfxName = null;
+        }
+      });
     } on PlatformException catch (e) {
       debugPrint("SFX failed: $e");
       _audioReady = false;
       _audioFailed = true;
       soundEnabled = false;
       musicEnabled = false;
+      _currentSfxName = null;
       notifyListeners();
+    } catch (_) {
+      if (_currentSfxName == name) {
+        _currentSfxName = null;
+      }
     }
   }
 
-  Future<void> playClick() async {
+  Future<void> playClick({bool force = false}) async {
     await ensureAudioInitialized();
-    await _playSfx("click");
+    await _playSfx("click", force: force);
   }
 
   @override

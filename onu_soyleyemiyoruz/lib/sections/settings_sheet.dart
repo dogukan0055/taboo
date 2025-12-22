@@ -34,7 +34,9 @@ class SettingsSheet extends StatelessWidget {
               const SizedBox(height: 10),
               SwitchListTile(
                 title: const Text("Müzik"),
-                secondary: const Icon(Icons.music_note),
+                secondary: game.musicEnabled
+                    ? const Icon(Icons.music_note)
+                    : const Icon(Icons.music_off),
                 value: game.musicEnabled,
                 onChanged: (val) async {
                   await game.playClick();
@@ -43,18 +45,22 @@ class SettingsSheet extends StatelessWidget {
               ),
               SwitchListTile(
                 title: const Text("Ses Efektleri"),
-                secondary: const Icon(Icons.surround_sound),
+                secondary: game.soundEnabled
+                    ? const Icon(Icons.volume_up_outlined)
+                    : const Icon(Icons.volume_off_outlined),
                 value: game.soundEnabled,
                 onChanged: (val) async {
-                  if (val) {
-                    await game.playClick();
-                  }
                   game.toggleSound(val);
+                  if (val) {
+                    await game.playClick(force: true);
+                  }
                 },
               ),
               SwitchListTile(
                 title: const Text("Titreşim"),
-                secondary: const Icon(Icons.vibration),
+                secondary: game.vibrationEnabled
+                    ? const Icon(Icons.vibration)
+                    : const Icon(Icons.phone_iphone),
                 value: game.vibrationEnabled,
                 onChanged: (val) async {
                   await game.playClick();
@@ -63,7 +69,10 @@ class SettingsSheet extends StatelessWidget {
               ),
               SwitchListTile(
                 title: const Text("Performans Modu"),
-                secondary: const Icon(Icons.speed),
+                secondary: Icon(
+                  Icons.speed,
+                  color: game.reducedMotion ? Colors.amber : null,
+                ),
                 value: game.reducedMotion,
                 onChanged: (val) async {
                   await game.playClick();
