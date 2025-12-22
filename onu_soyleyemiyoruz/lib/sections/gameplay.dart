@@ -8,14 +8,16 @@ class GamePlayScreen extends StatefulWidget {
 }
 
 class _GamePlayScreenState extends State<GamePlayScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   final List<Widget> _floatingTexts = [];
   late AnimationController _blink;
   bool _reduceMotion = false;
+  bool _pausedByBackground = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _blink = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -41,6 +43,25 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         ),
       );
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      final game = Provider.of<GameProvider>(context, listen: false);
+      game.pauseGame();
+      _pausedByBackground = true;
+      return;
+    }
+    if (state == AppLifecycleState.resumed && _pausedByBackground) {
+      _pausedByBackground = false;
+      if (!mounted) return;
+      _onPausePressed(
+        Provider.of<GameProvider>(context, listen: false),
+        fromBackground: true,
+      );
+    }
   }
 
   @override
@@ -191,7 +212,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     }
   }
 
-  void _onPausePressed(GameProvider game) {
+  void _onPausePressed(GameProvider game, {bool fromBackground = false}) {
     game.pauseGame();
     showDialog(
       context: context,
@@ -238,11 +259,22 @@ class _GamePlayScreenState extends State<GamePlayScreen>
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  "Oyunu durdurdun. Devam edebilir veya ana menüye dönebilirsin.",
+                  "Oyun durduruldu. Devam edebilir veya ana menüye dönebilirsin.",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ),
+              if (fromBackground) ...[
+                const SizedBox(height: 6),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "Uygulama arka plana alındığı için oyun otomatik durduruldu.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                ),
+              ],
               const SizedBox(height: 16),
               const Divider(
                 height: 1,
@@ -329,6 +361,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _blink.dispose();
     super.dispose();
   }
@@ -423,30 +456,31 @@ class _GamePlayScreenState extends State<GamePlayScreen>
   Widget _buildScoreHeader(GameProvider game) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-      child: Container(
-        height: 90,
-        decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.45),
-          borderRadius: BorderRadius.circular(40),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: _buildTeamScoreItem(
-                game.teamAName,
-                game.teamAScore,
-                Colors.blueAccent,
-                game.isTeamATurn,
-              ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            height: 90,
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.45),
+              borderRadius: BorderRadius.circular(40),
             ),
-            Container(
-              width: 82,
-              height: 70,
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildTeamScoreItem(
+                    game.teamAName,
+                    game.teamAScore,
+                    Colors.blueAccent,
+                    game.isTeamATurn,
+                  ),
+                ),
+                Container(
+                  width: 82,
+                  height: 70,
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  alignment: Alignment.center,
+                  child: Container(
                     width: 70,
                     height: 70,
                     decoration: BoxDecoration(
@@ -467,34 +501,43 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                       ),
                     ),
                   ),
-                  Positioned(
-                    right: -4,
-                    top: -4,
-                    child: IconButton(
-                      icon: const Icon(Icons.pause_circle_filled),
-                      color: Colors.black,
-                      iconSize: 26,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      onPressed: () async {
-                        await game.playClick();
-                        _onPausePressed(game);
-                      },
-                    ),
+                ),
+                Expanded(
+                  child: _buildTeamScoreItem(
+                    game.teamBName,
+                    game.teamBScore,
+                    Colors.redAccent,
+                    !game.isTeamATurn,
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: -12,
+            child: Center(
+              child: IconButton(
+                icon: Container(
+                  width: 28,
+                  height: 28,
+                  decoration: const BoxDecoration(
+                    color: Colors.amber,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.pause, color: Colors.black, size: 18),
+                ),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () async {
+                  await game.playClick();
+                  _onPausePressed(game);
+                },
               ),
             ),
-            Expanded(
-              child: _buildTeamScoreItem(
-                game.teamBName,
-                game.teamBScore,
-                Colors.redAccent,
-                !game.isTeamATurn,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -506,7 +549,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     bool isActive,
   ) {
     return AnimatedContainer(
-      duration: _reduceMotion ? Duration.zero : const Duration(milliseconds: 300),
+      duration: _reduceMotion
+          ? Duration.zero
+          : const Duration(milliseconds: 300),
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: isActive ? color.withValues(alpha: 0.8) : Colors.transparent,

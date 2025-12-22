@@ -912,6 +912,7 @@ class GameProvider extends ChangeNotifier {
   }
 
   Future<void> _playSfx(String name, {bool force = false}) async {
+    if (abortedToMenu) return;
     if ((!soundEnabled && !force) || !_audioReady || _audioFailed) return;
     final now = DateTime.now();
     final last = _lastSfxAt[name];
