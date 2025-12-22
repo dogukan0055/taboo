@@ -79,7 +79,7 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
             onPressed: () async {
               await Provider.of<GameProvider>(context, listen: false)
                   .playClick();
-              if (!context.mounted) return;
+              if (!mounted) return;
               Navigator.pop(context);
             },
             child: const Text("Anladım"),

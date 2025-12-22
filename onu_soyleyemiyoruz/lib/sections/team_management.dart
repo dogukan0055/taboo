@@ -271,6 +271,7 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
                 return;
               }
               final newName = isTeamA ? game.teamAName : game.teamBName;
+              if (!dialogContext.mounted) return;
               Navigator.pop(dialogContext);
               _showSnack(messenger, "$newName kaydedildi");
             },
@@ -328,6 +329,7 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
                 return;
               }
               final addedName = game.validateInput(c.text) ?? c.text.trim();
+              if (!dialogContext.mounted) return;
               Navigator.pop(dialogContext);
               final upperName = _turkishUpper(addedName);
               _showSnack(
