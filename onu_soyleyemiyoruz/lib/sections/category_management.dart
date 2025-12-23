@@ -230,76 +230,85 @@ class _CategoryCard extends StatelessWidget {
             final double countSize = compact ? 10 : 12;
             return Stack(
               children: [
-                Padding(
-                  padding: EdgeInsets.all(compact ? 10 : 12),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: boxSize,
-                        height: boxSize,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.25),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(
-                          icon,
-                          size: iconSize,
-                          color: isSelected
-                              ? Colors.amber
-                              : isPartial
-                              ? Colors.lightBlueAccent
-                              : Colors.white70,
-                        ),
-                      ),
-                      SizedBox(height: compact ? 4 : 8),
-                      Expanded(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                title,
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: titleColor,
-                                  fontSize: titleSize,
-                                ),
-                              ),
-                              if (!ultraCompact) ...[
-                                SizedBox(height: compact ? 2 : 4),
-                                Text(
-                                  countLabel,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.white54,
-                                    fontSize: countSize,
-                                  ),
-                                ),
-                              ],
-                            ],
+                Positioned.fill(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      compact ? 10 : 12,
+                      compact ? 10 : 12,
+                      compact ? 34 : 36,
+                      compact ? 10 : 12,
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: boxSize,
+                          height: boxSize,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.25),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Icon(
+                            icon,
+                            size: iconSize,
+                            color: isSelected
+                                ? Colors.amber
+                                : isPartial
+                                ? Colors.lightBlueAccent
+                                : Colors.white70,
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: compact ? 4 : 8),
+                        Expanded(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  title,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: titleColor,
+                                    fontSize: titleSize,
+                                  ),
+                                ),
+                                if (!ultraCompact) ...[
+                                  SizedBox(height: compact ? 2 : 4),
+                                  Text(
+                                    countLabel,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white54,
+                                      fontSize: countSize,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                Positioned(
-                  top: 2,
-                  right: 2,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.chevron_right,
-                      color: Colors.white70,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.chevron_right,
+                        color: Colors.white70,
+                      ),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: onOpen,
                     ),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: onOpen,
                   ),
                 ),
               ],
