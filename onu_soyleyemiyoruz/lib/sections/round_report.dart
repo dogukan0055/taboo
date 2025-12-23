@@ -84,7 +84,7 @@ class RoundReportScreen extends StatelessWidget {
                     vertical: 20,
                     horizontal: 40,
                   ),
-                  color: surfaceColor,
+                  color: scaffoldColor,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -123,7 +123,6 @@ class RoundReportScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                Divider(height: 1, color: dividerColor),
                 Expanded(
                   child: TabBarView(
                     children: [
