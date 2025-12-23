@@ -16,7 +16,6 @@ import 'onboarding_screen.dart';
 part 'sections/game_background.dart';
 part 'sections/main_menu.dart';
 part 'sections/setup_hub.dart';
-part 'sections/team_management.dart';
 part 'sections/category_management.dart';
 part 'sections/dice_roll.dart';
 part 'sections/round_start.dart';
@@ -150,6 +149,7 @@ void _showSnack(
   String message, {
   Duration duration = const Duration(seconds: 3),
   bool isError = false,
+  bool isSuccess = false,
 }) {
   messenger.removeCurrentSnackBar();
   final seconds = duration.inSeconds;
@@ -157,9 +157,17 @@ void _showSnack(
   final opacity = ValueNotifier<double>(0.0);
   bool dismissed = false;
   Timer? timer;
-  final Color background = isError ? const Color(0xFFB00020) : Colors.black;
-  final Color iconColor = isError ? Colors.white : Colors.white70;
-  final IconData icon = isError ? Icons.error_outline : Icons.info_outline;
+  final Color background = isError
+      ? const Color(0xFFB00020)
+      : isSuccess
+      ? const Color(0xFF2E7D32)
+      : const Color(0xFFFB8C00);
+  final IconData icon = isError
+      ? Icons.error_outline
+      : isSuccess
+      ? Icons.check_circle_outline
+      : Icons.info_outline;
+  final Color iconColor = Colors.white70;
   final Color closeColor = isError ? Colors.white : Colors.redAccent;
   Future<void> fadeOutAndDismiss() async {
     if (dismissed) return;

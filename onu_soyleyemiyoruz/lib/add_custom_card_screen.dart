@@ -59,7 +59,11 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
     if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
     if (_wordController.text.trim().length > 16) {
-      _showSnack(messenger, "Kelime en fazla 16 karakter olabilir");
+      _showSnack(
+        messenger,
+        "Kelime en fazla 16 karakter olabilir",
+        isError: true,
+      );
       return;
     }
     final taboos = _tabooControllers.map((c) => c.text).toList();
@@ -67,11 +71,15 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
         ? game.updateCustomCard(widget.existingCard!, _wordController.text, taboos)
         : game.addCustomCard(_wordController.text, taboos);
     if (error != null) {
-      _showSnack(messenger, error);
+      _showSnack(messenger, error, isError: true);
       return;
     }
     final addedWord = _wordController.text.trim().toUpperCase();
-    _showSnack(messenger, "$addedWord ÖZEL kategorisine eklendi");
+    _showSnack(
+      messenger,
+      "$addedWord ÖZEL kategorisine eklendi",
+      isSuccess: true,
+    );
     if (exitAfter || _editing) {
       Navigator.pop(context, addedWord);
     } else {
@@ -337,7 +345,33 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
   }
 }
 
-void _showSnack(ScaffoldMessengerState messenger, String message) {
+void _showSnack(
+  ScaffoldMessengerState messenger,
+  String message, {
+  bool isError = false,
+  bool isSuccess = false,
+}) {
   messenger.removeCurrentSnackBar();
-  messenger.showSnackBar(SnackBar(content: Text(message)));
+  final Color background = isError
+      ? const Color(0xFFB00020)
+      : isSuccess
+      ? const Color(0xFF2E7D32)
+      : const Color(0xFFFB8C00);
+  final IconData icon = isError
+      ? Icons.error_outline
+      : isSuccess
+      ? Icons.check_circle_outline
+      : Icons.info_outline;
+  messenger.showSnackBar(
+    SnackBar(
+      backgroundColor: background,
+      content: Row(
+        children: [
+          Icon(icon, color: Colors.white70, size: 18),
+          const SizedBox(width: 8),
+          Expanded(child: Text(message)),
+        ],
+      ),
+    ),
+  );
 }

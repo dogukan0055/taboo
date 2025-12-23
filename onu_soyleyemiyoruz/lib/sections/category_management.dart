@@ -158,7 +158,11 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                       _selectedCategories,
                       _disabledIds,
                     );
-                    _showSnack(messenger, "Kategoriler güncellendi");
+                    _showSnack(
+                      messenger,
+                      "Kategoriler güncellendi",
+                      isSuccess: true,
+                    );
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
@@ -417,6 +421,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                   _showSnack(
                     messenger,
                     "$added ÖZEL kategorisine eklendi",
+                    isSuccess: true,
                   );
                   setState(() {});
                   widget.onChanged();
@@ -548,10 +553,11 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                                       if (updated != null) {
                                         setState(() {});
                                         widget.onChanged();
-                                        _showSnack(
-                                          messenger,
-                                          "$updated güncellendi",
-                                        );
+                                      _showSnack(
+                                        messenger,
+                                        "$updated güncellendi",
+                                        isSuccess: true,
+                                      );
                                       }
                                     },
                                   ),
@@ -574,6 +580,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                                       _showSnack(
                                         messenger,
                                         "${word.word} silindi",
+                                        isSuccess: true,
                                       );
                                     },
                                   ),

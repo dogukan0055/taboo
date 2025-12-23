@@ -153,7 +153,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                                 game.updateSettings(time: val);
                                 _showSnack(
                                   messenger,
-                                  "Tur süresi $val sn olarak kaydedildi",
+                                  "Tur süresi $val sn olarak değiştirildi.",
                                 );
                               },
                               labelBuilder: (val) => "$val",
@@ -226,6 +226,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                             _showSnack(
                               messenger,
                               "Takımlardaki oyuncu sayıları eşit olmalı.",
+                              isError: true,
                             );
                             return;
                           }
@@ -281,8 +282,10 @@ class _SetupHubScreenState extends State<SetupHubScreen>
             bool isSelected = opt == currentValue;
             return GestureDetector(
               onTap: () async {
-                await Provider.of<GameProvider>(context, listen: false)
-                    .playClick();
+                await Provider.of<GameProvider>(
+                  context,
+                  listen: false,
+                ).playClick();
                 if (!context.mounted) return;
                 onSelect(opt);
               },
@@ -366,7 +369,7 @@ Future<String> _applySuggestionEffectSetupHub({
     applyValue(suggestion);
     await Future.delayed(const Duration(milliseconds: 40));
   }
-  _showSnack(messenger, "✨ $suggestion önerildi");
+  _showSnack(messenger, "✨ $suggestion önerildi", isSuccess: true);
   return suggestion;
 }
 
@@ -532,6 +535,7 @@ class TeamManagerPanel extends StatelessWidget {
                       _showSnack(
                         messenger,
                         "$upperName adlı oyuncu ${isTeamA ? game.teamAName : game.teamBName} takımından çıkarıldı",
+                        isSuccess: true,
                       );
                     },
                     child: const SizedBox(
@@ -637,7 +641,11 @@ class TeamManagerPanel extends StatelessWidget {
               }
               final newName = isTeamA ? game.teamAName : game.teamBName;
               Navigator.pop(dialogContext);
-              _showSnack(messenger, "$newName kaydedildi");
+              _showSnack(
+                messenger,
+                "Takım adı $newName olarak kaydedildi",
+                isSuccess: true,
+              );
             },
             child: const Text("Kaydet"),
           ),
@@ -711,6 +719,7 @@ class TeamManagerPanel extends StatelessWidget {
               _showSnack(
                 messenger,
                 "$upperName adlı oyuncu ${isTeamA ? game.teamAName : game.teamBName} takımına eklendi",
+                isSuccess: true,
               );
             },
             child: const Text("Ekle"),
