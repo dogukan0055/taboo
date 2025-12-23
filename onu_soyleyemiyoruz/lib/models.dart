@@ -282,7 +282,7 @@ final List<WordCard> initialDeck = [
     category: "Sanat",
   ),
   WordCard(
-    word: "HEYkel",
+    word: "HEYKEL",
     tabooWords: ["Taş", "Bronz", "Yontmak", "Figür", "Sanatçı"],
     category: "Sanat",
   ),
@@ -482,11 +482,6 @@ final List<WordCard> initialDeck = [
     category: "Sanat",
   ),
   WordCard(
-    word: "TRAGEDYA",
-    tabooWords: ["Tiyatro", "Acı", "Oyun", "Eski", "Yunan"],
-    category: "Sanat",
-  ),
-  WordCard(
     word: "KLASİK MÜZİK",
     tabooWords: ["Orkestra", "Beste", "Nota", "Konser", "Eski"],
     category: "Sanat",
@@ -526,11 +521,6 @@ final List<WordCard> initialDeck = [
   WordCard(
     word: "TELESKOP",
     tabooWords: ["Uzay", "Yıldız", "Gezegen", "Bakmak", "Gözlem"],
-    category: "Bilim",
-  ),
-  WordCard(
-    word: "GRAVİTASYON",
-    tabooWords: ["Yerçekimi", "Düşmek", "Newton", "Kuvvet", "Fizik"],
     category: "Bilim",
   ),
   WordCard(
@@ -821,11 +811,6 @@ final List<WordCard> initialDeck = [
     category: "Yemek",
   ),
   WordCard(
-    word: "ZEYTİNYAĞLI",
-    tabooWords: ["Soğuk", "Sebze", "Yağ", "Yemek", "Hafif"],
-    category: "Yemek",
-  ),
-  WordCard(
     word: "SALATA",
     tabooWords: ["Yeşillik", "Çiğ", "Karıştırmak", "Limon", "Yan"],
     category: "Yemek",
@@ -1018,11 +1003,6 @@ final List<WordCard> initialDeck = [
     category: "Spor",
   ),
   WordCard(
-    word: "TAEKWONDO",
-    tabooWords: ["Tekme", "Dövüş", "Kore", "Puan", "Spor"],
-    category: "Spor",
-  ),
-  WordCard(
     word: "FİTNESS",
     tabooWords: ["Spor salonu", "Ağırlık", "Egzersiz", "Kas", "Antrenman"],
     category: "Spor",
@@ -1030,11 +1010,6 @@ final List<WordCard> initialDeck = [
   WordCard(
     word: "VÜCUT GELİŞTİRME",
     tabooWords: ["Kas", "Ağırlık", "Fitness", "Protein", "Salon"],
-    category: "Spor",
-  ),
-  WordCard(
-    word: "CİMNASTİK",
-    tabooWords: ["Esneklik", "Hareket", "Alet", "Takla", "Sporcu"],
     category: "Spor",
   ),
   WordCard(
@@ -1078,16 +1053,6 @@ final List<WordCard> initialDeck = [
     category: "Spor",
   ),
   WordCard(
-    word: "RAGBİ",
-    tabooWords: ["Top", "Takım", "Taşımak", "Sert", "Maç"],
-    category: "Spor",
-  ),
-  WordCard(
-    word: "AMERİKAN FUTBOLU",
-    tabooWords: ["Top", "Kask", "NFL", "Taşımak", "Saha"],
-    category: "Spor",
-  ),
-  WordCard(
     word: "HENTBOL",
     tabooWords: ["Top", "Kale", "Takım", "Atmak", "Salon"],
     category: "Spor",
@@ -1118,7 +1083,7 @@ final List<WordCard> initialDeck = [
     category: "Spor",
   ),
   WordCard(
-    word: "SURF",
+    word: "SÖRF",
     tabooWords: ["Dalga", "Deniz", "Tahta", "Kaymak", "Denge"],
     category: "Spor",
   ),
@@ -1325,7 +1290,7 @@ final List<WordCard> initialDeck = [
     category: "Doğa",
   ),
   WordCard(
-    word: "BATakLIK",
+    word: "BATAKLIK",
     tabooWords: ["Çamur", "Su", "Sinek", "Yumuşak", "Toprak"],
     category: "Doğa",
   ),
@@ -1375,11 +1340,6 @@ final List<WordCard> initialDeck = [
     category: "Doğa",
   ),
   WordCard(
-    word: "BAHAR",
-    tabooWords: ["Çiçek", "Yeşil", "Ilık", "Mevsim", "Açmak"],
-    category: "Doğa",
-  ),
-  WordCard(
     word: "YAZ",
     tabooWords: ["Sıcak", "Deniz", "Tatil", "Güneş", "Mevsim"],
     category: "Doğa",
@@ -1418,7 +1378,7 @@ final List<WordCard> initialDeck = [
   ),
   WordCard(
     word: "AKILLI TELEFON",
-    tabooWords: ["Dokunmatik", "Uygulama", "Ekran", "Arama", "İnternet"],
+    tabooWords: ["Dokunmatik", "İphone", "Android", "Cep", "Kamera"],
     category: "Teknoloji",
   ),
   WordCard(
@@ -1427,18 +1387,13 @@ final List<WordCard> initialDeck = [
     category: "Teknoloji",
   ),
   WordCard(
-    word: "WIFI",
+    word: "WI-FI",
     tabooWords: ["Kablosuz", "İnternet", "Modem", "Bağlanmak", "Ağ"],
     category: "Teknoloji",
   ),
   WordCard(
     word: "MODEM",
     tabooWords: ["İnternet", "WiFi", "Bağlantı", "Işık", "Kutu"],
-    category: "Teknoloji",
-  ),
-  WordCard(
-    word: "ROUTER",
-    tabooWords: ["Ağ", "İnternet", "Dağıtmak", "Modem", "WiFi"],
     category: "Teknoloji",
   ),
   WordCard(

@@ -145,7 +145,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                         child: Column(
                           children: [
                             _buildUniqueSelector(
-                              "Süre (saniye)",
+                              "⏱️ Süre (saniye)",
                               [30, 45, 60, 75, 90],
                               game.roundTime,
                               (val) {
@@ -153,7 +153,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                                 game.updateSettings(time: val);
                                 _showSnack(
                                   messenger,
-                                  "Tur süresi $val sn olarak değiştirildi.",
+                                  "⏱️ Tur süresi $val sn olarak değiştirildi.",
                                 );
                               },
                               labelBuilder: (val) => "$val",
@@ -161,18 +161,18 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                             ),
                             const Divider(color: Colors.white24),
                             _buildUniqueSelector(
-                              "Hedef Puan",
+                              "🏆 Hedef Puan",
                               [20, 30, 50, 75, -1],
                               game.targetScore,
                               (val) {
                                 if (val == game.targetScore) return;
                                 game.updateSettings(score: val);
                                 final label = val == -1
-                                    ? "Hedef yok. Oyun istenilen sürede kazanılır!"
-                                    : "$val puana ulaşan kazanır!";
+                                    ? "🏆 Hedef yok. Oyun istenilen sürede kazanılır!"
+                                    : "🏆 $val puana ulaşan kazanır!";
                                 _showSnack(messenger, label);
                               },
-                              labelBuilder: (val) => val == -1 ? "-" : "$val",
+                              labelBuilder: (val) => val == -1 ? "∞" : "$val",
                               reduceMotion: reduceMotion,
                             ),
                           ],
@@ -566,7 +566,10 @@ class TeamManagerPanel extends StatelessWidget {
               children: [
                 Icon(Icons.add_circle, color: Colors.greenAccent, size: 24),
                 SizedBox(width: 8),
-                Text("Ekle", style: TextStyle(color: Colors.greenAccent)),
+                Text(
+                  "Oyuncu Ekle",
+                  style: TextStyle(color: Colors.greenAccent),
+                ),
               ],
             ),
           ),
@@ -656,6 +659,14 @@ class TeamManagerPanel extends StatelessWidget {
 
   void _showAddPlayer(BuildContext context, GameProvider game, bool isTeamA) {
     final messenger = ScaffoldMessenger.of(context);
+    if ((isTeamA ? game.teamA.length : game.teamB.length) >= 6) {
+      _showSnack(
+        messenger,
+        "Bir takımda en fazla 6 oyuncu olabilir",
+        isError: true,
+      );
+      return;
+    }
     TextEditingController c = TextEditingController();
     showDialog(
       context: context,

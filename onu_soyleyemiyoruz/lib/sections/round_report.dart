@@ -8,6 +8,16 @@ class RoundReportScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var game = Provider.of<GameProvider>(context);
     final reduceMotion = game.reducedMotion;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color scaffoldColor = isDark
+        ? const Color(0xFF141414)
+        : Colors.grey[200]!;
+    final Color surfaceColor = isDark ? const Color(0xFF1F1F1F) : Colors.white;
+    final Color chipFillColor = isDark
+        ? const Color(0xFF2A2A2A)
+        : Colors.grey[200]!;
+    final Color textColor = isDark ? Colors.white70 : Colors.black87;
+    final Color dividerColor = isDark ? Colors.white24 : Colors.black12;
     final correctList = game.roundHistory
         .where((e) => e.status == CardStatus.correct)
         .toList();
@@ -27,36 +37,38 @@ class RoundReportScreen extends StatelessWidget {
       child: DefaultTabController(
         length: 3,
         child: Scaffold(
-          backgroundColor: Colors.grey[200],
+          backgroundColor: scaffoldColor,
           appBar: AppBar(
-            title: const Text(
+            title: Text(
               "TUR SONUCU",
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: surfaceColor,
             elevation: 1,
             centerTitle: true,
             automaticallyImplyLeading: false,
             leading: IconButton(
-              icon: const Icon(Icons.exit_to_app, color: Colors.black87),
+              icon: Icon(Icons.exit_to_app, color: textColor),
               onPressed: () async {
-                await Provider.of<GameProvider>(context, listen: false)
-                    .playClick();
+                await Provider.of<GameProvider>(
+                  context,
+                  listen: false,
+                ).playClick();
                 if (!context.mounted) return;
                 _confirmExitToMenu(context, force: true);
               },
             ),
-            bottom: const TabBar(
+            bottom: TabBar(
               isScrollable: false,
-              labelColor: Colors.black87,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: Colors.deepPurple,
-              labelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              unselectedLabelStyle: TextStyle(fontSize: 12),
-              tabs: [
+              labelColor: textColor,
+              unselectedLabelColor: isDark ? Colors.white38 : Colors.grey,
+              indicatorColor: isDark ? Colors.amber[400]! : Colors.deepPurple,
+              labelStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+              unselectedLabelStyle: const TextStyle(fontSize: 12),
+              tabs: const [
                 Tab(text: "BİLİNENLER"),
                 Tab(text: "TABU OLANLAR"),
                 Tab(text: "PAS GEÇİLENLER"),
@@ -72,16 +84,22 @@ class RoundReportScreen extends StatelessWidget {
                     vertical: 20,
                     horizontal: 40,
                   ),
-                  color: Colors.white,
+                  color: surfaceColor,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _statCol("DOĞRU", correctList.length, Colors.green),
-                      _statCol("TABU", tabooList.length, Colors.red),
+                      _statCol(
+                        "DOĞRU",
+                        correctList.length,
+                        Colors.green,
+                        textColor,
+                      ),
+                      _statCol("TABU", tabooList.length, Colors.red, textColor),
                       _statCol(
                         "PUAN",
                         correctList.length - tabooList.length,
                         Colors.deepPurple,
+                        textColor,
                       ),
                     ],
                   ),
@@ -92,19 +110,20 @@ class RoundReportScreen extends StatelessWidget {
                     vertical: 8,
                   ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _InfoChip(
                         icon: Icons.layers,
                         label: game.allCardsUsed
                             ? "Kartlar bitti"
                             : "Kalan kart: ${game.remainingCards}",
-                        textColor: Colors.black87,
-                        fillColor: Colors.grey[200],
+                        textColor: textColor,
+                        fillColor: chipFillColor,
                       ),
                     ],
                   ),
                 ),
-                const Divider(height: 1),
+                Divider(height: 1, color: dividerColor),
                 Expanded(
                   child: TabBarView(
                     children: [
@@ -120,46 +139,99 @@ class RoundReportScreen extends StatelessWidget {
                 ),
                 Container(
                   padding: const EdgeInsets.all(20.0),
-                  color: Colors.white,
+                  color: scaffoldColor,
                   child: SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black87,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.all(18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () async {
-                        await Provider.of<GameProvider>(context, listen: false)
-                            .playClick();
-                        if (!context.mounted) return;
-                        if (game.allCardsUsed || game.gameWinner != null) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const GameOverScreen(),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black87,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.all(18),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
-                          );
-                        } else {
-                          game.finishTurn();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const RoundStartScreen(),
+                            onPressed: () async {
+                              await Provider.of<GameProvider>(
+                                context,
+                                listen: false,
+                              ).playClick();
+                              if (!context.mounted) return;
+                              if (game.allCardsUsed ||
+                                  game.gameWinner != null) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const GameOverScreen(),
+                                  ),
+                                );
+                              } else {
+                                game.finishTurn();
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const RoundStartScreen(),
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Text(
+                              "DEVAM ET",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          );
-                        }
-                      },
-                      child: const Text(
-                        "DEVAM ET",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
+                        if (game.targetScore == -1) ...[
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.all(18),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: () async {
+                                await Provider.of<GameProvider>(
+                                  context,
+                                  listen: false,
+                                ).playClick();
+                                if (!context.mounted) return;
+                                if (game.teamAScore > game.teamBScore) {
+                                  game.gameWinner = game.teamAName;
+                                } else if (game.teamBScore > game.teamAScore) {
+                                  game.gameWinner = game.teamBName;
+                                } else {
+                                  game.gameWinner = null;
+                                }
+                                game.endedByCards = false;
+                                game.endMessage = null;
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const GameOverScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                "OYUNU BİTİR",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ),
@@ -171,7 +243,7 @@ class RoundReportScreen extends StatelessWidget {
     );
   }
 
-  Widget _statCol(String label, int val, Color c) => Column(
+  Widget _statCol(String label, int val, Color c, Color valueColor) => Column(
     children: [
       Text(
         label,
@@ -179,10 +251,10 @@ class RoundReportScreen extends StatelessWidget {
       ),
       Text(
         "$val",
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.w900,
-          color: Colors.black87,
+          color: valueColor,
         ),
       ),
     ],
@@ -236,106 +308,157 @@ class RoundReportScreen extends StatelessWidget {
                     ),
                   ],
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: LayoutBuilder(
             builder: (context, c) {
-              final bool compact = c.maxHeight < 140;
-              final double wordSize = compact ? 15 : 18;
-              final double tabooSize = compact ? 10 : 12;
-              final EdgeInsets chipPad = compact
-                  ? const EdgeInsets.symmetric(horizontal: 6, vertical: 3)
-                  : const EdgeInsets.symmetric(horizontal: 7, vertical: 4);
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: chipPad,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      card.category.toUpperCase(),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: compact ? 9 : 10,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.4,
+              final double h = c.maxHeight;
+              final double w = c.maxWidth;
+              final EdgeInsets contentPadding = EdgeInsets.symmetric(
+                horizontal: (w * 0.06).clamp(6.0, 10.0),
+                vertical: (h * 0.04).clamp(6.0, 10.0),
+              );
+              final double wordSize = (h * 0.14).clamp(12.0, 18.0);
+              final double tabooSize = (h * 0.12).clamp(12.0, 16.0);
+              final double categoryFont = (h * 0.06).clamp(8.0, 11.0);
+              final EdgeInsets chipPad = EdgeInsets.symmetric(
+                horizontal: (w * 0.04).clamp(4.0, 7.0),
+                vertical: (h * 0.01).clamp(1.0, 3.0),
+              );
+              return Padding(
+                padding: contentPadding,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: chipPad,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        card.category.toUpperCase(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: categoryFont,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.4,
+                        ),
                       ),
                     ),
-                  ),
-                  Text(
-                    card.word,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: (wordSize * 0.9).clamp(12, 18),
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
-                      letterSpacing: 0.1,
+                    SizedBox(height: (h * 0.02).clamp(2.0, 6.0)),
+                    Text(
+                      card.word,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: wordSize,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        letterSpacing: 0.1,
+                      ),
                     ),
-                  ),
-                  Container(
-                    width: 28,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.35),
-                      borderRadius: BorderRadius.circular(2),
+                    SizedBox(height: (h * 0.02).clamp(2.0, 6.0)),
+                    Container(
+                      width: (w * 0.2).clamp(16.0, 26.0),
+                      height: 2,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.35),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                  ),
-                  Flexible(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ...card.tabooWords.map(
-                          (t) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 1.5),
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.08),
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.1),
-                                  width: 0.6,
+                    SizedBox(height: (h * 0.02).clamp(2.0, 6.0)),
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, inner) {
+                          final int count = card.tabooWords.length;
+                          final double gap = count > 1
+                              ? (inner.maxHeight * 0.04).clamp(2.0, 6.0)
+                              : 0;
+                          final double footerHeight = event.timedOut
+                              ? (inner.maxHeight * 0.14).clamp(14.0, 22.0)
+                              : 0;
+                          final double totalGap = gap * (count - 1);
+                          final double availableHeight = (inner.maxHeight -
+                                  footerHeight -
+                                  totalGap)
+                              .clamp(0.0, inner.maxHeight);
+                          final double rowHeight =
+                              count > 0 ? availableHeight / count : 0.0;
+                          final double pillHeight = rowHeight * 0.82;
+                          return Column(
+                            children: [
+                              for (
+                                int i = 0;
+                                i < card.tabooWords.length;
+                                i++
+                              ) ...[
+                                SizedBox(
+                                  height: rowHeight,
+                                  child: Center(
+                                    child: Container(
+                                      width: inner.maxWidth * 0.86,
+                                      height: pillHeight,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.16,
+                                        ),
+                                        borderRadius: BorderRadius.circular(7),
+                                        border: Border.all(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.1,
+                                          ),
+                                          width: 0.6,
+                                        ),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          card.tabooWords[i],
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: tabooSize,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              child: Text(
-                                t,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: (tabooSize * 0.9).clamp(9, 13),
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
+                                if (i < card.tabooWords.length - 1)
+                                  SizedBox(height: gap),
+                              ],
+                              if (event.timedOut)
+                                SizedBox(
+                                  height: footerHeight,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      "Süre bitti",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.amber[200],
+                                        fontSize: (h * 0.11)
+                                            .clamp(14.0, 18.0),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (event.timedOut)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Text(
-                              "Süre bitti",
-                              style: TextStyle(
-                                color: Colors.amber[200],
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                      ],
+                            ],
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           ),
