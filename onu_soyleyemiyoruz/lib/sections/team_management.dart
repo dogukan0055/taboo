@@ -179,6 +179,13 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
                 style: TextStyle(color: Colors.white38, fontSize: 12),
               ),
             ),
+          Padding(
+            padding: const EdgeInsets.only(left: 8, bottom: 6),
+            child: Text(
+              "(${isTeamA ? game.teamA.length : game.teamB.length}/6)",
+              style: const TextStyle(color: Colors.white54, fontSize: 12),
+            ),
+          ),
           ...(isTeamA ? game.teamA : game.teamB).map(
             (p) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
