@@ -887,25 +887,16 @@ class GameProvider extends ChangeNotifier {
     _audioReady = true;
     try {
       if (kIsWeb) {
-        String sourceName = "audio/music_loop.mp3";
-        try {
-          await rootBundle.load("assets/$sourceName");
-        } catch (_) {
-          sourceName = "audio/music_loop.wav";
-        }
+        const sourceName = "audio/music_loop.mp3";
+        await rootBundle.load("assets/$sourceName");
         await _musicPlayer.setSource(AssetSource(sourceName));
         await _musicPlayer.setVolume(musicEnabled ? 0.3 : 0);
         if (musicEnabled) {
           await _musicPlayer.resume();
         }
       } else {
-        String sourceName = "audio/music_loop.mp3";
-        // fallback to wav if mp3 missing
-        try {
-          await rootBundle.load("assets/$sourceName");
-        } catch (_) {
-          sourceName = "audio/music_loop.wav";
-        }
+        const sourceName = "audio/music_loop.mp3";
+        await rootBundle.load("assets/$sourceName");
         final musicPath = await _ensureAudioFile(sourceName);
         await _musicPlayer.setSource(DeviceFileSource(musicPath));
         await _musicPlayer.setVolume(musicEnabled ? 0.3 : 0);
@@ -956,12 +947,8 @@ class GameProvider extends ChangeNotifier {
     try {
       _lastSfxAt[name] = now;
       _currentSfxName = name;
-      String sourceName = "audio/$name.mp3";
-      try {
-        await rootBundle.load("assets/$sourceName");
-      } catch (_) {
-        sourceName = "audio/$name.wav";
-      }
+      final sourceName = "audio/$name.mp3";
+      await rootBundle.load("assets/$sourceName");
       await _sfxPlayer.stop();
       if (kIsWeb) {
         await _sfxPlayer.play(AssetSource(sourceName));
