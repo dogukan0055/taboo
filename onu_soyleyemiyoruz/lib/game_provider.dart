@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -17,6 +18,7 @@ class GameProvider extends ChangeNotifier {
   bool tutorialTipShown = false;
   bool reducedMotion = false;
   bool onboardingSeen = false;
+  ThemeMode themeMode = ThemeMode.light;
   bool hydrated = false;
   SharedPreferences? _prefs;
   bool _audioFailed = false;
@@ -126,6 +128,7 @@ class GameProvider extends ChangeNotifier {
     vibrationEnabled = _prefs?.getBool("vibrationEnabled") ?? vibrationEnabled;
     reducedMotion = _prefs?.getBool("reducedMotion") ?? reducedMotion;
     onboardingSeen = _prefs?.getBool("onboardingSeen") ?? onboardingSeen;
+    themeMode = _themeModeFromString(_prefs?.getString("themeMode"));
     tutorialTipShown = _prefs?.getBool("tutorialTipShown") ?? tutorialTipShown;
     teamAName = _prefs?.getString("teamAName") ?? teamAName;
     teamBName = _prefs?.getString("teamBName") ?? teamBName;
@@ -172,6 +175,7 @@ class GameProvider extends ChangeNotifier {
     _prefs!.setBool("musicEnabled", musicEnabled);
     _prefs!.setBool("vibrationEnabled", vibrationEnabled);
     _prefs!.setBool("reducedMotion", reducedMotion);
+    _prefs!.setString("themeMode", _themeModeToString(themeMode));
     _prefs!.setBool("tutorialTipShown", tutorialTipShown);
     _prefs!.setBool("onboardingSeen", onboardingSeen);
     _prefs!.setString("teamAName", teamAName);
@@ -286,6 +290,34 @@ class GameProvider extends ChangeNotifier {
     reducedMotion = val;
     _persist();
     notifyListeners();
+  }
+
+  void cycleThemeMode() {
+    themeMode = themeMode == ThemeMode.dark
+        ? ThemeMode.light
+        : ThemeMode.dark;
+    _persist();
+    notifyListeners();
+  }
+
+  ThemeMode _themeModeFromString(String? value) {
+    switch (value) {
+      case "dark":
+        return ThemeMode.dark;
+      case "light":
+      default:
+        return ThemeMode.light;
+    }
+  }
+
+  String _themeModeToString(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.dark:
+        return "dark";
+      case ThemeMode.light:
+      default:
+        return "light";
+    }
   }
 
   void toggleRepeats(bool val) {
@@ -481,6 +513,7 @@ class GameProvider extends ChangeNotifier {
   String? setTeamName(bool isTeamA, String name) {
     if (name.trim().isEmpty) return "İsim boş olamaz";
     if (containsProhibitedWords(name)) return "Uygunsuz isim tespit edildi";
+    if (name.trim().length > 20) return "İsim en fazla 20 karakter olabilir";
     String? valid = validateInput(name);
     if (valid == null) return "İsim geçersiz";
     if (isTeamA && valid == teamBName) return "Diğer takımla aynı isim olamaz";
@@ -917,8 +950,7 @@ class GameProvider extends ChangeNotifier {
     final now = DateTime.now();
     final last = _lastSfxAt[name];
     if (last != null && now.difference(last) < _sfxMinGap) return;
-    if (_currentSfxName == name &&
-        _sfxPlayer.state == PlayerState.playing) {
+    if (_currentSfxName == name && _sfxPlayer.state == PlayerState.playing) {
       return;
     }
     try {

@@ -6,11 +6,15 @@ class SettingsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var game = Provider.of<GameProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color sheetColor = isDark ? const Color(0xFF1D1A22) : Colors.white;
+    final Color textColor = isDark ? Colors.white : Colors.black;
+    final Color iconColor = isDark ? Colors.white70 : Colors.black54;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: sheetColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
         top: false,
@@ -33,10 +37,10 @@ class SettingsSheet extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               SwitchListTile(
-                title: const Text("Müzik"),
+                title: Text("Müzik", style: TextStyle(color: textColor)),
                 secondary: game.musicEnabled
-                    ? const Icon(Icons.music_note)
-                    : const Icon(Icons.music_off),
+                    ? Icon(Icons.music_note, color: iconColor)
+                    : Icon(Icons.music_off, color: iconColor),
                 value: game.musicEnabled,
                 onChanged: (val) async {
                   await game.playClick();
@@ -44,10 +48,10 @@ class SettingsSheet extends StatelessWidget {
                 },
               ),
               SwitchListTile(
-                title: const Text("Ses Efektleri"),
+                title: Text("Ses Efektleri", style: TextStyle(color: textColor)),
                 secondary: game.soundEnabled
-                    ? const Icon(Icons.volume_up_outlined)
-                    : const Icon(Icons.volume_off_outlined),
+                    ? Icon(Icons.volume_up_outlined, color: iconColor)
+                    : Icon(Icons.volume_off_outlined, color: iconColor),
                 value: game.soundEnabled,
                 onChanged: (val) async {
                   game.toggleSound(val);
@@ -57,10 +61,10 @@ class SettingsSheet extends StatelessWidget {
                 },
               ),
               SwitchListTile(
-                title: const Text("Titreşim"),
+                title: Text("Titreşim", style: TextStyle(color: textColor)),
                 secondary: game.vibrationEnabled
-                    ? const Icon(Icons.vibration)
-                    : const Icon(Icons.phone_iphone),
+                    ? Icon(Icons.vibration, color: iconColor)
+                    : Icon(Icons.phone_iphone, color: iconColor),
                 value: game.vibrationEnabled,
                 onChanged: (val) async {
                   await game.playClick();
@@ -68,10 +72,10 @@ class SettingsSheet extends StatelessWidget {
                 },
               ),
               SwitchListTile(
-                title: const Text("Performans Modu"),
+                title: Text("Performans Modu", style: TextStyle(color: textColor)),
                 secondary: Icon(
                   Icons.speed,
-                  color: game.reducedMotion ? Colors.amber : null,
+                  color: game.reducedMotion ? Colors.amber : iconColor,
                 ),
                 value: game.reducedMotion,
                 onChanged: (val) async {

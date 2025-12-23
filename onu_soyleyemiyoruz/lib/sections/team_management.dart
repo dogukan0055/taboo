@@ -23,6 +23,21 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
     super.dispose();
   }
 
+  Future<String> _applySuggestionEffect({
+    required String Function() nextValue,
+    required void Function(String) applyValue,
+    required ScaffoldMessengerState messenger,
+  }) async {
+    String suggestion = nextValue();
+    for (int i = 0; i < 6; i++) {
+      suggestion = nextValue();
+      applyValue(suggestion);
+      await Future.delayed(const Duration(milliseconds: 40));
+    }
+    _showSnack(messenger, "✨ $suggestion önerildi");
+    return suggestion;
+  }
+
   @override
   Widget build(BuildContext context) {
     var game = Provider.of<GameProvider>(context);
@@ -129,13 +144,16 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
                 onPressed: () async {
                   await game.playClick();
                   if (!context.mounted) return;
-                  final suggestion = game.randomTeamName(isTeamA);
-                  final error = game.setTeamName(isTeamA, suggestion);
-                  if (error != null) {
-                    _showSnack(messenger, error);
-                  } else {
-                    _showSnack(messenger, "$suggestion önerildi");
-                  }
+                  await _applySuggestionEffect(
+                    nextValue: () => game.randomTeamName(isTeamA),
+                    applyValue: (suggestion) {
+                      final error = game.setTeamName(isTeamA, suggestion);
+                      if (error != null) {
+                    _showSnack(messenger, error, isError: true);
+                      }
+                    },
+                    messenger: messenger,
+                  );
                 },
                 icon: const Icon(Icons.casino, color: Colors.white70, size: 26),
                 label: const Text(
@@ -240,7 +258,7 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
           children: [
             TextField(
               controller: c,
-              maxLength: 16,
+              maxLength: 20,
               textCapitalization: TextCapitalization.words,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp('[A-Za-z ]')),
@@ -251,9 +269,16 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
               child: TextButton.icon(
                 onPressed: () async {
                   await game.playClick();
-                  final suggestion = game.randomTeamName(isTeamA);
-                  c.text = suggestion;
-                  c.selection = TextSelection.collapsed(offset: c.text.length);
+                  await _applySuggestionEffect(
+                    nextValue: () => game.randomTeamName(isTeamA),
+                    applyValue: (suggestion) {
+                      c.text = suggestion;
+                      c.selection = TextSelection.collapsed(
+                        offset: c.text.length,
+                      );
+                    },
+                    messenger: messenger,
+                  );
                 },
                 icon: const Icon(Icons.casino, size: 22),
                 label: const Text("Öner"),
@@ -267,7 +292,7 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
               await game.playClick();
               final error = game.setTeamName(isTeamA, c.text);
               if (error != null) {
-                _showSnack(messenger, error);
+                _showSnack(messenger, error, isError: true);
                 return;
               }
               final newName = isTeamA ? game.teamAName : game.teamBName;
@@ -305,9 +330,16 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
               child: TextButton.icon(
                 onPressed: () async {
                   await game.playClick();
-                  final suggestion = game.randomPlayerName();
-                  c.text = suggestion;
-                  c.selection = TextSelection.collapsed(offset: c.text.length);
+                  await _applySuggestionEffect(
+                    nextValue: () => game.randomPlayerName(),
+                    applyValue: (suggestion) {
+                      c.text = suggestion;
+                      c.selection = TextSelection.collapsed(
+                        offset: c.text.length,
+                      );
+                    },
+                    messenger: messenger,
+                  );
                 },
                 icon: const Icon(Icons.casino, size: 22),
                 label: const Text("Öner"),
@@ -320,12 +352,12 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
             onPressed: () async {
               await game.playClick();
               if (c.text.trim().isEmpty) {
-                _showSnack(messenger, "İsim boş olamaz");
+                _showSnack(messenger, "İsim boş olamaz", isError: true);
                 return;
               }
               final error = game.addPlayer(c.text, isTeamA);
               if (error != null) {
-                _showSnack(messenger, error);
+                _showSnack(messenger, error, isError: true);
                 return;
               }
               final addedName = game.validateInput(c.text) ?? c.text.trim();

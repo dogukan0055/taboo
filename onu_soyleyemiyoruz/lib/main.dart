@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
@@ -81,6 +82,26 @@ class MyApp extends StatelessWidget {
           ),
           pageTransitionsTheme: pageTransitions,
         );
+        final darkTheme = ThemeData(
+          fontFamily: 'Roboto',
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: Colors.transparent,
+          snackBarTheme: SnackBarThemeData(
+            behavior: SnackBarBehavior.floating,
+            dismissDirection: DismissDirection.horizontal,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+            insetPadding: const EdgeInsets.all(16),
+            backgroundColor: Colors.black.withValues(alpha: .9),
+            contentTextStyle: const TextStyle(color: Colors.white),
+          ),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepPurple,
+            brightness: Brightness.dark,
+          ),
+          pageTransitionsTheme: pageTransitions,
+        );
 
         Widget home;
         if (!game.hydrated) {
@@ -101,6 +122,8 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Onu Söyleyemiyoruz',
           theme: theme,
+          darkTheme: darkTheme,
+          themeMode: game.themeMode,
           home: home,
         );
       },
@@ -122,9 +145,79 @@ class _NoTransitionsBuilder extends PageTransitionsBuilder {
   }
 }
 
-void _showSnack(ScaffoldMessengerState messenger, String message) {
+void _showSnack(
+  ScaffoldMessengerState messenger,
+  String message, {
+  Duration duration = const Duration(seconds: 3),
+  bool isError = false,
+}) {
   messenger.removeCurrentSnackBar();
-  messenger.showSnackBar(SnackBar(content: Text(message)));
+  final seconds = duration.inSeconds;
+  final secondsLeft = ValueNotifier<int>(seconds);
+  final opacity = ValueNotifier<double>(0.0);
+  bool dismissed = false;
+  Timer? timer;
+  final Color background = isError ? const Color(0xFFB00020) : Colors.black;
+  final Color iconColor = isError ? Colors.white : Colors.white70;
+  final IconData icon = isError ? Icons.error_outline : Icons.info_outline;
+  final Color closeColor = isError ? Colors.white : Colors.redAccent;
+  Future<void> fadeOutAndDismiss() async {
+    if (dismissed) return;
+    dismissed = true;
+    opacity.value = 0;
+    await Future.delayed(const Duration(milliseconds: 160));
+    messenger.hideCurrentSnackBar();
+  }
+  final controller = messenger.showSnackBar(
+    SnackBar(
+      duration: duration,
+      backgroundColor: background,
+      content: ValueListenableBuilder<double>(
+        valueListenable: opacity,
+        builder: (context, value, child) => AnimatedOpacity(
+          opacity: value,
+          duration: Duration(milliseconds: value >= 1 ? 220 : 140),
+          child: child,
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: iconColor, size: 18),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+            ValueListenableBuilder<int>(
+              valueListenable: secondsLeft,
+              builder: (context, value, _) => Text(
+                "$value sn",
+                style: const TextStyle(color: Colors.white70),
+              ),
+            ),
+            const SizedBox(width: 6),
+            InkWell(
+              onTap: fadeOutAndDismiss,
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: EdgeInsets.all(4),
+                child: Icon(Icons.close, color: closeColor, size: 18),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+  Future.microtask(() => opacity.value = 1.0);
+  timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    if (secondsLeft.value <= 1) {
+      fadeOutAndDismiss();
+      return;
+    }
+    secondsLeft.value -= 1;
+  });
+  controller.closed.then((_) {
+    timer?.cancel();
+    secondsLeft.dispose();
+    opacity.dispose();
+  });
 }
 
 void _showCardPreview(BuildContext context, WordCard card) {
@@ -235,8 +328,10 @@ Future<bool> _confirmExitToMenu(
           actions: [
             TextButton(
               onPressed: () async {
-                await Provider.of<GameProvider>(context, listen: false)
-                    .playClick();
+                await Provider.of<GameProvider>(
+                  context,
+                  listen: false,
+                ).playClick();
                 if (!context.mounted) return;
                 Navigator.pop(context, false);
               },
@@ -244,8 +339,10 @@ Future<bool> _confirmExitToMenu(
             ),
             ElevatedButton(
               onPressed: () async {
-                await Provider.of<GameProvider>(context, listen: false)
-                    .playClick();
+                await Provider.of<GameProvider>(
+                  context,
+                  listen: false,
+                ).playClick();
                 if (!context.mounted) return;
                 Navigator.pop(context, true);
               },

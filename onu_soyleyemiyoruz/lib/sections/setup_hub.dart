@@ -151,13 +151,9 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                               (val) {
                                 if (val == game.roundTime) return;
                                 game.updateSettings(time: val);
-                                messenger.removeCurrentSnackBar();
-                                messenger.showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      "Tur süresi $val sn olarak kaydedildi",
-                                    ),
-                                  ),
+                                _showSnack(
+                                  messenger,
+                                  "Tur süresi $val sn olarak kaydedildi",
                                 );
                               },
                               labelBuilder: (val) => "$val",
@@ -174,10 +170,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                                 final label = val == -1
                                     ? "Hedef yok. Oyun istenilen sürede kazanılır!"
                                     : "$val puana ulaşan kazanır!";
-                                messenger.removeCurrentSnackBar();
-                                messenger.showSnackBar(
-                                  SnackBar(content: Text(label)),
-                                );
+                                _showSnack(messenger, label);
                               },
                               labelBuilder: (val) => val == -1 ? "-" : "$val",
                               reduceMotion: reduceMotion,
@@ -226,7 +219,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                               msg =
                                   "${game.teamBName} takımında eksik oyuncu var.";
                             }
-                            _showSnack(messenger, msg);
+                            _showSnack(messenger, msg, isError: true);
                             return;
                           }
                           if (game.teamA.length != game.teamB.length) {
@@ -360,6 +353,21 @@ class _InfoChip extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<String> _applySuggestionEffectSetupHub({
+  required String Function() nextValue,
+  required void Function(String) applyValue,
+  required ScaffoldMessengerState messenger,
+}) async {
+  String suggestion = nextValue();
+  for (int i = 0; i < 6; i++) {
+    suggestion = nextValue();
+    applyValue(suggestion);
+    await Future.delayed(const Duration(milliseconds: 40));
+  }
+  _showSnack(messenger, "✨ $suggestion önerildi");
+  return suggestion;
 }
 
 class TeamManagerPanel extends StatelessWidget {
@@ -574,7 +582,7 @@ class TeamManagerPanel extends StatelessWidget {
           children: [
             TextField(
               controller: c,
-              maxLength: 16,
+              maxLength: 20,
               textCapitalization: TextCapitalization.words,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(
@@ -587,9 +595,16 @@ class TeamManagerPanel extends StatelessWidget {
               child: TextButton.icon(
                 onPressed: () async {
                   await game.playClick();
-                  final suggestion = game.randomTeamName(isTeamA);
-                  c.text = suggestion;
-                  c.selection = TextSelection.collapsed(offset: c.text.length);
+                  await _applySuggestionEffectSetupHub(
+                    nextValue: () => game.randomTeamName(isTeamA),
+                    applyValue: (suggestion) {
+                      c.text = suggestion;
+                      c.selection = TextSelection.collapsed(
+                        offset: c.text.length,
+                      );
+                    },
+                    messenger: messenger,
+                  );
                 },
                 icon: const Icon(Icons.casino, size: 22),
                 label: const Text("Öner"),
@@ -610,7 +625,7 @@ class TeamManagerPanel extends StatelessWidget {
               game.playClick();
               final error = game.setTeamName(isTeamA, c.text);
               if (error != null) {
-                _showSnack(messenger, error);
+                _showSnack(messenger, error, isError: true);
                 return;
               }
               final newName = isTeamA ? game.teamAName : game.teamBName;
@@ -651,9 +666,16 @@ class TeamManagerPanel extends StatelessWidget {
               child: TextButton.icon(
                 onPressed: () async {
                   await game.playClick();
-                  final suggestion = game.randomPlayerName();
-                  c.text = suggestion;
-                  c.selection = TextSelection.collapsed(offset: c.text.length);
+                  await _applySuggestionEffectSetupHub(
+                    nextValue: () => game.randomPlayerName(),
+                    applyValue: (suggestion) {
+                      c.text = suggestion;
+                      c.selection = TextSelection.collapsed(
+                        offset: c.text.length,
+                      );
+                    },
+                    messenger: messenger,
+                  );
                 },
                 icon: const Icon(Icons.casino, size: 22),
                 label: const Text("Öner"),
@@ -674,7 +696,7 @@ class TeamManagerPanel extends StatelessWidget {
               game.playClick();
               final err = game.addPlayer(c.text, isTeamA);
               if (err != null) {
-                _showSnack(messenger, err);
+                _showSnack(messenger, err, isError: true);
                 return;
               }
               Navigator.pop(dialogContext);
