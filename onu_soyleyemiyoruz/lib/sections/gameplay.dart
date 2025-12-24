@@ -291,28 +291,16 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        game.t("paused_body"),
+                        fromBackground
+                            ? game.t("paused_background")
+                            : game.t("paused_body"),
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white70,
-                          fontSize: 14,
+                          fontSize: fromBackground ? 12 : 14,
                         ),
                       ),
                     ),
-                    if (fromBackground) ...[
-                      const SizedBox(height: 6),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          game.t("paused_background"),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
                     const SizedBox(height: 16),
                     const Divider(
                       height: 1,

@@ -395,7 +395,7 @@ class GameProvider extends ChangeNotifier {
         "target_score_label": "🏆 Hedef Puan",
         "round_time_changed": "⏱️ Tur süresi {seconds} sn olarak değiştirildi.",
         "target_score_changed": "🏆 {score} puana ulaşan kazanır!",
-        "target_score_unlimited": "🏆 Oyun istenildiği zaman bitirebilir!",
+        "target_score_unlimited": "Oyun istenildiği zaman bitirebilir!",
         "round_time_chip": "Tur süresi: {seconds} saniye",
         "target_score_chip": "Oyunu kazanmak için hedef: {score} puan",
         "roll_and_play": "ZAR AT & OYNA",
@@ -447,7 +447,7 @@ class GameProvider extends ChangeNotifier {
         "paused_body":
             "Oyun durduruldu. Devam edebilir veya ana menüye dönebilirsin.",
         "paused_background":
-            "Uygulama arka plana alındığı için oyun otomatik durduruldu.",
+            "Oyun otomatik durduruldu. Devam edebilir veya ana menüye dönebilirsin.",
         "resume": "DEVAM ET",
         "return_menu": "ANA MENÜYE DÖN",
         "sound_on": "Ses Açık",
@@ -558,8 +558,8 @@ class GameProvider extends ChangeNotifier {
         "category_ozel": "Özel",
       },
       "en": {
-        "app_title": "Don't Say It",
-        "menu_title": "DON'T\nSAY IT",
+        "app_title": "We Don't Say It",
+        "menu_title": "WE DON'T\nSAY IT",
         "menu_play": "PLAY",
         "menu_settings": "SETTINGS",
         "menu_how_to_play": "HOW TO PLAY",
@@ -641,7 +641,7 @@ class GameProvider extends ChangeNotifier {
         "paused_title": "PAUSED",
         "paused_body": "Game paused. You can resume or return to main menu.",
         "paused_background":
-            "Game paused automatically when the app was sent to background.",
+            "Auto paused. You can resume or return to main menu.",
         "resume": "RESUME",
         "return_menu": "MAIN MENU",
         "sound_on": "Sound On",
