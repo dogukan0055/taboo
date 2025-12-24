@@ -329,6 +329,9 @@ void _showSnack(
 void _showCardPreview(BuildContext context, WordCard card) {
   showDialog(
     context: context,
+    barrierColor: Colors.black.withValues(alpha: 0.2),
+    barrierDismissible: true,
+    useSafeArea: false,
     builder: (_) {
       final bool isDark = Theme.of(context).brightness == Brightness.dark;
       final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
@@ -339,84 +342,99 @@ void _showCardPreview(BuildContext context, WordCard card) {
       final Color tabooColor = isDark ? Colors.white70 : Colors.black87;
       final Color dividerColor =
           isDark ? Colors.white24 : const Color(0xFFE0E0E0);
-      return Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.all(20),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.7,
-          child: Container(
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.25),
-                  blurRadius: 12,
-                  offset: const Offset(0, 8),
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: IgnorePointer(
+              child: BackdropFilter(
+                filter: ui.ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.15),
                 ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: headerColor,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24),
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    card.category.toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
-                  child: Text(
-                    card.word,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: wordColor,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
-                Divider(height: 1, thickness: 1, color: dividerColor),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
-                  child: Column(
-                    children: card.tabooWords
-                        .map(
-                          (t) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Text(
-                              t,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: tabooColor,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+          Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.all(20),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.7,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: cardColor,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.25),
+                      blurRadius: 12,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: headerColor,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(24),
+                          topRight: Radius.circular(24),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        card.category.toUpperCase(),
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+                      child: Text(
+                        card.word,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: wordColor,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    Divider(height: 1, thickness: 1, color: dividerColor),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+                      child: Column(
+                        children: card.tabooWords
+                            .map(
+                              (t) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Text(
+                                  t,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: tabooColor,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       );
     },
   );
@@ -443,7 +461,22 @@ Future<bool> _confirmExitToMenu(
   final shouldExit =
       await showDialog<bool>(
         context: context,
-        builder: (_) => AlertDialog(
+        barrierColor: Colors.black.withValues(alpha: 0.2),
+        useSafeArea: false,
+        builder: (_) => Stack(
+          children: [
+            Positioned.fill(
+              child: IgnorePointer(
+                child: BackdropFilter(
+                  filter: ui.ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                  child: Container(
+                    color: Colors.black.withValues(alpha: 0.15),
+                  ),
+                ),
+              ),
+            ),
+            Center(
+              child: AlertDialog(
           title: const Text("Ana menüye dönülsün mü?"),
           content: const Text("Oyundan çıkmak istediğine emin misin?"),
           actions: [
@@ -468,6 +501,9 @@ Future<bool> _confirmExitToMenu(
                 Navigator.pop(context, true);
               },
               child: const Text("EVET"),
+            ),
+          ],
+              ),
             ),
           ],
         ),
