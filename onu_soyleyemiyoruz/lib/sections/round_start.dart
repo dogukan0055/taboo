@@ -7,6 +7,25 @@ class RoundStartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var game = Provider.of<GameProvider>(context);
     bool isA = game.isTeamATurn;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color backgroundColor = isDark
+        ? (isA ? Colors.blue.shade900 : Colors.red.shade900)
+        : (isA ? Colors.blue.shade700 : Colors.red.shade700);
+    final Color scoreCardColor = isDark
+        ? Colors.black.withValues(alpha: 0.4)
+        : Colors.white.withValues(alpha: 0.16);
+    final Color scoreBorderColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.white.withValues(alpha: 0.2);
+    final Color activeChipColor = Colors.black.withValues(
+      alpha: isDark ? 0.4 : 0.3,
+    );
+    final Color inactiveChipColor = Colors.black.withValues(
+      alpha: isDark ? 0.3 : 0.22,
+    );
+    final Color teamATint = Colors.blueAccent;
+    final Color teamBTint = Colors.redAccent;
+    final Color startButtonColor = isDark ? Colors.amber[400]! : Colors.white;
     final double maxWidth = MediaQuery.of(context).size.width * 0.9;
     return PopScope(
       canPop: false,
@@ -15,7 +34,7 @@ class RoundStartScreen extends StatelessWidget {
         await _confirmExitToMenu(context);
       },
       child: Scaffold(
-        backgroundColor: isA ? Colors.blue[900] : Colors.red[900],
+        backgroundColor: backgroundColor,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           centerTitle: true,
@@ -127,8 +146,9 @@ class RoundStartScreen extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white10,
+                    color: scoreCardColor,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: scoreBorderColor),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -137,18 +157,43 @@ class RoundStartScreen extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                game.teamAName,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Colors.blueAccent,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    isA ? activeChipColor : inactiveChipColor,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: teamATint.withValues(
+                                    alpha: isA ? 0.7 : 0.4,
+                                  ),
+                                ),
+                              ),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  game.teamAName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight:
+                                        isA ? FontWeight.bold : FontWeight.w600,
+                                    shadows: const [
+                                      BoxShadow(
+                                        color: Colors.black54,
+                                        blurRadius: 6,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 6),
                             FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
@@ -173,16 +218,45 @@ class RoundStartScreen extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                game.teamBName,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(color: Colors.redAccent),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: !isA
+                                    ? activeChipColor
+                                    : inactiveChipColor,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: teamBTint.withValues(
+                                    alpha: !isA ? 0.7 : 0.4,
+                                  ),
+                                ),
+                              ),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  game.teamBName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: !isA
+                                        ? FontWeight.bold
+                                        : FontWeight.w600,
+                                    shadows: const [
+                                      BoxShadow(
+                                        color: Colors.black54,
+                                        blurRadius: 6,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 6),
                             FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
@@ -226,7 +300,7 @@ class RoundStartScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: startButtonColor,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 50,
                       vertical: 20,
