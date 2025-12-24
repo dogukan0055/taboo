@@ -506,12 +506,15 @@ class GameProvider extends ChangeNotifier {
         "game_starts_with_team": "Oyuna {team} TAKIMI BAŞLIYOR!",
         "game_over_title": "OYUN BİTTİ",
         "winner_label": "KAZANAN",
-        "winner_score": "{score} Puan",
         "tie_label": "BERABERE",
         "share": "Paylaş",
         "rematch": "RÖVANŞ?",
         "score_summary": "Skor özeti",
         "share_winner": "Kazanan: {winner}",
+        "share_message_win":
+            "Bakın! {winner} olarak {loser} takımını yendik. {app} oyununa sen de katıl!",
+        "share_message_tie":
+            "Bakın! {teamA} ile {teamB} berabere kaldı. {app} oyununa sen de katıl!",
         "share_tie": "Berabere",
         "return_menu_button": "ANA MENÜYE DÖN",
         "quick_tip_title": "Hızlı Başlangıç İpucu",
@@ -724,12 +727,15 @@ class GameProvider extends ChangeNotifier {
         "game_starts_with_team": "TEAM {team} starts the game!",
         "game_over_title": "GAME OVER",
         "winner_label": "WINNER",
-        "winner_score": "{score} Points",
         "tie_label": "TIE",
         "share": "Share",
         "rematch": "REMATCH?",
         "score_summary": "Score summary",
         "share_winner": "Winner: {winner}",
+        "share_message_win":
+            "Hey look! We, {winner}, beat {loser}. Come join us in {app}!",
+        "share_message_tie":
+            "Hey look! {teamA} and {teamB} tied. Come join us in {app}!",
         "share_tie": "Tie",
         "return_menu_button": "RETURN TO MENU",
         "quick_tip_title": "Quick Start Tip",
@@ -1629,6 +1635,16 @@ class GameProvider extends ChangeNotifier {
     await ensureAudioInitialized();
     await _playSfx(
       "click",
+      force: force,
+      restartIfPlaying: true,
+      bypassThrottle: true,
+    );
+  }
+
+  Future<void> playWin({bool force = false}) async {
+    await ensureAudioInitialized();
+    await _playSfx(
+      "win",
       force: force,
       restartIfPlaying: true,
       bypassThrottle: true,

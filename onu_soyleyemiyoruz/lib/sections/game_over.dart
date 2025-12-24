@@ -24,6 +24,9 @@ class _GameOverScreenState extends State<GameOverScreen>
       vsync: this,
       duration: const Duration(seconds: 4),
     );
+    if (game.gameWinner != null) {
+      game.playWin();
+    }
     if (_showConfetti) {
       _confettiCtrl.repeat();
     }
@@ -39,18 +42,24 @@ class _GameOverScreenState extends State<GameOverScreen>
   Widget build(BuildContext context) {
     final game = Provider.of<GameProvider>(context, listen: false);
     final reduceMotion = game.reducedMotion;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color scoreCardColor = isDark
+        ? Colors.black.withValues(alpha: 0.35)
+        : Colors.white.withValues(alpha: 0.92);
+    final Color scoreBorderColor = Colors.white.withValues(
+      alpha: isDark ? 0.2 : 0.14,
+    );
+    final Color scoreTextColor = isDark ? Colors.white : Colors.black87;
+    final Color dividerColor = isDark ? Colors.white70 : Colors.black54;
     final GlobalKey boundaryKey = GlobalKey();
+    final String appTitle = game.t("app_title");
     Future<void> shareSummary() async {
       try {
-        final winnerLine = game.gameWinner != null
-            ? game.t(
-                "share_winner",
-                params: {"winner": game.gameWinner!},
-              )
-            : game.t("share_tie");
+        final shareMessage = _buildShareMessage(game);
+        final scoreLines =
+            "${game.teamAName}: ${game.teamAScore}\n${game.teamBName}: ${game.teamBScore}";
+        final summary = "$shareMessage\n$scoreLines";
         if (kIsWeb) {
-          final summary =
-              "${game.teamAName}: ${game.teamAScore}\n${game.teamBName}: ${game.teamBScore}\n$winnerLine";
           await SharePlus.instance.share(ShareParams(text: summary));
           return;
         }
@@ -71,261 +80,306 @@ class _GameOverScreenState extends State<GameOverScreen>
         );
         await file.writeAsBytes(bytes, flush: true);
         await SharePlus.instance.share(
-          ShareParams(text: game.t("score_summary"), files: [XFile(file.path)]),
+          ShareParams(text: summary, files: [XFile(file.path)]),
         );
       } catch (e) {
         if (!context.mounted) return;
-        final winnerLine = game.gameWinner != null
-            ? game.t(
-                "share_winner",
-                params: {"winner": game.gameWinner!},
-              )
-            : game.t("share_tie");
+        final shareMessage = _buildShareMessage(game);
         final summary =
-            "${game.teamAName}: ${game.teamAScore}\n${game.teamBName}: ${game.teamBScore}\n$winnerLine";
+            "$shareMessage\n${game.teamAName}: ${game.teamAScore}\n${game.teamBName}: ${game.teamBScore}";
         await SharePlus.instance.share(ShareParams(text: summary));
       }
     }
 
     return Scaffold(
-      body: Stack(
-        children: [
-          GameBackground(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20.0),
-                child: RepaintBoundary(
-                  key: boundaryKey,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: MediaQuery.of(context).size.height * 0.7,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.emoji_events,
-                          size: 100,
-                          color: Colors.amber,
+      body: RepaintBoundary(
+        key: boundaryKey,
+        child: Stack(
+          children: [
+            GameBackground(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Center(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20.0),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: MediaQuery.of(context).size.height * 0.7,
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          game.t("game_over_title"),
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 24,
-                            letterSpacing: 5,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        if (game.endMessage != null)
-                          Text(
-                            game.endMessage!,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.emoji_events,
+                              size: 100,
+                              color: Colors.amber,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                        if (game.endMessage != null) const SizedBox(height: 10),
-                        if (game.gameWinner != null)
-                          Text(
-                            game.t("winner_label"),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        const SizedBox(height: 10),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              game.gameWinner ?? game.t("tie_label"),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.amber,
-                                fontSize: 40,
-                                fontWeight: FontWeight.w900,
-                                shadows: reduceMotion
-                                    ? []
-                                    : const [
-                                        BoxShadow(
-                                          color: Colors.black,
-                                          blurRadius: 20,
-                                        ),
-                                      ],
+                            const SizedBox(height: 20),
+                            Text(
+                              game.t("game_over_title"),
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 24,
+                                letterSpacing: 5,
                               ),
                             ),
-                          ),
-                        ),
-                        if (game.gameWinner != null) ...[
-                          const SizedBox(height: 6),
-                          Text(
-                            game.t(
-                              "winner_score",
-                              params: {
-                                "score": game.gameWinner == game.teamAName
-                                    ? "${game.teamAScore}"
-                                    : "${game.teamBScore}",
-                              },
-                            ),
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: 30),
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Expanded(
-                                child: _finalScoreItem(
-                                  game.teamAName,
-                                  game.teamAScore,
-                                  Colors.blue,
+                            const SizedBox(height: 10),
+                            if (game.endMessage != null)
+                              Text(
+                                game.endMessage!,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
-                              const Text(
-                                "-",
-                                style: TextStyle(
-                                  fontSize: 40,
+                            if (game.endMessage != null)
+                              const SizedBox(height: 10),
+                            if (game.gameWinner != null)
+                              Text(
+                                game.t("winner_label"),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Expanded(
-                                child: _finalScoreItem(
-                                  game.teamBName,
-                                  game.teamBScore,
-                                  Colors.red,
+                            const SizedBox(height: 10),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  game.gameWinner ?? game.t("tie_label"),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.amber,
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.w900,
+                                    shadows: reduceMotion
+                                        ? []
+                                        : const [
+                                            BoxShadow(
+                                              color: Colors.black,
+                                              blurRadius: 20,
+                                            ),
+                                          ],
+                                  ),
                                 ),
+                              ),
+                            ),
+                            const SizedBox(height: 30),
+                            Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: scoreCardColor,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: scoreBorderColor),
+                                boxShadow: reduceMotion
+                                    ? []
+                                    : [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: isDark ? 0.4 : 0.18,
+                                          ),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 6),
+                                        ),
+                                      ],
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Expanded(
+                                    child: _finalScoreItem(
+                                      game.teamAName,
+                                      game.teamAScore,
+                                      Colors.blue,
+                                      scoreTextColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    "-",
+                                    style: TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold,
+                                      color: dividerColor,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: _finalScoreItem(
+                                      game.teamBName,
+                                      game.teamBScore,
+                                      Colors.red,
+                                      scoreTextColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                await Provider.of<GameProvider>(
+                                  context,
+                                  listen: false,
+                                ).playClick();
+                                if (!context.mounted) return;
+                                await shareSummary();
+                              },
+                              icon: const Icon(Icons.share),
+                              label: Text(
+                                game.t("share"),
+                                style:
+                                    const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.deepPurple,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 28,
+                                  vertical: 12,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 26),
+                            ElevatedButton(
+                              onPressed: () async {
+                                await Provider.of<GameProvider>(
+                                  context,
+                                  listen: false,
+                                ).playClick();
+                                if (!context.mounted) return;
+                                game.startGame();
+                                game.rollDice();
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (_) => const RoundStartScreen(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.amber,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 38,
+                                  vertical: 14,
+                                ),
+                              ),
+                              child: Text(
+                                game.t("rematch"),
+                                style: const TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            ElevatedButton(
+                              onPressed: () async {
+                                await Provider.of<GameProvider>(
+                                  context,
+                                  listen: false,
+                                ).playClick();
+                                if (!context.mounted) return;
+                                Navigator.of(
+                                  context,
+                                ).popUntil((route) => route.isFirst);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 40,
+                                  vertical: 15,
+                                ),
+                              ),
+                              child: Text(
+                                game.t("return_menu_button"),
+                                style: const TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  IgnorePointer(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Text(
+                          appTitle,
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.5),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 2,
+                            shadows: const [
+                              Shadow(
+                                color: Colors.black54,
+                                blurRadius: 6,
+                                offset: Offset(0, 2),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 24),
-                        ElevatedButton.icon(
-                          onPressed: () async {
-                            await Provider.of<GameProvider>(
-                              context,
-                              listen: false,
-                            ).playClick();
-                            if (!context.mounted) return;
-                            await shareSummary();
-                          },
-                          icon: const Icon(Icons.share),
-                          label: Text(
-                            game.t("share"),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.deepPurple,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 28,
-                              vertical: 12,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 26),
-                        ElevatedButton(
-                          onPressed: () async {
-                            await Provider.of<GameProvider>(
-                              context,
-                              listen: false,
-                            ).playClick();
-                            if (!context.mounted) return;
-                            game.startGame();
-                            game.rollDice();
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (_) => const RoundStartScreen(),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 38,
-                              vertical: 14,
-                            ),
-                          ),
-                          child: Text(
-                            game.t("rematch"),
-                            style: const TextStyle(
-                              color: Colors.deepPurple,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton(
-                          onPressed: () async {
-                            await Provider.of<GameProvider>(
-                              context,
-                              listen: false,
-                            ).playClick();
-                            if (!context.mounted) return;
-                            Navigator.of(
-                              context,
-                            ).popUntil((route) => route.isFirst);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 40,
-                              vertical: 15,
-                            ),
-                          ),
-                          child: Text(
-                            game.t("return_menu_button"),
-                            style: const TextStyle(
-                              color: Colors.deepPurple,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
+                  ),
+                ],
+              ),
+            ),
+            if (_showConfetti)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: AnimatedBuilder(
+                    animation: _confettiCtrl,
+                    builder: (context, _) {
+                      return CustomPaint(
+                        painter: _ConfettiPainter(
+                          progress: _confettiCtrl.value,
+                          pieces: _confettiPieces,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
-            ),
-          ),
-          if (_showConfetti)
-            Positioned.fill(
-              child: IgnorePointer(
-                child: AnimatedBuilder(
-                  animation: _confettiCtrl,
-                  builder: (context, _) {
-                    return CustomPaint(
-                      painter: _ConfettiPainter(
-                        progress: _confettiCtrl.value,
-                        pieces: _confettiPieces,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _finalScoreItem(String name, int score, Color c) {
+  String _buildShareMessage(GameProvider game) {
+    final app = game.t("app_title");
+    if (game.gameWinner == null) {
+      return game.t(
+        "share_message_tie",
+        params: {"teamA": game.teamAName, "teamB": game.teamBName, "app": app},
+      );
+    }
+    final winner = game.gameWinner!;
+    final loser = winner == game.teamAName ? game.teamBName : game.teamAName;
+    return game.t(
+      "share_message_win",
+      params: {"winner": winner, "loser": loser, "app": app},
+    );
+  }
+
+  Widget _finalScoreItem(
+    String name,
+    int score,
+    Color c,
+    Color scoreColor,
+  ) {
     return Column(
       children: [
         SizedBox(
@@ -342,7 +396,11 @@ class _GameOverScreenState extends State<GameOverScreen>
         ),
         Text(
           "$score",
-          style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w900),
+          style: TextStyle(
+            fontSize: 40,
+            fontWeight: FontWeight.w900,
+            color: scoreColor,
+          ),
         ),
       ],
     );
@@ -397,8 +455,7 @@ class _ConfettiPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     for (final piece in pieces) {
-      final double y =
-          ((progress * piece.speed) + piece.offset) % 1.2 - 0.1;
+      final double y = ((progress * piece.speed) + piece.offset) % 1.2 - 0.1;
       final double dx = piece.x * size.width;
       final double dy = y * size.height;
       canvas.save();
