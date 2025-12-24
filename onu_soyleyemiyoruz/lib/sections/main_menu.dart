@@ -180,35 +180,66 @@ class _LanguageToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     final game = Provider.of<GameProvider>(context);
     final bool isEnglish = game.isEnglish;
-    final String flag = isEnglish ? "🇺🇸" : "🇹🇷";
+    final String trLabel = "🇹🇷 ${game.t("lang_tr")}";
+    final String enLabel = "🇺🇸 ${game.t("lang_en")}";
+    Widget buildLangChip({
+      required String label,
+      required bool active,
+      required VoidCallback onTap,
+    }) {
+      return InkWell(
+        onTap: active ? null : onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: active
+                ? Colors.white.withValues(alpha: 0.22)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: active
+                  ? Colors.white.withValues(alpha: 0.5)
+                  : Colors.white.withValues(alpha: 0.2),
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: active ? Colors.white : Colors.white70,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.4,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      );
+    }
     return SafeArea(
       child: Tooltip(
         message: game.t("lang_tooltip"),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(14),
-          onTap: () async {
-            await game.playClick();
-            game.toggleLanguage();
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.35),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.2),
-              ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildLangChip(
+              label: trLabel,
+              active: !isEnglish,
+              onTap: () async {
+                await game.playClick();
+                game.toggleLanguage();
+              },
             ),
-            child: Text(
-              "$flag ${isEnglish ? game.t("lang_en") : game.t("lang_tr")}",
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.6,
-                fontSize: 12,
-              ),
+            const SizedBox(width: 6),
+            buildLangChip(
+              label: enLabel,
+              active: isEnglish,
+              onTap: () async {
+                await game.playClick();
+                game.toggleLanguage();
+              },
             ),
-          ),
+          ],
         ),
       ),
     );

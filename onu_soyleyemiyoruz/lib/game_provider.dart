@@ -558,8 +558,8 @@ class GameProvider extends ChangeNotifier {
         "category_ozel": "Özel",
       },
       "en": {
-        "app_title": "We Don't Say It",
-        "menu_title": "WE DON'T\nSAY IT",
+        "app_title": "We Can't Say It",
+        "menu_title": "WE CAN'T\nSAY IT",
         "menu_play": "PLAY",
         "menu_settings": "SETTINGS",
         "menu_how_to_play": "HOW TO PLAY",
