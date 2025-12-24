@@ -280,7 +280,7 @@ class RoundReportScreen extends StatelessWidget {
         }
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const GameOverScreen()),
+          MaterialPageRoute(builder: (_) => const GameRecapTeamScreen()),
         );
       },
       child: Text(

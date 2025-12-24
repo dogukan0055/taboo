@@ -36,6 +36,34 @@ class RoundEvent {
   RoundEvent({required this.card, required this.status, this.timedOut = false});
 }
 
+class RoundSummary {
+  final int turnIndex;
+  final int roundNumber;
+  final int turnInRound;
+  final bool isTeamA;
+  final String teamName;
+  final String narrator;
+  final int correct;
+  final int taboo;
+  final int pass;
+  final int points;
+  final int maxTabooStreak;
+
+  const RoundSummary({
+    required this.turnIndex,
+    required this.roundNumber,
+    required this.turnInRound,
+    required this.isTeamA,
+    required this.teamName,
+    required this.narrator,
+    required this.correct,
+    required this.taboo,
+    required this.pass,
+    required this.points,
+    required this.maxTabooStreak,
+  });
+}
+
 // --- DUMMY DATA ---
 final List<WordCard> initialDeck = [
   // Genel Kategori

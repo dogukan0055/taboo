@@ -125,6 +125,8 @@ class GameProvider extends ChangeNotifier {
 
   List<RoundEvent> roundHistory = [];
   List<WordCard> _activeDeck = [];
+  final List<RoundSummary> roundSummaries = [];
+  bool _roundEnded = false;
 
   Future<void> _hydrate() async {
     _prefs = await SharedPreferences.getInstance();
@@ -465,6 +467,29 @@ class GameProvider extends ChangeNotifier {
         "remaining_cards_short": "{count} kalan kart",
         "start": "BAŞLA",
         "round_result_title": "TUR SONUCU",
+        "recap_title": "OYUN ÖZETİ",
+        "recap_team_based": "TAKIM İSTATİSTİKLERİ",
+        "recap_player_based": "OYUNCU İSTATİSTİKLERİ",
+        "recap_to_player": "Oyuncu İstatistiklerine Geç",
+        "recap_round_label": "Tur {index}",
+        "recap_round_points": "Tur Puanı",
+        "recap_points": "Puan",
+        "recap_correct": "Doğru",
+        "recap_pass": "Pas",
+        "recap_taboo": "Tabu",
+        "recap_narrator": "Anlatıcı",
+        "recap_skip": "Atla",
+        "recap_continue": "Sonuçlara Geç",
+        "recap_no_data": "Henüz tur verisi yok.",
+        "recap_most_word_guesser": "En Çok Kelime Tahmin Ettiren",
+        "recap_least_tabooed": "En Az Tabu Yapan",
+        "recap_quickest_player": "En Hızlı Oyuncu",
+        "recap_passing_player": "En Çok Pas Yapan",
+        "recap_risky_narrator": "Riskli Anlatıcı",
+        "recap_taboo_monster": "Tabu Canavarı",
+        "recap_slowest_round": "En Yavaş Tur",
+        "recap_fastest_round": "En Hızlı Tur",
+        "recap_in_a_row": "üst üste",
         "tab_correct": "BİLİNENLER",
         "tab_taboo": "TABU OLANLAR",
         "tab_pass": "PAS GEÇİLENLER",
@@ -481,6 +506,7 @@ class GameProvider extends ChangeNotifier {
         "game_starts_with_team": "Oyuna {team} TAKIMI BAŞLIYOR!",
         "game_over_title": "OYUN BİTTİ",
         "winner_label": "KAZANAN",
+        "winner_score": "{score} Puan",
         "tie_label": "BERABERE",
         "share": "Paylaş",
         "rematch": "RÖVANŞ?",
@@ -659,6 +685,29 @@ class GameProvider extends ChangeNotifier {
         "remaining_cards_short": "{count} cards left",
         "start": "START",
         "round_result_title": "ROUND RESULT",
+        "recap_title": "GAME RECAP",
+        "recap_team_based": "TEAM STATS",
+        "recap_player_based": "PLAYER STATS",
+        "recap_to_player": "Go to Player Stats",
+        "recap_round_label": "Round {index}",
+        "recap_round_points": "Round Points",
+        "recap_points": "Points",
+        "recap_correct": "Correct",
+        "recap_pass": "Pass",
+        "recap_taboo": "Taboo",
+        "recap_narrator": "Narrator",
+        "recap_skip": "Skip",
+        "recap_continue": "View Results",
+        "recap_no_data": "No round data yet.",
+        "recap_most_word_guesser": "Most Words Guesser",
+        "recap_least_tabooed": "Least Tabooed Player",
+        "recap_quickest_player": "The Quickest Player",
+        "recap_passing_player": "The Passing Player",
+        "recap_risky_narrator": "Risky Narrator",
+        "recap_taboo_monster": "Taboo Monster",
+        "recap_slowest_round": "Slowest Round",
+        "recap_fastest_round": "Fastest Round",
+        "recap_in_a_row": "in a row",
         "tab_correct": "CORRECT",
         "tab_taboo": "TABOO",
         "tab_pass": "PASSED",
@@ -675,6 +724,7 @@ class GameProvider extends ChangeNotifier {
         "game_starts_with_team": "TEAM {team} starts the game!",
         "game_over_title": "GAME OVER",
         "winner_label": "WINNER",
+        "winner_score": "{score} Points",
         "tie_label": "TIE",
         "share": "Share",
         "rematch": "REMATCH?",
@@ -1203,6 +1253,7 @@ class GameProvider extends ChangeNotifier {
     gameWinner = null;
     endedByCards = false;
     endMessage = null;
+    roundSummaries.clear();
     _cooldownActive = false;
     _cooldownTimer?.cancel();
     _resetDeck();
@@ -1224,6 +1275,7 @@ class GameProvider extends ChangeNotifier {
     _cooldownActive = false;
     _cooldownTimer?.cancel();
     roundHistory.clear();
+    _roundEnded = false;
     endedByCards = false;
     endMessage = null;
     isPaused = false;
@@ -1268,10 +1320,9 @@ class GameProvider extends ChangeNotifier {
     });
   }
 
-  void endRound({
-    bool addTimeoutEvent = true,
-    bool playTimeoutFx = true,
-  }) {
+  void endRound({bool addTimeoutEvent = true, bool playTimeoutFx = true}) {
+    if (_roundEnded) return;
+    _roundEnded = true;
     _timer?.cancel();
     _cooldownTimer?.cancel();
     _cooldownActive = false;
@@ -1287,6 +1338,33 @@ class GameProvider extends ChangeNotifier {
       );
     }
     currentCard = null;
+
+    final statusList = roundHistory.map((e) => e.status).toList();
+    final int correctCount = statusList
+        .where((s) => s == CardStatus.correct)
+        .length;
+    final int passCount = statusList.where((s) => s == CardStatus.pass).length;
+    final int tabooCount = statusList
+        .where((s) => s == CardStatus.taboo)
+        .length;
+    final int points = correctCount - tabooCount;
+    final int turnIndex = roundSummaries.length;
+    final int roundNumber = (turnIndex ~/ 2) + 1;
+    final int turnInRound = (turnIndex % 2) + 1;
+    final summary = RoundSummary(
+      turnIndex: turnIndex,
+      roundNumber: roundNumber,
+      turnInRound: turnInRound,
+      isTeamA: isTeamATurn,
+      teamName: isTeamATurn ? teamAName : teamBName,
+      narrator: currentNarrator,
+      correct: correctCount,
+      taboo: tabooCount,
+      pass: passCount,
+      points: points,
+      maxTabooStreak: _maxTabooStreak(statusList),
+    );
+    roundSummaries.add(summary);
 
     if (_targetScore != -1) {
       if (teamAScore >= _targetScore && teamAScore > teamBScore) {
@@ -1310,6 +1388,20 @@ class GameProvider extends ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  int _maxTabooStreak(List<CardStatus> statuses) {
+    int best = 0;
+    int current = 0;
+    for (final status in statuses) {
+      if (status == CardStatus.taboo) {
+        current++;
+        if (current > best) best = current;
+      } else {
+        current = 0;
+      }
+    }
+    return best;
   }
 
   void finishTurn() {

@@ -21,6 +21,7 @@ part 'sections/dice_roll.dart';
 part 'sections/round_start.dart';
 part 'sections/gameplay.dart';
 part 'sections/round_report.dart';
+part 'sections/game_recap.dart';
 part 'sections/game_over.dart';
 part 'sections/settings_sheet.dart';
 part 'sections/tutorial.dart';
