@@ -46,6 +46,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
     var game = Provider.of<GameProvider>(context);
     final messenger = ScaffoldMessenger.of(context);
     var wordsMap = game.wordsByCategory;
+    final reduceMotion = game.reducedMotion;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -80,7 +81,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                     maxCrossAxisExtent: 220,
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
-                    childAspectRatio: 1.05,
+                    childAspectRatio: 1.0,
                   ),
                   children: game.availableCategories.map((cat) {
                     List<WordCard> words = wordsMap[cat] ?? [];
@@ -106,6 +107,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                       countLabel: "$activeCount / ${words.length} Kelime",
                       isSelected: isCatSelected,
                       isPartial: isPartial,
+                      reduceMotion: reduceMotion,
                       onToggle: (val) async {
                         await game.playClick();
                         setState(() {
@@ -193,6 +195,7 @@ class _CategoryCard extends StatelessWidget {
   final String countLabel;
   final bool isSelected;
   final bool isPartial;
+  final bool reduceMotion;
   final ValueChanged<bool> onToggle;
   final VoidCallback onOpen;
 
@@ -203,121 +206,225 @@ class _CategoryCard extends StatelessWidget {
     required this.countLabel,
     required this.isSelected,
     required this.isPartial,
+    required this.reduceMotion,
     required this.onToggle,
     required this.onOpen,
   });
 
   @override
   Widget build(BuildContext context) {
+    final Color accent = isSelected
+        ? Colors.amber
+        : isPartial
+        ? Colors.lightBlueAccent
+        : Colors.white70;
     final Color borderColor = isSelected
         ? Colors.amber
         : isPartial
         ? Colors.lightBlueAccent
         : Colors.white24;
-    return Card(
-      color: Colors.white.withValues(alpha: 0.08),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: borderColor),
+    final Color glowColor = isSelected
+        ? Colors.amber.withValues(alpha: 0.3)
+        : isPartial
+        ? Colors.lightBlueAccent.withValues(alpha: 0.3)
+        : Colors.transparent;
+    final Color bgTop = isSelected
+        ? Colors.amber.withValues(alpha: 0.16)
+        : isPartial
+        ? Colors.lightBlueAccent.withValues(alpha: 0.12)
+        : Colors.white.withValues(alpha: 0.06);
+    final Color bgBottom = Colors.black.withValues(alpha: 0.45);
+    final Duration animDuration =
+        reduceMotion ? Duration.zero : const Duration(milliseconds: 220);
+    final String statusLabel = isSelected
+        ? "AÇIK"
+        : isPartial
+        ? "KISMİ"
+        : "KAPALI";
+    return AnimatedContainer(
+      duration: animDuration,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [bgTop, bgBottom],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+          if (glowColor != Colors.transparent)
+            BoxShadow(
+              color: glowColor,
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
+        ],
       ),
-      child: InkWell(
-        onTap: () => onToggle(!isSelected),
-        borderRadius: BorderRadius.circular(16),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final bool compact = constraints.maxHeight < 150;
-            final bool ultraCompact = constraints.maxHeight < 130;
-            final double iconSize = compact ? 24 : 28;
-            final double boxSize = compact ? 44 : 52;
-            final double titleSize = compact ? 14 : 16;
-            final double countSize = compact ? 10 : 12;
-            return Stack(
-              children: [
-                Positioned.fill(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      compact ? 10 : 12,
-                      compact ? 10 : 12,
-                      compact ? 34 : 36,
-                      compact ? 10 : 12,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => onToggle(!isSelected),
+          borderRadius: BorderRadius.circular(18),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final bool compact = constraints.maxHeight < 150;
+              final bool ultraCompact = constraints.maxHeight < 130;
+              final double titleSize = compact ? 14 : 16;
+              final double countSize = compact ? 10 : 12;
+              final double statusSize = compact ? 9 : 10;
+              final double bgIconSize = compact ? 84 : 104;
+              final double actionIconSize = compact ? 16 : 18;
+              final double actionFontSize = compact ? 10 : 11;
+              return Stack(
+                children: [
+                  Align(
+                    alignment: const Alignment(0, 0.15),
+                    child: Icon(
+                      icon,
+                      size: bgIconSize,
+                      color: Colors.white.withValues(alpha: 0.08),
                     ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: boxSize,
-                          height: boxSize,
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.25),
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Icon(
-                            icon,
-                            size: iconSize,
-                            color: isSelected
-                                ? Colors.amber
-                                : isPartial
-                                ? Colors.lightBlueAccent
-                                : Colors.white70,
-                          ),
+                  ),
+                  Positioned(
+                    top: compact ? 8 : 10,
+                    left: compact ? 10 : 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: accent.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: accent.withValues(alpha: 0.35),
+                          width: 0.6,
                         ),
-                        SizedBox(height: compact ? 4 : 8),
-                        Expanded(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  title,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: titleColor,
-                                    fontSize: titleSize,
+                      ),
+                      child: Text(
+                        statusLabel,
+                        style: TextStyle(
+                          color: accent,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.6,
+                          fontSize: statusSize,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        compact ? 16 : 18,
+                        compact ? 18 : 20,
+                        compact ? 16 : 18,
+                        compact ? 30 : 34,
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              title,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: titleColor,
+                                fontSize: titleSize,
+                              ),
+                            ),
+                            if (!ultraCompact) ...[
+                              SizedBox(height: compact ? 6 : 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(
+                                    alpha: 0.35,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                    width: 0.6,
                                   ),
                                 ),
-                                if (!ultraCompact) ...[
-                                  SizedBox(height: compact ? 2 : 4),
-                                  Text(
-                                    countLabel,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: Colors.white54,
-                                      fontSize: countSize,
-                                    ),
+                                child: Text(
+                                  countLabel,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: countSize,
                                   ),
-                                ],
-                              ],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: compact ? 6 : 8,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: InkWell(
+                        onTap: onOpen,
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: compact ? 10 : 12,
+                            vertical: compact ? 6 : 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.35),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.2),
                             ),
                           ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.menu_book,
+                                color: Colors.white70,
+                                size: actionIconSize,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                "KELİMELER",
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.6,
+                                  fontSize: actionFontSize,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 4),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.chevron_right,
-                        color: Colors.white70,
                       ),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      onPressed: onOpen,
                     ),
                   ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -383,10 +490,62 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
     widget.onChanged();
   }
 
+  Widget _buildWordChip({
+    required String label,
+    required Color color,
+    required bool compact,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: compact ? 6 : 8,
+        vertical: compact ? 2 : 4,
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.4), width: 0.6),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.4,
+          fontSize: compact ? 9 : 10,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+    required bool compact,
+  }) {
+    final double size = compact ? 30 : 34;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: color, size: compact ? 16 : 18),
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+        onPressed: onPressed,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var game = Provider.of<GameProvider>(context);
     final messenger = ScaffoldMessenger.of(context);
+    final reduceMotion = game.reducedMotion;
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -441,7 +600,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
               maxCrossAxisExtent: 220,
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: 0.95,
+              childAspectRatio: 0.9,
             ),
             itemCount: widget.words.length,
             itemBuilder: (context, index) {
@@ -449,147 +608,173 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
               final isDisabled = widget.disabledIds.contains(word.id);
               final isCustom = word.isCustom;
               final bool isEnabled = !isDisabled;
-              return Card(
-                color: Colors.white.withValues(alpha: 0.08),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(
-                    color: isEnabled ? Colors.amber : Colors.white24,
+              final Color accent = isEnabled ? Colors.amber : Colors.white38;
+              final Color borderColor =
+                  isEnabled ? Colors.amber : Colors.white24;
+              final Color bgTop = isEnabled
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : Colors.white.withValues(alpha: 0.05);
+              final Color bgBottom = Colors.black.withValues(alpha: 0.5);
+              final Duration animDuration = reduceMotion
+                  ? Duration.zero
+                  : const Duration(milliseconds: 200);
+              return AnimatedContainer(
+                duration: animDuration,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [bgTop, bgBottom],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: borderColor, width: 1.2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.25),
+                      blurRadius: 10,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
-                child: InkWell(
-                  onTap: () async {
-                    await game.playClick();
-                    setState(() => _toggleWord(word, !isEnabled));
-                  },
-                  borderRadius: BorderRadius.circular(16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final bool compact = constraints.maxHeight < 140;
-                        final double iconBox = compact ? 36 : 46;
-                        final double iconSize = compact ? 18 : 22;
-                        final double wordSize = compact ? 13 : 15;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Center(
-                              child: Container(
-                                width: iconBox,
-                                height: iconBox,
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.25),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () async {
+                      await game.playClick();
+                      setState(() => _toggleWord(word, !isEnabled));
+                    },
+                    borderRadius: BorderRadius.circular(18),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final bool compact = constraints.maxHeight < 140;
+                          final bool ultraCompact = constraints.maxHeight < 120;
+                          final double wordSize = compact ? 13 : 15;
+                          final double bgIconSize = compact ? 78 : 96;
+                          final bool showCustomActions =
+                              isCustom && !ultraCompact;
+                          return Stack(
+                            children: [
+                              Align(
+                                alignment: const Alignment(0, 0.2),
                                 child: Icon(
                                   widget.icon,
-                                  color: Colors.white70,
-                                  size: iconSize,
+                                  size: bgIconSize,
+                                  color: Colors.white.withValues(alpha: 0.07),
                                 ),
                               ),
-                            ),
-                            SizedBox(height: compact ? 6 : 8),
-                            Expanded(
-                              child: Center(
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    word.word,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: wordSize,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: compact ? 4 : 8),
-                            Center(
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.remove_red_eye,
-                                  color: Colors.white70,
-                                  size: compact ? 18 : 22,
-                                ),
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                                onPressed: () async {
-                                  await game.playClick();
-                                  if (!context.mounted) return;
-                                  _showCardPreview(context, word);
-                                },
-                              ),
-                            ),
-                            if (isCustom && !compact) ...[
-                              const SizedBox(height: 4),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      color: Colors.white70,
-                                      size: 20,
-                                    ),
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
-                                    onPressed: () async {
-                                      await game.playClick();
-                                      if (!context.mounted) return;
-                                      final updated =
-                                          await Navigator.push<String>(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => AddCustomCardScreen(
-                                            existingCard: word,
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      _buildWordChip(
+                                        label: isEnabled ? "AÇIK" : "KAPALI",
+                                        color: accent,
+                                        compact: compact,
+                                      ),
+                                      if (isCustom && !compact)
+                                        _buildWordChip(
+                                          label: "ÖZEL",
+                                          color: Colors.deepPurpleAccent,
+                                          compact: compact,
+                                        ),
+                                    ],
+                                  ),
+                                  Expanded(
+                                    child: Center(
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          word.word,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: isEnabled
+                                                ? Colors.white
+                                                : Colors.white60,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: wordSize,
+                                            letterSpacing: 0.2,
                                           ),
                                         ),
-                                      );
-                                      if (!context.mounted) return;
-                                      if (updated != null) {
-                                        setState(() {});
-                                        widget.onChanged();
-                                      _showSnack(
-                                        messenger,
-                                        "$updated güncellendi",
-                                        isSuccess: true,
-                                      );
-                                      }
-                                    },
-                                  ),
-                                  const SizedBox(width: 8),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.delete_forever,
-                                      color: Colors.redAccent,
-                                      size: 20,
+                                      ),
                                     ),
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
-                                    onPressed: () {
-                                      game.playClick();
-                                      game.removeCustomCard(word.id);
-                                      setState(() {
-                                        widget.disabledIds.remove(word.id);
-                                      });
-                                      widget.onChanged();
-                                      _showSnack(
-                                        messenger,
-                                        "${word.word} silindi",
-                                        isSuccess: true,
-                                      );
-                                    },
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      _buildActionButton(
+                                        icon: Icons.remove_red_eye,
+                                        color: Colors.white70,
+                                        compact: compact,
+                                        onPressed: () async {
+                                          await game.playClick();
+                                          if (!context.mounted) return;
+                                          _showCardPreview(context, word);
+                                        },
+                                      ),
+                                      if (showCustomActions) ...[
+                                        const SizedBox(width: 8),
+                                        _buildActionButton(
+                                          icon: Icons.edit,
+                                          color: Colors.white70,
+                                          compact: compact,
+                                          onPressed: () async {
+                                            await game.playClick();
+                                            if (!context.mounted) return;
+                                            final updated =
+                                                await Navigator.push<String>(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) =>
+                                                    AddCustomCardScreen(
+                                                      existingCard: word,
+                                                    ),
+                                              ),
+                                            );
+                                            if (!context.mounted) return;
+                                            if (updated != null) {
+                                              setState(() {});
+                                              widget.onChanged();
+                                              _showSnack(
+                                                messenger,
+                                                "$updated güncellendi",
+                                                isSuccess: true,
+                                              );
+                                            }
+                                          },
+                                        ),
+                                        const SizedBox(width: 8),
+                                        _buildActionButton(
+                                          icon: Icons.delete_forever,
+                                          color: Colors.redAccent,
+                                          compact: compact,
+                                          onPressed: () {
+                                            game.playClick();
+                                            game.removeCustomCard(word.id);
+                                            setState(() {
+                                              widget.disabledIds.remove(word.id);
+                                            });
+                                            widget.onChanged();
+                                            _showSnack(
+                                              messenger,
+                                              "${word.word} silindi",
+                                              isSuccess: true,
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ],
                                   ),
                                 ],
                               ),
                             ],
-                          ],
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
