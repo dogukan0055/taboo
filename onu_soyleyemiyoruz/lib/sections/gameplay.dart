@@ -67,7 +67,13 @@ class _GamePlayScreenState extends State<GamePlayScreen>
   @override
   Widget build(BuildContext context) {
     var game = Provider.of<GameProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     _reduceMotion = game.reducedMotion;
+    final Color tabooColor = isDark ? Colors.red.shade700 : Colors.red;
+    final Color passColor = isDark ? Colors.blue.shade700 : Colors.blue;
+    final Color correctColor = isDark ? Colors.green.shade700 : Colors.green;
+    final Color disabledPassColor =
+        isDark ? Colors.blueGrey.shade700 : Colors.grey;
     _updateBlink(game.timeLeft);
     if (!game.isPaused && !game.abortedToMenu && game.timeLeft == 0) {
       final navigator = Navigator.of(context);
@@ -138,7 +144,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                       children: [
                         BouncingButton(
                           icon: Icons.close,
-                          color: Colors.red,
+                          color: tabooColor,
                           label: "TABU",
                           disabled: game.isCoolingDown,
                           onTap: () {
@@ -149,7 +155,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                         game.currentPasses > 0
                             ? BouncingButton(
                                 icon: Icons.skip_next,
-                                color: Colors.blue,
+                                color: passColor,
                                 label: "PAS",
                                 badgeText: "${game.currentPasses}",
                                 disabled: game.isCoolingDown,
@@ -161,17 +167,17 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                             : Opacity(
                                 opacity: 0.5,
                                 child: BouncingButton(
-                                  icon: Icons.skip_next,
-                                  color: Colors.grey,
-                                  label: "PAS",
-                                  badgeText: "0",
-                                  disabled: true,
-                                  onTap: () {},
-                                ),
+                                icon: Icons.skip_next,
+                                color: disabledPassColor,
+                                label: "PAS",
+                                badgeText: "0",
+                                disabled: true,
+                                onTap: () {},
+                              ),
                               ),
                         BouncingButton(
                           icon: Icons.check,
-                          color: Colors.green,
+                          color: correctColor,
                           label: "DOĞRU",
                           disabled: game.isCoolingDown,
                           onTap: () {
@@ -220,7 +226,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
       builder: (dialogCtx) => Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Container(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.8,
+          child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             gradient: const LinearGradient(
@@ -236,117 +244,118 @@ class _GamePlayScreenState extends State<GamePlayScreen>
               ),
             ],
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 18),
-              const Icon(
-                Icons.pause_circle_outline,
-                color: Colors.amber,
-                size: 46,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "DURDURULDU",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 20,
-                  letterSpacing: 1,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 18),
+                const Icon(
+                  Icons.pause_circle_outline,
+                  color: Colors.amber,
+                  size: 46,
                 ),
-              ),
-              const SizedBox(height: 6),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  "Oyun durduruldu. Devam edebilir veya ana menüye dönebilirsin.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                const SizedBox(height: 8),
+                const Text(
+                  "DURDURULDU",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 20,
+                    letterSpacing: 1,
+                  ),
                 ),
-              ),
-              if (fromBackground) ...[
                 const SizedBox(height: 6),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    "Uygulama arka plana alındığı için oyun otomatik durduruldu.",
+                    "Oyun durduruldu. Devam edebilir veya ana menüye dönebilirsin.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ),
+                if (fromBackground) ...[
+                  const SizedBox(height: 6),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      "Uygulama arka plana alındığı için oyun otomatik durduruldu.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 16),
+                const Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: Colors.white24,
+                  indent: 16,
+                  endIndent: 16,
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            game.playClick();
+                            Navigator.pop(dialogCtx);
+                            game.resumeGame();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            "DEVAM ET",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            _confirmExitToMenu(
+                              context,
+                              onConfirm: () async {
+                                game.abortCurrentRound();
+                              },
+                            );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            side: const BorderSide(
+                              color: Colors.redAccent,
+                              width: 1.4,
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            "ANA MENÜYE DÖN",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
               ],
-              const SizedBox(height: 16),
-              const Divider(
-                height: 1,
-                thickness: 1,
-                color: Colors.white24,
-                indent: 16,
-                endIndent: 16,
-              ),
-              const SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          game.playClick();
-                          Navigator.pop(dialogCtx);
-                          game.resumeGame();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber,
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          "DEVAM ET",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          _confirmExitToMenu(
-                            context,
-                            onConfirm: () async {
-                              game.abortCurrentRound();
-                            },
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(
-                            color: Colors.redAccent,
-                            width: 1.4,
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          "ANA MENÜYE DÖN",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-            ],
+            ),
           ),
         ),
       ),
