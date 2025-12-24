@@ -26,7 +26,10 @@ class RoundStartScreen extends StatelessWidget {
           leading: IconButton(
             icon: const Icon(Icons.exit_to_app),
             onPressed: () async {
-              await Provider.of<GameProvider>(context, listen: false).playClick();
+              await Provider.of<GameProvider>(
+                context,
+                listen: false,
+              ).playClick();
               if (!context.mounted) return;
               _confirmExitToMenu(context, force: true);
             },
@@ -200,7 +203,7 @@ class RoundStartScreen extends StatelessWidget {
 
                 const SizedBox(height: 12),
                 _InfoChip(
-                  icon: Icons.layers,
+                  icon: Icons.style,
                   label: "${game.remainingCards} kalan kart",
                 ),
 

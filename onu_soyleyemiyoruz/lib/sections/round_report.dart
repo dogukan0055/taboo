@@ -17,7 +17,6 @@ class RoundReportScreen extends StatelessWidget {
         ? const Color(0xFF2A2A2A)
         : Colors.grey[200]!;
     final Color textColor = isDark ? Colors.white70 : Colors.black87;
-    final Color dividerColor = isDark ? Colors.white24 : Colors.black12;
     final correctList = game.roundHistory
         .where((e) => e.status == CardStatus.correct)
         .toList();
@@ -113,7 +112,7 @@ class RoundReportScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _InfoChip(
-                        icon: Icons.layers,
+                        icon: Icons.style,
                         label: game.allCardsUsed
                             ? "Kartlar bitti"
                             : "Kalan kart: ${game.remainingCards}",
@@ -378,12 +377,14 @@ class RoundReportScreen extends StatelessWidget {
                               ? (inner.maxHeight * 0.14).clamp(14.0, 22.0)
                               : 0;
                           final double totalGap = gap * (count - 1);
-                          final double availableHeight = (inner.maxHeight -
-                                  footerHeight -
-                                  totalGap)
-                              .clamp(0.0, inner.maxHeight);
-                          final double rowHeight =
-                              count > 0 ? availableHeight / count : 0.0;
+                          final double availableHeight =
+                              (inner.maxHeight - footerHeight - totalGap).clamp(
+                                0.0,
+                                inner.maxHeight,
+                              );
+                          final double rowHeight = count > 0
+                              ? availableHeight / count
+                              : 0.0;
                           final double pillHeight = rowHeight * 0.82;
                           return Column(
                             children: [
@@ -444,8 +445,7 @@ class RoundReportScreen extends StatelessWidget {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Colors.amber[200],
-                                        fontSize: (h * 0.11)
-                                            .clamp(14.0, 18.0),
+                                        fontSize: (h * 0.11).clamp(14.0, 18.0),
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),

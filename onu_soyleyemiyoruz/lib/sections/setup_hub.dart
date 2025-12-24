@@ -168,7 +168,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                                 if (val == game.targetScore) return;
                                 game.updateSettings(score: val);
                                 final label = val == -1
-                                    ? "🏆 Hedef yok. Oyun istenilen sürede kazanılır!"
+                                    ? "🏆 Oyun istenildiği zaman bitirebilir!"
                                     : "🏆 $val puana ulaşan kazanır!";
                                 _showSnack(messenger, label);
                               },
@@ -192,7 +192,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                           _InfoChip(
                             icon: Icons.flag,
                             label: game.targetScore == -1
-                                ? "Hedef yok. Oyun istenilen sürede kazanılır!"
+                                ? "Oyun istenildiği zaman bitirilebilir!"
                                 : "Oyunu kazanmak için hedef: ${game.targetScore} puan",
                           ),
                         ],

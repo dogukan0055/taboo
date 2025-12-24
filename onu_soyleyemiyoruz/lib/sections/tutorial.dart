@@ -77,8 +77,10 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
         actions: [
           TextButton(
             onPressed: () async {
-              await Provider.of<GameProvider>(context, listen: false)
-                  .playClick();
+              await Provider.of<GameProvider>(
+                context,
+                listen: false,
+              ).playClick();
               if (!mounted) return;
               Navigator.pop(context);
             },
@@ -163,7 +165,7 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
                 icon: Icons.block,
                 title: "Tabu Cezası",
                 description:
-                    "Tabu kelime söylendiğinde (yani yakalandığında) takım puanı bir azalır ve yeni karta geçilir.",
+                    "Tabu kelime söylendiğinde (yakalandığında) takım puanı bir azalır ve yeni karta geçilir.",
               ),
               _TutorialTipCard(
                 icon: Icons.record_voice_over,

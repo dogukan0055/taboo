@@ -147,14 +147,16 @@ class _NoTransitionsBuilder extends PageTransitionsBuilder {
 void _showSnack(
   ScaffoldMessengerState messenger,
   String message, {
-  Duration duration = const Duration(seconds: 3),
   bool isError = false,
   bool isSuccess = false,
 }) {
   messenger.removeCurrentSnackBar();
-  final seconds = duration.inSeconds;
-  final secondsLeft = ValueNotifier<int>(seconds);
+  const Duration toastDuration = Duration(seconds: 3);
+  const Duration fadeOutDuration = Duration(milliseconds: 350);
+  const Duration fadeInDuration = Duration(milliseconds: 350);
+  final secondsLeft = ValueNotifier<int>(toastDuration.inSeconds);
   final opacity = ValueNotifier<double>(0.0);
+  final dismissKey = UniqueKey();
   bool dismissed = false;
   Timer? timer;
   final Color background = isError
@@ -169,51 +171,97 @@ void _showSnack(
       : Icons.info_outline;
   final Color iconColor = Colors.white70;
   final Color closeColor = isError ? Colors.white : Colors.redAccent;
+  final BorderRadius toastRadius = BorderRadius.circular(14);
   Future<void> fadeOutAndDismiss() async {
     if (dismissed) return;
     dismissed = true;
     opacity.value = 0;
-    await Future.delayed(const Duration(milliseconds: 160));
+    await Future.delayed(fadeOutDuration);
     messenger.hideCurrentSnackBar();
   }
+
   final controller = messenger.showSnackBar(
     SnackBar(
-      duration: duration,
-      backgroundColor: background,
+      duration: toastDuration + fadeOutDuration,
+      behavior: SnackBarBehavior.fixed,
+      dismissDirection: DismissDirection.none,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      padding: EdgeInsets.zero,
       content: ValueListenableBuilder<double>(
         valueListenable: opacity,
-        builder: (context, value, child) => AnimatedOpacity(
-          opacity: value,
-          duration: Duration(milliseconds: value >= 1 ? 220 : 140),
-          child: child,
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: iconColor, size: 18),
-            const SizedBox(width: 8),
-            Expanded(child: Text(message)),
-            ValueListenableBuilder<int>(
-              valueListenable: secondsLeft,
-              builder: (context, value, _) => Text(
-                "$value sn",
-                style: const TextStyle(color: Colors.white70),
+        builder: (context, value, child) {
+          final animDuration = value >= 1 ? fadeInDuration : fadeOutDuration;
+          final double slideOffset = (1 - value).clamp(0.0, 1.0).toDouble();
+          final double maxWidth = (MediaQuery.of(context).size.width - 32)
+              .clamp(0.0, 360.0)
+              .toDouble();
+          return AnimatedSlide(
+            offset: Offset(0, slideOffset),
+            duration: animDuration,
+            curve: Curves.easeOutCubic,
+            child: AnimatedOpacity(
+              opacity: value,
+              duration: animDuration,
+              curve: Curves.easeOut,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxWidth),
+                  child: child,
+                ),
               ),
             ),
-            const SizedBox(width: 6),
-            InkWell(
-              onTap: fadeOutAndDismiss,
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: EdgeInsets.all(4),
-                child: Icon(Icons.close, color: closeColor, size: 18),
+          );
+        },
+        child: Dismissible(
+          key: dismissKey,
+          direction: DismissDirection.horizontal,
+          onDismissed: (_) {
+            if (dismissed) return;
+            dismissed = true;
+            messenger.hideCurrentSnackBar();
+          },
+          child: Material(
+            color: background,
+            elevation: 6,
+            shadowColor: Colors.black.withValues(alpha: 0.35),
+            borderRadius: toastRadius,
+            clipBehavior: Clip.antiAlias,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                children: [
+                  Icon(icon, color: iconColor, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(message)),
+                  ValueListenableBuilder<int>(
+                    valueListenable: secondsLeft,
+                    builder: (context, value, _) => Text(
+                      "$value sn",
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  InkWell(
+                    onTap: fadeOutAndDismiss,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Icon(Icons.close, color: closeColor, size: 18),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     ),
   );
-  Future.microtask(() => opacity.value = 1.0);
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    opacity.value = 1.0;
+  });
   timer = Timer.periodic(const Duration(seconds: 1), (_) {
     if (secondsLeft.value <= 1) {
       fadeOutAndDismiss();
@@ -222,6 +270,7 @@ void _showSnack(
     secondsLeft.value -= 1;
   });
   controller.closed.then((_) {
+    dismissed = true;
     timer?.cancel();
     secondsLeft.dispose();
     opacity.dispose();

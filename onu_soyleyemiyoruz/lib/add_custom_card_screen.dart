@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -352,6 +354,14 @@ void _showSnack(
   bool isSuccess = false,
 }) {
   messenger.removeCurrentSnackBar();
+  const Duration toastDuration = Duration(seconds: 3);
+  const Duration fadeOutDuration = Duration(milliseconds: 260);
+  const Duration fadeInDuration = Duration(milliseconds: 320);
+  final secondsLeft = ValueNotifier<int>(toastDuration.inSeconds);
+  final opacity = ValueNotifier<double>(0.0);
+  final dismissKey = UniqueKey();
+  bool dismissed = false;
+  Timer? timer;
   final Color background = isError
       ? const Color(0xFFB00020)
       : isSuccess
@@ -362,16 +372,110 @@ void _showSnack(
       : isSuccess
       ? Icons.check_circle_outline
       : Icons.info_outline;
-  messenger.showSnackBar(
+  final Color iconColor = Colors.white70;
+  final Color closeColor = isError ? Colors.white : Colors.redAccent;
+  final BorderRadius toastRadius = BorderRadius.circular(14);
+  Future<void> fadeOutAndDismiss() async {
+    if (dismissed) return;
+    dismissed = true;
+    opacity.value = 0;
+    await Future.delayed(fadeOutDuration);
+    messenger.hideCurrentSnackBar();
+  }
+  final controller = messenger.showSnackBar(
     SnackBar(
-      backgroundColor: background,
-      content: Row(
-        children: [
-          Icon(icon, color: Colors.white70, size: 18),
-          const SizedBox(width: 8),
-          Expanded(child: Text(message)),
-        ],
+      duration: toastDuration + fadeOutDuration,
+      behavior: SnackBarBehavior.fixed,
+      dismissDirection: DismissDirection.none,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      padding: EdgeInsets.zero,
+      content: ValueListenableBuilder<double>(
+        valueListenable: opacity,
+        builder: (context, value, child) {
+          final animDuration = value >= 1 ? fadeInDuration : fadeOutDuration;
+          final double slideOffset =
+              (1 - value).clamp(0.0, 1.0).toDouble();
+          final double maxWidth = (MediaQuery.of(context).size.width - 32)
+              .clamp(0.0, 360.0)
+              .toDouble();
+          return AnimatedSlide(
+            offset: Offset(0, slideOffset),
+            duration: animDuration,
+            curve: Curves.easeOutCubic,
+            child: AnimatedOpacity(
+              opacity: value,
+              duration: animDuration,
+              curve: Curves.easeOut,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxWidth),
+                  child: child,
+                ),
+              ),
+            ),
+          );
+        },
+        child: Dismissible(
+          key: dismissKey,
+          direction: DismissDirection.horizontal,
+          onDismissed: (_) {
+            if (dismissed) return;
+            dismissed = true;
+            messenger.hideCurrentSnackBar();
+          },
+          child: Material(
+            color: background,
+            elevation: 6,
+            shadowColor: Colors.black.withValues(alpha: 0.35),
+            borderRadius: toastRadius,
+            clipBehavior: Clip.antiAlias,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                children: [
+                  Icon(icon, color: iconColor, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(message)),
+                  ValueListenableBuilder<int>(
+                    valueListenable: secondsLeft,
+                    builder: (context, value, _) => Text(
+                      "$value sn",
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  InkWell(
+                    onTap: fadeOutAndDismiss,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Icon(Icons.close, color: closeColor, size: 18),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     ),
   );
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    opacity.value = 1.0;
+  });
+  timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    if (secondsLeft.value <= 1) {
+      fadeOutAndDismiss();
+      return;
+    }
+    secondsLeft.value -= 1;
+  });
+  controller.closed.then((_) {
+    dismissed = true;
+    timer?.cancel();
+    secondsLeft.dispose();
+    opacity.dispose();
+  });
 }
