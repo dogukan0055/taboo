@@ -377,11 +377,25 @@ class GameProvider extends ChangeNotifier {
         .join();
   }
 
-  String _capitalizeFirst(String input) {
+  String _turkishLower(String input) {
+    return input
+        .split('')
+        .map(
+          (c) => c == 'I'
+              ? 'ı'
+              : c == 'İ'
+              ? 'i'
+              : c.toLowerCase(),
+        )
+        .join();
+  }
+
+  String _turkishCapitalizeFirst(String input) {
     final trimmed = input.trim();
     if (trimmed.isEmpty) return "";
-    final lower = trimmed.toLowerCase();
-    return "${lower[0].toUpperCase()}${lower.substring(1)}";
+    final lower = _turkishLower(trimmed);
+    final first = _turkishUpper(lower[0]);
+    return "$first${lower.substring(1)}";
   }
 
   String _stableId(String word, String category) {
@@ -421,9 +435,9 @@ class GameProvider extends ChangeNotifier {
     }
     final formattedTaboos = cleanTaboos
         .take(5)
-        .map(_capitalizeFirst)
+        .map(_turkishCapitalizeFirst)
         .toList(growable: false);
-    cleanWord = _capitalizeFirst(cleanWord);
+    cleanWord = _turkishUpper(cleanWord);
     customCards.add(
       WordCard(
         id: id,
@@ -490,9 +504,9 @@ class GameProvider extends ChangeNotifier {
 
     final formattedTaboos = cleanTaboos
         .take(5)
-        .map(_capitalizeFirst)
+        .map(_turkishCapitalizeFirst)
         .toList(growable: false);
-    cleanWord = _capitalizeFirst(cleanWord);
+    cleanWord = _turkishUpper(cleanWord);
 
     final bool wasDisabled = disabledCardIds.contains(original.id);
     customCards.removeWhere((c) => c.id == original.id);

@@ -596,106 +596,115 @@ class _GamePlayScreenState extends State<GamePlayScreen>
 
   Widget _buildCardContent(WordCard? card) {
     if (card == null) return Container(key: const ValueKey("empty"));
-    return Container(
-      key: ValueKey(card.id),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: _reduceMotion
-            ? []
-            : [const BoxShadow(blurRadius: 20, color: Colors.black45)],
-      ),
-      child: Column(
-        children: [
-          Container(
-            height: 60,
-            decoration: const BoxDecoration(
-              color: Colors.deepPurple,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              card.category.toUpperCase(),
-              style: const TextStyle(
-                color: Colors.white38,
-                letterSpacing: 2,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+    final double cardWidth = MediaQuery.of(context).size.width * 0.7;
+    return Align(
+      alignment: Alignment.center,
+      child: SizedBox(
+        key: ValueKey(card.id),
+        width: cardWidth,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: _reduceMotion
+                ? []
+                : [const BoxShadow(blurRadius: 20, color: Colors.black45)],
           ),
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final double wordSize = (constraints.biggest.shortestSide * 0.1)
-                    .clamp(16.0, 30.0);
-                final double tabooSize =
-                    (constraints.biggest.shortestSide * 0.06).clamp(11.0, 18.0);
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              card.word,
-                              style: TextStyle(
-                                fontSize: wordSize,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.black87,
+          child: Column(
+            children: [
+              Container(
+                height: 60,
+                decoration: const BoxDecoration(
+                  color: Colors.deepPurple,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  card.category.toUpperCase(),
+                  style: const TextStyle(
+                    color: Colors.white38,
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final double wordSize =
+                        (constraints.biggest.shortestSide * 0.1)
+                            .clamp(16.0, 30.0);
+                    final double tabooSize =
+                        (constraints.biggest.shortestSide * 0.06)
+                            .clamp(11.0, 18.0);
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Center(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  card.word,
+                                  style: TextStyle(
+                                    fontSize: wordSize,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.black87,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 0, bottom: 2),
-                      child: Divider(thickness: 2, indent: 8, endIndent: 8),
-                    ),
-                    Expanded(
-                      flex: 4,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: card.tabooWords
-                            .map(
-                              (t) => Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 2,
-                                  horizontal: 6,
-                                ),
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    t,
-                                    style: TextStyle(
-                                      fontSize: tabooSize,
-                                      color: Colors.grey[700],
-                                      fontWeight: FontWeight.w600,
+                        const Padding(
+                          padding: EdgeInsets.only(top: 0, bottom: 2),
+                          child: Divider(thickness: 2, indent: 8, endIndent: 8),
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: card.tabooWords
+                                .map(
+                                  (t) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 2,
+                                      horizontal: 6,
                                     ),
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        t,
+                                        style: TextStyle(
+                                          fontSize: tabooSize,
+                                          color: Colors.grey[700],
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

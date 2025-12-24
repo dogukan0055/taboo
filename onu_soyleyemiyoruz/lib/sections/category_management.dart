@@ -549,12 +549,47 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
     );
   }
 
+  Widget _buildEmptyCustomState(BuildContext context) {
+    return SafeArea(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Kart Yok",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Özel kart eklemek için sağ üstteki + ikonuna basınız",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var game = Provider.of<GameProvider>(context);
     final messenger = ScaffoldMessenger.of(context);
     final reduceMotion = game.reducedMotion;
     final words = game.wordsByCategory[widget.category] ?? widget.words;
+    final bool isCustomEmpty =
+        widget.category == "Özel" && words.isEmpty;
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -599,221 +634,252 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
         ],
       ),
       body: GameBackground(
-        child: Scrollbar(
-          controller: _wordScrollController,
-          thumbVisibility: true,
-          child: GridView.builder(
-            controller: _wordScrollController,
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 220,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 0.9,
-            ),
-            itemCount: words.length,
-            itemBuilder: (context, index) {
-              final word = words[index];
-              final isDisabled = widget.disabledIds.contains(word.id);
-              final isCustom = word.isCustom;
-              final bool isEnabled = !isDisabled;
-              final Color accent = isEnabled ? Colors.amber : Colors.white38;
-              final Color borderColor =
-                  isEnabled ? Colors.amber : Colors.white24;
-              final Color bgTop = isEnabled
-                  ? Colors.white.withValues(alpha: 0.12)
-                  : Colors.white.withValues(alpha: 0.05);
-              final Color bgBottom = Colors.black.withValues(alpha: 0.5);
-              final Duration animDuration = reduceMotion
-                  ? Duration.zero
-                  : const Duration(milliseconds: 200);
-              return AnimatedContainer(
-                duration: animDuration,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [bgTop, bgBottom],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+        child: isCustomEmpty
+            ? _buildEmptyCustomState(context)
+            : Scrollbar(
+                controller: _wordScrollController,
+                thumbVisibility: true,
+                child: GridView.builder(
+                  controller: _wordScrollController,
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 220,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 0.9,
                   ),
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: borderColor, width: 1.2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.25),
-                      blurRadius: 10,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () async {
-                      await game.playClick();
-                      setState(() => _toggleWord(words, word, !isEnabled));
-                    },
-                    borderRadius: BorderRadius.circular(18),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final bool compact = constraints.maxHeight < 140;
-                          final bool ultraCompact = constraints.maxHeight < 120;
-                          final double wordSize = compact ? 13 : 15;
-                          final double bgIconSize = compact ? 78 : 96;
-                          final bool showCustomActions =
-                              isCustom && !ultraCompact;
-                          return Stack(
-                            children: [
-                              Align(
-                                alignment: const Alignment(0, 0.2),
-                                child: Icon(
-                                  widget.icon,
-                                  size: bgIconSize,
-                                  color: Colors.white.withValues(alpha: 0.07),
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      _buildWordChip(
-                                        label: isEnabled ? "AÇIK" : "KAPALI",
-                                        color: accent,
-                                        compact: compact,
-                                      ),
-                                      if (isCustom && !compact)
-                                        _buildWordChip(
-                                          label: "ÖZEL",
-                                          color: Colors.deepPurpleAccent,
-                                          compact: compact,
-                                        ),
-                                    ],
-                                  ),
-                                  Expanded(
-                                    child: Center(
-                                      child: FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        child: Text(
-                                          word.word,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: isEnabled
-                                                ? Colors.white
-                                                : Colors.white60,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: wordSize,
-                                            letterSpacing: 0.2,
-                                          ),
+                  itemCount: words.length,
+                  itemBuilder: (context, index) {
+                    final word = words[index];
+                    final isDisabled = widget.disabledIds.contains(word.id);
+                    final isCustom = word.isCustom;
+                    final bool isEnabled = !isDisabled;
+                    final Color accent =
+                        isEnabled ? Colors.amber : Colors.white38;
+                    final Color borderColor =
+                        isEnabled ? Colors.amber : Colors.white24;
+                    final Color bgTop = isEnabled
+                        ? Colors.white.withValues(alpha: 0.12)
+                        : Colors.white.withValues(alpha: 0.05);
+                    final Color bgBottom = Colors.black.withValues(alpha: 0.5);
+                    final Duration animDuration = reduceMotion
+                        ? Duration.zero
+                        : const Duration(milliseconds: 200);
+                    return AnimatedContainer(
+                      duration: animDuration,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [bgTop, bgBottom],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: borderColor, width: 1.2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.25),
+                            blurRadius: 10,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            await game.playClick();
+                            setState(() => _toggleWord(words, word, !isEnabled));
+                          },
+                          borderRadius: BorderRadius.circular(18),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                final bool compact = constraints.maxHeight < 140;
+                                final bool ultraCompact =
+                                    constraints.maxHeight < 120;
+                                final double wordSize = compact ? 13 : 15;
+                                final double bgIconSize = compact ? 78 : 96;
+                                final bool showCustomActions =
+                                    isCustom && !ultraCompact;
+                                return Stack(
+                                  children: [
+                                    Align(
+                                      alignment: const Alignment(0, 0.2),
+                                      child: Icon(
+                                        widget.icon,
+                                        size: bgIconSize,
+                                        color: Colors.white.withValues(
+                                          alpha: 0.07,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      _buildActionButton(
-                                        icon: Icons.remove_red_eye,
-                                        color: Colors.white70,
-                                        compact: compact,
-                                        onPressed: () async {
-                                          await game.playClick();
-                                          if (!context.mounted) return;
-                                          _showCardPreview(context, word);
-                                        },
-                                      ),
-                                      if (showCustomActions) ...[
-                                        const SizedBox(width: 8),
-                                        _buildActionButton(
-                                          icon: Icons.edit,
-                                          color: Colors.white70,
-                                          compact: compact,
-                                          onPressed: () async {
-                                            await game.playClick();
-                                            if (!context.mounted) return;
-                                            final updated =
-                                                await Navigator.push<String>(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (_) =>
-                                                    AddCustomCardScreen(
-                                                      existingCard: word,
-                                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            _buildWordChip(
+                                              label: isEnabled
+                                                  ? "AÇIK"
+                                                  : "KAPALI",
+                                              color: accent,
+                                              compact: compact,
+                                            ),
+                                            if (isCustom && !compact)
+                                              _buildWordChip(
+                                                label: "ÖZEL",
+                                                color:
+                                                    Colors.deepPurpleAccent,
+                                                compact: compact,
                                               ),
-                                            );
-                                            if (!context.mounted) return;
-                                            if (updated != null) {
-                                              setState(() {});
-                                              widget.onChanged();
-                                              _showSnack(
-                                                messenger,
-                                                "$updated güncellendi",
-                                                isSuccess: true,
-                                              );
-                                            }
-                                          },
+                                          ],
                                         ),
-                                        const SizedBox(width: 8),
-                                        _buildActionButton(
-                                          icon: Icons.delete_forever,
-                                          color: Colors.redAccent,
-                                          compact: compact,
-                                          onPressed: () {
-                                            game.playClick();
-                                            final removed = word;
-                                            final wasDisabled =
-                                                widget.disabledIds.contains(
-                                              word.id,
-                                            );
-                                            game.removeCustomCard(word.id);
-                                            setState(() {
-                                              widget.disabledIds.remove(word.id);
-                                            });
-                                            widget.onChanged();
-                                            _showSnack(
-                                              messenger,
-                                              "${word.word} silindi",
-                                              isSuccess: true,
-                                              actionLabel: "GERİ AL",
-                                              actionIcon: Icons.undo,
-                                              onAction: () {
-                                                game.restoreCustomCard(
-                                                  removed,
-                                                  disabled: wasDisabled,
-                                                );
-                                                if (wasDisabled) {
-                                                  setState(() {
-                                                    widget.disabledIds.add(
-                                                      removed.id,
-                                                    );
-                                                  });
-                                                } else {
-                                                  setState(() {});
-                                                }
-                                                widget.onChanged();
+                                        Expanded(
+                                          child: Center(
+                                            child: FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Text(
+                                                word.word,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: isEnabled
+                                                      ? Colors.white
+                                                      : Colors.white60,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: wordSize,
+                                                  letterSpacing: 0.2,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            _buildActionButton(
+                                              icon: Icons.remove_red_eye,
+                                              color: Colors.white70,
+                                              compact: compact,
+                                              onPressed: () async {
+                                                await game.playClick();
+                                                if (!context.mounted) return;
+                                                _showCardPreview(context, word);
                                               },
-                                            );
-                                          },
+                                            ),
+                                            if (showCustomActions) ...[
+                                              const SizedBox(width: 8),
+                                              _buildActionButton(
+                                                icon: Icons.edit,
+                                                color: Colors.white70,
+                                                compact: compact,
+                                                onPressed: () async {
+                                                  await game.playClick();
+                                                  if (!context.mounted) return;
+                                                  final updated =
+                                                      await Navigator.push<String>(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          AddCustomCardScreen(
+                                                            existingCard: word,
+                                                          ),
+                                                    ),
+                                                  );
+                                                  if (!context.mounted) return;
+                                                  if (updated != null) {
+                                                    setState(() {});
+                                                    widget.onChanged();
+                                                    _showSnack(
+                                                      messenger,
+                                                      "$updated güncellendi",
+                                                      isSuccess: true,
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                              const SizedBox(width: 8),
+                                              _buildActionButton(
+                                                icon: Icons.delete_forever,
+                                                color: Colors.redAccent,
+                                                compact: compact,
+                                                onPressed: () {
+                                                  game.playClick();
+                                                  final removed = word;
+                                                  final bool wasSelected =
+                                                      widget.selectedCategories
+                                                          .contains(
+                                                    widget.category,
+                                                  );
+                                                  final wasDisabled =
+                                                      widget.disabledIds
+                                                          .contains(word.id);
+                                                  game.removeCustomCard(word.id);
+                                                  setState(() {
+                                                    widget.disabledIds
+                                                        .remove(word.id);
+                                                  });
+                                                  if (widget.category == "Özel") {
+                                                    final remaining =
+                                                        game.wordsByCategory[
+                                                                "Özel"] ??
+                                                            [];
+                                                    if (remaining.isEmpty) {
+                                                      widget.selectedCategories
+                                                          .remove("Özel");
+                                                    }
+                                                  }
+                                                  widget.onChanged();
+                                                  _showSnack(
+                                                    messenger,
+                                                    "${word.word} silindi",
+                                                    isSuccess: true,
+                                                    actionLabel: "GERİ AL",
+                                                    actionIcon: Icons.undo,
+                                                    onAction: () {
+                                                      game.restoreCustomCard(
+                                                        removed,
+                                                        disabled: wasDisabled,
+                                                      );
+                                                      if (widget.category ==
+                                                              "Özel" &&
+                                                          wasSelected) {
+                                                        widget.selectedCategories
+                                                            .add("Özel");
+                                                      }
+                                                      if (wasDisabled) {
+                                                        setState(() {
+                                                          widget.disabledIds
+                                                              .add(removed.id);
+                                                        });
+                                                      } else {
+                                                        setState(() {});
+                                                      }
+                                                      widget.onChanged();
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ],
                                         ),
                                       ],
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-        ),
+              ),
       ),
     );
   }
