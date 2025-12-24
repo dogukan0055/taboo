@@ -91,6 +91,14 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
   }
 
   Widget _cardPreview() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final Color headerColor =
+        isDark ? const Color(0xFF2E1A4A) : const Color(0xFF7B1FA2);
+    final Color textColor = isDark ? Colors.white : Colors.black87;
+    final Color hintColor = isDark ? Colors.white38 : Colors.black38;
+    final Color dividerColor =
+        isDark ? Colors.white24 : const Color(0xFFE0E0E0);
     final taboosPreview = _tabooControllers
         .asMap()
         .entries
@@ -106,7 +114,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
@@ -120,8 +128,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            decoration: const BoxDecoration(
-              color: Color(0xFF7B1FA2),
+            decoration: BoxDecoration(
+              color: headerColor,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(22),
                 topRight: Radius.circular(22),
@@ -129,10 +137,10 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
             ),
             height: 64,
             alignment: Alignment.center,
-            child: const Text(
+            child: Text(
               "ÖZEL",
               style: TextStyle(
-                color: Colors.grey,
+                color: Colors.white70,
                 letterSpacing: 2,
                 fontWeight: FontWeight.w700,
               ),
@@ -145,8 +153,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
             maxLength: 16,
             textCapitalization: TextCapitalization.characters,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.black87,
+            style: TextStyle(
+              color: textColor,
               fontSize: 28,
               fontWeight: FontWeight.w900,
             ),
@@ -160,8 +168,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
               isDense: true,
               border: InputBorder.none,
               hintText: wordText,
-              hintStyle: const TextStyle(
-                color: Colors.black38,
+              hintStyle: TextStyle(
+                color: hintColor,
                 fontSize: 28,
                 fontWeight: FontWeight.w900,
               ),
@@ -169,7 +177,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: 8),
-          const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
+          Divider(height: 1, thickness: 1, color: dividerColor),
           const SizedBox(height: 12),
           Column(
             children: List.generate(5, (i) {
@@ -180,8 +188,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                   maxLength: 20,
                   textCapitalization: TextCapitalization.sentences,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.black87,
+                  style: TextStyle(
+                    color: textColor,
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
                   ),
@@ -194,8 +202,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                     counterText: "",
                     border: InputBorder.none,
                     hintText: taboosPreview[i],
-                    hintStyle: const TextStyle(
-                      color: Colors.black38,
+                    hintStyle: TextStyle(
+                      color: hintColor,
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                     ),
@@ -212,11 +220,18 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final saveColor = isDark ? Colors.amber[400]! : Colors.amber;
+    final saveTextColor = Colors.black;
+    final continueColor = isDark ? Colors.green[400]! : Colors.greenAccent;
+    final continueTextColor = Colors.black;
+    final dangerColor = isDark ? Colors.red[400]! : Colors.redAccent;
+    final dangerBorderColor = isDark ? Colors.red[300]! : Colors.redAccent;
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text("Özel Kart Ekle"),
+        title: Text(_editing ? "Özel Kartı Düzenle" : "Özel Kart Ekle"),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -231,9 +246,19 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF2E0249), Color(0xFF570A57), Color(0xFFA91079)],
+            colors: isDark
+                ? const [
+                    Color(0xFF2E0249),
+                    Color(0xFF570A57),
+                    Color(0xFFA91079),
+                  ]
+                : const [
+                    Color(0xFFE2D3F0),
+                    Color(0xFFB78BD5),
+                    Color(0xFF8F4FB8),
+                  ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -256,8 +281,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                         ElevatedButton(
                         onPressed: () => _handleSave(exitAfter: true),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber,
-                            foregroundColor: Colors.black,
+                            backgroundColor: saveColor,
+                            foregroundColor: saveTextColor,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           child: const Text(
@@ -275,8 +300,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                       },
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            backgroundColor: Colors.redAccent,
-                            side: const BorderSide(color: Colors.redAccent),
+                            backgroundColor: dangerColor,
+                            side: BorderSide(color: dangerBorderColor),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           child: const Text("Çık"),
@@ -288,8 +313,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                             child: ElevatedButton(
                               onPressed: () => _handleSave(exitAfter: true),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.amber,
-                                  foregroundColor: Colors.black,
+                                  backgroundColor: saveColor,
+                                  foregroundColor: saveTextColor,
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 14),
                                 ),
@@ -304,8 +329,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                             child: ElevatedButton(
                               onPressed: () => _handleSave(exitAfter: false),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.greenAccent,
-                                  foregroundColor: Colors.black,
+                                  backgroundColor: continueColor,
+                                  foregroundColor: continueTextColor,
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 14),
                                 ),
@@ -328,8 +353,8 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                         },
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            backgroundColor: Colors.redAccent,
-                            side: const BorderSide(color: Colors.redAccent),
+                            backgroundColor: dangerColor,
+                            side: BorderSide(color: dangerBorderColor),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           child: const Text("Kaydetmeden Çık"),

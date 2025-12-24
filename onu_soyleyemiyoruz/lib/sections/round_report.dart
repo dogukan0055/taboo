@@ -17,6 +17,10 @@ class RoundReportScreen extends StatelessWidget {
         ? const Color(0xFF2A2A2A)
         : Colors.grey[200]!;
     final Color textColor = isDark ? Colors.white70 : Colors.black87;
+    final Color primaryButtonColor =
+        isDark ? const Color(0xFF2A2A2A) : Colors.black87;
+    final Color dangerButtonColor =
+        isDark ? Colors.red[400]! : Colors.redAccent;
     final correctList = game.roundHistory
         .where((e) => e.status == CardStatus.correct)
         .toList();
@@ -129,9 +133,20 @@ class RoundReportScreen extends StatelessWidget {
                         correctList,
                         Colors.green,
                         reduceMotion,
+                        isDark,
                       ),
-                      _buildSimpleCardList(tabooList, Colors.red, reduceMotion),
-                      _buildSimpleCardList(passList, Colors.blue, reduceMotion),
+                      _buildSimpleCardList(
+                        tabooList,
+                        Colors.red,
+                        reduceMotion,
+                        isDark,
+                      ),
+                      _buildSimpleCardList(
+                        passList,
+                        Colors.blue,
+                        reduceMotion,
+                        isDark,
+                      ),
                     ],
                   ),
                 ),
@@ -145,7 +160,7 @@ class RoundReportScreen extends StatelessWidget {
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black87,
+                              backgroundColor: primaryButtonColor,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.all(18),
                               shape: RoundedRectangleBorder(
@@ -190,7 +205,7 @@ class RoundReportScreen extends StatelessWidget {
                           Expanded(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.redAccent,
+                                backgroundColor: dangerButtonColor,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.all(18),
                                 shape: RoundedRectangleBorder(
@@ -263,6 +278,7 @@ class RoundReportScreen extends StatelessWidget {
     List<RoundEvent> events,
     Color color,
     bool reduceMotion,
+    bool isDark,
   ) {
     if (events.isEmpty) {
       return Center(
@@ -281,26 +297,34 @@ class RoundReportScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final event = events[index];
         final card = event.card;
+        final Color topColor = isDark
+            ? color.withValues(alpha: 0.7)
+            : color.withValues(alpha: 0.9);
+        final Color bottomColor = isDark
+            ? color.withValues(alpha: 0.5)
+            : color.withValues(alpha: 0.65);
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                color.withValues(alpha: 0.9),
-                color.withValues(alpha: 0.65),
+                topColor,
+                bottomColor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: Colors.white.withValues(alpha: isDark ? 0.12 : 0.2),
               width: 1,
             ),
             boxShadow: reduceMotion
                 ? []
                 : [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.14),
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.3 : 0.14,
+                      ),
                       blurRadius: 8,
                       offset: const Offset(0, 5),
                     ),

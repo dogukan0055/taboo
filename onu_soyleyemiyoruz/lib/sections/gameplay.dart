@@ -596,6 +596,15 @@ class _GamePlayScreenState extends State<GamePlayScreen>
 
   Widget _buildCardContent(WordCard? card) {
     if (card == null) return Container(key: const ValueKey("empty"));
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final Color headerColor = isDark
+        ? const Color(0xFF2E1A4A)
+        : Colors.deepPurple;
+    final Color wordColor = isDark ? Colors.white : Colors.black87;
+    final Color tabooColor = isDark ? Colors.white70 : Colors.grey[700]!;
+    final Color dividerColor =
+        isDark ? Colors.white24 : const Color(0xFFE0E0E0);
     final double cardWidth = MediaQuery.of(context).size.width * 0.7;
     return Align(
       alignment: Alignment.center,
@@ -604,7 +613,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         width: cardWidth,
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: cardColor,
             borderRadius: BorderRadius.circular(30),
             boxShadow: _reduceMotion
                 ? []
@@ -614,9 +623,11 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             children: [
               Container(
                 height: 60,
-                decoration: const BoxDecoration(
-                  color: Colors.deepPurple,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                decoration: BoxDecoration(
+                  color: headerColor,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(30),
+                  ),
                 ),
                 alignment: Alignment.center,
                 child: Text(
@@ -653,7 +664,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                                   style: TextStyle(
                                     fontSize: wordSize,
                                     fontWeight: FontWeight.w900,
-                                    color: Colors.black87,
+                                    color: wordColor,
                                   ),
                                   textAlign: TextAlign.center,
                                   maxLines: 1,
@@ -663,9 +674,14 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                             ),
                           ),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 0, bottom: 2),
-                          child: Divider(thickness: 2, indent: 8, endIndent: 8),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 0, bottom: 2),
+                          child: Divider(
+                            thickness: 2,
+                            indent: 8,
+                            endIndent: 8,
+                            color: dividerColor,
+                          ),
                         ),
                         Expanded(
                           flex: 4,
@@ -684,7 +700,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                                         t,
                                         style: TextStyle(
                                           fontSize: tabooSize,
-                                          color: Colors.grey[700],
+                                          color: tabooColor,
                                           fontWeight: FontWeight.w600,
                                         ),
                                         textAlign: TextAlign.center,

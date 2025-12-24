@@ -329,85 +329,96 @@ void _showSnack(
 void _showCardPreview(BuildContext context, WordCard card) {
   showDialog(
     context: context,
-    builder: (_) => Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.all(20),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.7,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.25),
-                blurRadius: 12,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                height: 44,
-                decoration: BoxDecoration(
-                  color: Colors.deepPurple.shade700,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
+    builder: (_) {
+      final bool isDark = Theme.of(context).brightness == Brightness.dark;
+      final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+      final Color headerColor = isDark
+          ? const Color(0xFF2E1A4A)
+          : Colors.deepPurple.shade700;
+      final Color wordColor = isDark ? Colors.white : Colors.black87;
+      final Color tabooColor = isDark ? Colors.white70 : Colors.black87;
+      final Color dividerColor =
+          isDark ? Colors.white24 : const Color(0xFFE0E0E0);
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(20),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.7,
+          child: Container(
+            decoration: BoxDecoration(
+              color: cardColor,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 12,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: headerColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    card.category.toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
-                alignment: Alignment.center,
-                child: Text(
-                  card.category.toUpperCase(),
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    letterSpacing: 2,
-                    fontWeight: FontWeight.w700,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+                  child: Text(
+                    card.word,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: wordColor,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
-                child: Text(
-                  card.word,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.black87,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
-                child: Column(
-                  children: card.tabooWords
-                      .map(
-                        (t) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Text(
-                            t,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
+                Divider(height: 1, thickness: 1, color: dividerColor),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+                  child: Column(
+                    children: card.tabooWords
+                        .map(
+                          (t) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Text(
+                              t,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: tabooColor,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                      .toList(),
+                        )
+                        .toList(),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    ),
+      );
+    },
   );
 }
 
