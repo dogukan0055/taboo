@@ -841,7 +841,11 @@ class GameProvider extends ChangeNotifier {
       teamBScore++;
     }
     if (vibrationEnabled) HapticFeedback.mediumImpact();
-    _playSfx("correct");
+    _playSfx(
+      "correct",
+      restartIfPlaying: true,
+      bypassThrottle: true,
+    );
     _logEvent(CardStatus.correct);
     nextCard();
   }
@@ -854,7 +858,11 @@ class GameProvider extends ChangeNotifier {
       teamBScore--;
     }
     if (vibrationEnabled) HapticFeedback.heavyImpact();
-    _playSfx("taboo");
+    _playSfx(
+      "taboo",
+      restartIfPlaying: true,
+      bypassThrottle: true,
+    );
     _logEvent(CardStatus.taboo);
     nextCard();
   }
@@ -864,7 +872,11 @@ class GameProvider extends ChangeNotifier {
     if (currentPasses > 0) {
       currentPasses--;
       if (vibrationEnabled) HapticFeedback.mediumImpact();
-      _playSfx("pass");
+      _playSfx(
+        "pass",
+        restartIfPlaying: true,
+        bypassThrottle: true,
+      );
       _logEvent(CardStatus.pass);
       nextCard();
     }
@@ -960,14 +972,21 @@ class GameProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> _playSfx(String name, {bool force = false}) async {
+  Future<void> _playSfx(
+    String name, {
+    bool force = false,
+    bool restartIfPlaying = false,
+    bool bypassThrottle = false,
+  }) async {
     if (abortedToMenu) return;
     if ((!soundEnabled && !force) || !_audioReady || _audioFailed) return;
     final now = DateTime.now();
     final last = _lastSfxAt[name];
-    if (last != null && now.difference(last) < _sfxMinGap) return;
-    if (_currentSfxName == name && _sfxPlayer.state == PlayerState.playing) {
+    if (!bypassThrottle && last != null && now.difference(last) < _sfxMinGap) {
       return;
+    }
+    if (_currentSfxName == name && _sfxPlayer.state == PlayerState.playing) {
+      if (!restartIfPlaying) return;
     }
     try {
       _lastSfxAt[name] = now;
@@ -1003,7 +1022,12 @@ class GameProvider extends ChangeNotifier {
 
   Future<void> playClick({bool force = false}) async {
     await ensureAudioInitialized();
-    await _playSfx("click", force: force);
+    await _playSfx(
+      "click",
+      force: force,
+      restartIfPlaying: true,
+      bypassThrottle: true,
+    );
   }
 
   @override
