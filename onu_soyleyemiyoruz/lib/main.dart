@@ -438,6 +438,7 @@ String _turkishUpper(String input) {
 Future<bool> _confirmExitToMenu(
   BuildContext context, {
   bool force = false,
+  Future<void> Function()? onConfirm,
 }) async {
   final shouldExit =
       await showDialog<bool>(
@@ -474,6 +475,9 @@ Future<bool> _confirmExitToMenu(
       false;
   if (!context.mounted) return false;
   if (shouldExit) {
+    if (onConfirm != null) {
+      await onConfirm();
+    }
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const MainMenuScreen()),
       (route) => false,

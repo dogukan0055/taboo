@@ -318,13 +318,11 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                       width: double.infinity,
                       child: OutlinedButton(
                         onPressed: () {
-                          Navigator.pop(dialogCtx);
-                          game.abortCurrentRound();
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (_) => const MainMenuScreen(),
-                            ),
-                            (route) => false,
+                          _confirmExitToMenu(
+                            context,
+                            onConfirm: () async {
+                              game.abortCurrentRound();
+                            },
                           );
                         },
                         style: OutlinedButton.styleFrom(
