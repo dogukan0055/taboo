@@ -445,6 +445,17 @@ class GameProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void restoreCustomCard(WordCard card, {bool disabled = false}) {
+    if (!_idsForCategory("Özel").contains(card.id)) {
+      customCards.add(card);
+    }
+    if (disabled) {
+      disabledCardIds.add(card.id);
+    }
+    _persist();
+    notifyListeners();
+  }
+
   String? updateCustomCard(
     WordCard original,
     String newWord,

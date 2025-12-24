@@ -149,6 +149,9 @@ void _showSnack(
   String message, {
   bool isError = false,
   bool isSuccess = false,
+  String? actionLabel,
+  IconData? actionIcon,
+  VoidCallback? onAction,
 }) {
   messenger.removeCurrentSnackBar();
   const Duration toastDuration = Duration(seconds: 3);
@@ -158,6 +161,8 @@ void _showSnack(
   final opacity = ValueNotifier<double>(0.0);
   final dismissKey = UniqueKey();
   bool dismissed = false;
+  bool notifierDisposed = false;
+  bool actionHandled = false;
   Timer? timer;
   final Color background = isError
       ? const Color(0xFFB00020)
@@ -173,11 +178,17 @@ void _showSnack(
   final Color closeColor = isError ? Colors.white : Colors.redAccent;
   final BorderRadius toastRadius = BorderRadius.circular(14);
   Future<void> fadeOutAndDismiss() async {
-    if (dismissed) return;
+    if (dismissed || notifierDisposed) return;
     dismissed = true;
     opacity.value = 0;
     await Future.delayed(fadeOutDuration);
     messenger.hideCurrentSnackBar();
+  }
+  void handleAction() {
+    if (actionHandled || dismissed || notifierDisposed) return;
+    actionHandled = true;
+    onAction?.call();
+    fadeOutAndDismiss();
   }
 
   final controller = messenger.showSnackBar(
@@ -235,6 +246,41 @@ void _showSnack(
                   Icon(icon, color: iconColor, size: 18),
                   const SizedBox(width: 8),
                   Expanded(child: Text(message)),
+                  if (actionLabel != null && onAction != null) ...[
+                    const SizedBox(width: 6),
+                    InkWell(
+                      onTap: handleAction,
+                      borderRadius: BorderRadius.circular(12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 4,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (actionIcon != null) ...[
+                              Icon(
+                                actionIcon,
+                                size: 14,
+                                color: Colors.amber[200],
+                              ),
+                              const SizedBox(width: 4),
+                            ],
+                            Text(
+                              actionLabel,
+                              style: TextStyle(
+                                color: Colors.amber[200],
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.4,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                   ValueListenableBuilder<int>(
                     valueListenable: secondsLeft,
                     builder: (context, value, _) => Text(
@@ -260,7 +306,9 @@ void _showSnack(
     ),
   );
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    opacity.value = 1.0;
+    if (!notifierDisposed) {
+      opacity.value = 1.0;
+    }
   });
   timer = Timer.periodic(const Duration(seconds: 1), (_) {
     if (secondsLeft.value <= 1) {
@@ -271,6 +319,7 @@ void _showSnack(
   });
   controller.closed.then((_) {
     dismissed = true;
+    notifierDisposed = true;
     timer?.cancel();
     secondsLeft.dispose();
     opacity.dispose();

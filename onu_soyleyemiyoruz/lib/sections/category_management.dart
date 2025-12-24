@@ -110,6 +110,14 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                       reduceMotion: reduceMotion,
                       onToggle: (val) async {
                         await game.playClick();
+                        if (val && cat == "Özel" && words.isEmpty) {
+                          _showSnack(
+                            messenger,
+                            "Özel kategorisi boş. Önce kelime ekleyin.",
+                            isError: true,
+                          );
+                          return;
+                        }
                         setState(() {
                           if (val) {
                             _selectedCategories.add(cat);
@@ -468,19 +476,19 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
     super.dispose();
   }
 
-  void _toggleWord(WordCard word, bool enabled) {
+  void _toggleWord(List<WordCard> words, WordCard word, bool enabled) {
     if (enabled) {
       widget.disabledIds.remove(word.id);
     } else {
       widget.disabledIds.add(word.id);
     }
-    final allEnabled = widget.words.every(
+    final allEnabled = words.every(
       (cw) => !widget.disabledIds.contains(cw.id),
     );
     if (allEnabled) {
       widget.selectedCategories.add(widget.category);
     } else {
-      final allDisabled = widget.words.every(
+      final allDisabled = words.every(
         (cw) => widget.disabledIds.contains(cw.id),
       );
       if (allDisabled && widget.selectedCategories.contains(widget.category)) {
@@ -546,6 +554,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
     var game = Provider.of<GameProvider>(context);
     final messenger = ScaffoldMessenger.of(context);
     final reduceMotion = game.reducedMotion;
+    final words = game.wordsByCategory[widget.category] ?? widget.words;
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -602,9 +611,9 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
               crossAxisSpacing: 12,
               childAspectRatio: 0.9,
             ),
-            itemCount: widget.words.length,
+            itemCount: words.length,
             itemBuilder: (context, index) {
-              final word = widget.words[index];
+              final word = words[index];
               final isDisabled = widget.disabledIds.contains(word.id);
               final isCustom = word.isCustom;
               final bool isEnabled = !isDisabled;
@@ -641,7 +650,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                   child: InkWell(
                     onTap: () async {
                       await game.playClick();
-                      setState(() => _toggleWord(word, !isEnabled));
+                      setState(() => _toggleWord(words, word, !isEnabled));
                     },
                     borderRadius: BorderRadius.circular(18),
                     child: Padding(
@@ -754,6 +763,11 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                                           compact: compact,
                                           onPressed: () {
                                             game.playClick();
+                                            final removed = word;
+                                            final wasDisabled =
+                                                widget.disabledIds.contains(
+                                              word.id,
+                                            );
                                             game.removeCustomCard(word.id);
                                             setState(() {
                                               widget.disabledIds.remove(word.id);
@@ -763,6 +777,24 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                                               messenger,
                                               "${word.word} silindi",
                                               isSuccess: true,
+                                              actionLabel: "GERİ AL",
+                                              actionIcon: Icons.undo,
+                                              onAction: () {
+                                                game.restoreCustomCard(
+                                                  removed,
+                                                  disabled: wasDisabled,
+                                                );
+                                                if (wasDisabled) {
+                                                  setState(() {
+                                                    widget.disabledIds.add(
+                                                      removed.id,
+                                                    );
+                                                  });
+                                                } else {
+                                                  setState(() {});
+                                                }
+                                                widget.onChanged();
+                                              },
                                             );
                                           },
                                         ),
