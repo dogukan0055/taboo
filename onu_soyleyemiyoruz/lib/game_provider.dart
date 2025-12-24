@@ -240,6 +240,10 @@ class GameProvider extends ChangeNotifier {
   bool get isCoolingDown => _cooldownActive;
   int get remainingCards => _activeDeck.length + (currentCard != null ? 1 : 0);
   bool get allCardsUsed => endedByCards;
+  bool get hasReachedTargetScore =>
+      _targetScore != -1 &&
+      (teamAScore >= _targetScore || teamBScore >= _targetScore);
+  bool get isGameEnded => endedByCards || hasReachedTargetScore;
 
   String get currentNarrator {
     if (isTeamATurn) {
@@ -1264,20 +1268,25 @@ class GameProvider extends ChangeNotifier {
     });
   }
 
-  void endRound() {
+  void endRound({
+    bool addTimeoutEvent = true,
+    bool playTimeoutFx = true,
+  }) {
     _timer?.cancel();
     _cooldownTimer?.cancel();
     _cooldownActive = false;
     timeLeft = 0;
-    if (vibrationEnabled) HapticFeedback.heavyImpact();
-    _playSfx("taboo");
+    if (playTimeoutFx) {
+      if (vibrationEnabled) HapticFeedback.heavyImpact();
+      _playSfx("taboo");
+    }
 
-    if (currentCard != null) {
+    if (addTimeoutEvent && currentCard != null) {
       roundHistory.add(
         RoundEvent(card: currentCard!, status: CardStatus.pass, timedOut: true),
       );
-      currentCard = null;
     }
+    currentCard = null;
 
     if (_targetScore != -1) {
       if (teamAScore >= _targetScore && teamAScore > teamBScore) {
@@ -1355,6 +1364,10 @@ class GameProvider extends ChangeNotifier {
     if (vibrationEnabled) HapticFeedback.mediumImpact();
     _playSfx("correct", restartIfPlaying: true, bypassThrottle: true);
     _logEvent(CardStatus.correct);
+    if (hasReachedTargetScore) {
+      endRound(addTimeoutEvent: false, playTimeoutFx: false);
+      return;
+    }
     nextCard();
   }
 

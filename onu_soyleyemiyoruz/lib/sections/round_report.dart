@@ -30,6 +30,7 @@ class RoundReportScreen extends StatelessWidget {
     final passList = game.roundHistory
         .where((e) => e.status == CardStatus.pass)
         .toList();
+    final bool isGameEnded = game.isGameEnded;
 
     return PopScope(
       canPop: false,
@@ -166,97 +167,61 @@ class RoundReportScreen extends StatelessWidget {
                   color: scaffoldColor,
                   child: SizedBox(
                     width: double.infinity,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryButtonColor,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.all(18),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            onPressed: () async {
-                              await Provider.of<GameProvider>(
-                                context,
-                                listen: false,
-                              ).playClick();
-                              if (!context.mounted) return;
-                              if (game.allCardsUsed ||
-                                  game.gameWinner != null) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const GameOverScreen(),
+                    child: isGameEnded
+                        ? _buildEndGameButton(
+                            context,
+                            game,
+                            dangerButtonColor,
+                            isManual: false,
+                          )
+                        : Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: primaryButtonColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.all(18),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
                                   ),
-                                );
-                              } else {
-                                game.finishTurn();
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const RoundStartScreen(),
+                                  onPressed: () async {
+                                    await Provider.of<GameProvider>(
+                                      context,
+                                      listen: false,
+                                    ).playClick();
+                                    if (!context.mounted) return;
+                                    game.finishTurn();
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const RoundStartScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    game.t("continue"),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                );
-                              }
-                            },
-                            child: Text(
-                              game.t("continue"),
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (game.targetScore == -1) ...[
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: dangerButtonColor,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(18),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              onPressed: () async {
-                                await Provider.of<GameProvider>(
-                                  context,
-                                  listen: false,
-                                ).playClick();
-                                if (!context.mounted) return;
-                                if (game.teamAScore > game.teamBScore) {
-                                  game.gameWinner = game.teamAName;
-                                } else if (game.teamBScore > game.teamAScore) {
-                                  game.gameWinner = game.teamBName;
-                                } else {
-                                  game.gameWinner = null;
-                                }
-                                game.endedByCards = false;
-                                game.endMessage = null;
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const GameOverScreen(),
+                              if (game.targetScore == -1) ...[
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildEndGameButton(
+                                    context,
+                                    game,
+                                    dangerButtonColor,
+                                    isManual: true,
                                   ),
-                                );
-                              },
-                              child: Text(
-                                game.t("end_game"),
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                            ),
+                              ],
+                            ],
                           ),
-                        ],
-                      ],
-                    ),
                   ),
                 ),
               ],
@@ -283,6 +248,50 @@ class RoundReportScreen extends StatelessWidget {
       ),
     ],
   );
+
+  Widget _buildEndGameButton(
+    BuildContext context,
+    GameProvider game,
+    Color dangerButtonColor, {
+    required bool isManual,
+  }) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: dangerButtonColor,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.all(18),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      onPressed: () async {
+        await Provider.of<GameProvider>(context, listen: false).playClick();
+        if (!context.mounted) return;
+        if (isManual) {
+          if (game.teamAScore > game.teamBScore) {
+            game.gameWinner = game.teamAName;
+          } else if (game.teamBScore > game.teamAScore) {
+            game.gameWinner = game.teamBName;
+          } else {
+            game.gameWinner = null;
+          }
+          game.endedByCards = false;
+          game.endMessage = null;
+        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const GameOverScreen()),
+        );
+      },
+      child: Text(
+        game.t("end_game"),
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
 
   // SIMPLE RECTANGLE CARD
   Widget _buildSimpleCardList(
