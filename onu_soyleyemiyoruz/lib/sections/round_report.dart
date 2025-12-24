@@ -31,6 +31,7 @@ class RoundReportScreen extends StatelessWidget {
         .where((e) => e.status == CardStatus.pass)
         .toList();
     final bool isGameEnded = game.isGameEnded;
+    final bool canManualEnd = _canEndGameManually(game);
 
     return PopScope(
       canPop: false,
@@ -217,6 +218,7 @@ class RoundReportScreen extends StatelessWidget {
                                     game,
                                     dangerButtonColor,
                                     isManual: true,
+                                    enabled: canManualEnd,
                                   ),
                                 ),
                               ],
@@ -254,17 +256,24 @@ class RoundReportScreen extends StatelessWidget {
     GameProvider game,
     Color dangerButtonColor, {
     required bool isManual,
+    bool enabled = true,
   }) {
+    final Color disabledBg = dangerButtonColor.withValues(alpha: 0.4);
+    final Color disabledFg = Colors.white70;
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: dangerButtonColor,
-        foregroundColor: Colors.white,
+        backgroundColor: enabled ? dangerButtonColor : disabledBg,
+        foregroundColor: enabled ? Colors.white : disabledFg,
+        disabledBackgroundColor: disabledBg,
+        disabledForegroundColor: disabledFg,
         padding: const EdgeInsets.all(18),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-      onPressed: () async {
+      onPressed: !enabled
+          ? null
+          : () async {
         await Provider.of<GameProvider>(context, listen: false).playClick();
         if (!context.mounted) return;
         if (isManual) {
@@ -291,6 +300,12 @@ class RoundReportScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool _canEndGameManually(GameProvider game) {
+    if (game.targetScore != -1) return true;
+    if (game.roundSummaries.isEmpty) return false;
+    return game.roundSummaries.last.turnInRound == 2;
   }
 
   // SIMPLE RECTANGLE CARD
@@ -382,7 +397,7 @@ class RoundReportScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        game.categoryLabel(card.category).toUpperCase(),
+                        game.languageUpper(game.categoryLabel(card.category)),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: categoryFont,

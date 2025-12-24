@@ -389,7 +389,7 @@ void _showCardPreview(BuildContext context, WordCard card) {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        game.categoryLabel(card.category).toUpperCase(),
+                        game.languageUpper(game.categoryLabel(card.category)),
                         style: const TextStyle(
                           color: Colors.white70,
                           letterSpacing: 2,
@@ -441,19 +441,6 @@ void _showCardPreview(BuildContext context, WordCard card) {
       );
     },
   );
-}
-
-String _turkishUpper(String input) {
-  return input
-      .split('')
-      .map(
-        (c) => c == 'i'
-            ? 'İ'
-            : c == 'ı'
-            ? 'I'
-            : c.toUpperCase(),
-      )
-      .join();
 }
 
 Future<bool> _confirmExitToMenu(

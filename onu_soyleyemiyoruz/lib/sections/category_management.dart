@@ -632,12 +632,13 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                   _showSnack(
                     messenger,
                     game.t(
-                      "custom_added",
-                      params: {
-                        "word": added,
-                        "category": game.categoryLabel("Özel").toUpperCase(),
-                      },
-                    ),
+                        "custom_added",
+                        params: {
+                          "word": added,
+                          "category":
+                              game.languageUpper(game.categoryLabel("Özel")),
+                        },
+                      ),
                     isSuccess: true,
                   );
                   setState(() {});

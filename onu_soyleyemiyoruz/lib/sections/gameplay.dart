@@ -703,7 +703,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  game.categoryLabel(card.category).toUpperCase(),
+                  game.languageUpper(game.categoryLabel(card.category)),
                   style: const TextStyle(
                     color: Colors.white38,
                     letterSpacing: 2,

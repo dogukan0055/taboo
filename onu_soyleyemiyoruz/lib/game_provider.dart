@@ -128,6 +128,18 @@ class GameProvider extends ChangeNotifier {
   final List<RoundSummary> roundSummaries = [];
   bool _roundEnded = false;
 
+  String _defaultLanguageCode() {
+    final dispatcher = WidgetsBinding.instance.platformDispatcher;
+    final locales = dispatcher.locales;
+    final locale = locales.isNotEmpty ? locales.first : dispatcher.locale;
+    final language = locale.languageCode.toLowerCase();
+    final country = locale.countryCode?.toUpperCase();
+    if (country == "TR" || language == "tr") {
+      return "tr";
+    }
+    return "en";
+  }
+
   Future<void> _hydrate() async {
     _prefs = await SharedPreferences.getInstance();
     soundEnabled = _prefs?.getBool("soundEnabled") ?? soundEnabled;
@@ -136,7 +148,8 @@ class GameProvider extends ChangeNotifier {
     reducedMotion = _prefs?.getBool("reducedMotion") ?? reducedMotion;
     onboardingSeen = _prefs?.getBool("onboardingSeen") ?? onboardingSeen;
     themeMode = _themeModeFromString(_prefs?.getString("themeMode"));
-    languageCode = _prefs?.getString("languageCode") ?? languageCode;
+    final storedLanguage = _prefs?.getString("languageCode");
+    languageCode = storedLanguage ?? _defaultLanguageCode();
     tutorialTipShown = _prefs?.getBool("tutorialTipShown") ?? tutorialTipShown;
     teamAName = _prefs?.getString("teamAName") ?? teamAName;
     teamBName = _prefs?.getString("teamBName") ?? teamBName;
@@ -268,11 +281,47 @@ class GameProvider extends ChangeNotifier {
   }
 
   // --- INPUT VALIDATION ---
+  RegExp get nameAllowedChars => isEnglish
+      ? RegExp(r'[A-Za-z ]')
+      : RegExp(r'[A-Za-zÇçĞğİıÖöŞşÜü ]');
+
+  RegExp get wordAllowedChars =>
+      RegExp(r'[A-Za-zÇçĞğİıÖöŞşÜü ]');
+
+  RegExp get _nameValidationPattern => isEnglish
+      ? RegExp(r'^[A-Z ]+$')
+      : RegExp(r'^[A-ZÇĞİÖŞÜ ]+$');
+
+  RegExp get _wordValidationPattern => RegExp(r'^[A-ZÇĞİÖŞÜ ]+$');
+
+  String languageUpper(String input) =>
+      isEnglish ? input.toUpperCase() : _turkishUpper(input);
+
+  String _languageLower(String input) =>
+      isEnglish ? input.toLowerCase() : _turkishLower(input);
+
+  String _languageCapitalizeFirst(String input) {
+    final trimmed = input.trim();
+    if (trimmed.isEmpty) return "";
+    final lower = _languageLower(trimmed);
+    final first = languageUpper(lower[0]);
+    return "$first${lower.substring(1)}";
+  }
+
   // Returns formatted clean string or null if invalid
-  String? validateInput(String input) {
-    String clean = _turkishUpper(input.trim());
-    if (clean.isEmpty || containsProhibitedWords(clean)) return null;
-    if (!RegExp(r'^[A-ZÇĞİÖŞÜ ]+$').hasMatch(clean)) return null;
+  String? validateNameInput(String input) {
+    final trimmed = input.trim();
+    if (trimmed.isEmpty || containsProhibitedWords(trimmed)) return null;
+    final clean = languageUpper(trimmed);
+    if (!_nameValidationPattern.hasMatch(clean)) return null;
+    return clean;
+  }
+
+  String? validateWordInput(String input) {
+    final trimmed = input.trim();
+    if (trimmed.isEmpty || containsProhibitedWords(trimmed)) return null;
+    final clean = languageUpper(trimmed);
+    if (!_wordValidationPattern.hasMatch(clean)) return null;
     return clean;
   }
 
@@ -905,14 +954,6 @@ class GameProvider extends ChangeNotifier {
         .join();
   }
 
-  String _turkishCapitalizeFirst(String input) {
-    final trimmed = input.trim();
-    if (trimmed.isEmpty) return "";
-    final lower = _turkishLower(trimmed);
-    final first = _turkishUpper(lower[0]);
-    return "$first${lower.substring(1)}";
-  }
-
   String _stableId(String word, String category) {
     String sanitize(String v) {
       return v
@@ -931,10 +972,10 @@ class GameProvider extends ChangeNotifier {
     if (word.trim().length > 16) {
       return t("error_word_max", params: {"max": "16"});
     }
-    String? cleanWord = validateInput(word);
+    String? cleanWord = validateWordInput(word);
     if (cleanWord == null) return t("error_word_invalid");
     final cleanTaboos = taboos
-        .map((e) => validateInput(e) ?? "")
+        .map((e) => validateWordInput(e) ?? "")
         .where((e) => e.isNotEmpty)
         .toList();
     if (cleanTaboos.any((t) => containsProhibitedWords(t))) {
@@ -952,9 +993,9 @@ class GameProvider extends ChangeNotifier {
     }
     final formattedTaboos = cleanTaboos
         .take(5)
-        .map(_turkishCapitalizeFirst)
+        .map(_languageCapitalizeFirst)
         .toList(growable: false);
-    cleanWord = _turkishUpper(cleanWord);
+    cleanWord = languageUpper(cleanWord);
     customCards.add(
       WordCard(
         id: id,
@@ -999,11 +1040,11 @@ class GameProvider extends ChangeNotifier {
     if (newWord.trim().length > 16) {
       return t("error_word_max", params: {"max": "16"});
     }
-    String? cleanWord = validateInput(newWord);
+    String? cleanWord = validateWordInput(newWord);
     if (cleanWord == null) return t("error_word_invalid");
 
     final cleanTaboos = taboos
-        .map((e) => validateInput(e) ?? "")
+        .map((e) => validateWordInput(e) ?? "")
         .where((e) => e.isNotEmpty)
         .toList();
     if (cleanTaboos.length < 5) return t("error_taboo_count");
@@ -1021,9 +1062,9 @@ class GameProvider extends ChangeNotifier {
 
     final formattedTaboos = cleanTaboos
         .take(5)
-        .map(_turkishCapitalizeFirst)
+        .map(_languageCapitalizeFirst)
         .toList(growable: false);
-    cleanWord = _turkishUpper(cleanWord);
+    cleanWord = languageUpper(cleanWord);
 
     final bool wasDisabled = disabledCardIds.contains(original.id);
     customCards.removeWhere((c) => c.id == original.id);
@@ -1058,7 +1099,7 @@ class GameProvider extends ChangeNotifier {
     if (name.trim().length > 20) {
       return t("error_team_name_max");
     }
-    String? valid = validateInput(name);
+    String? valid = validateNameInput(name);
     if (valid == null) return t("error_name_invalid");
     if (isTeamA && valid == teamBName) {
       return t("error_team_name_same");
@@ -1082,7 +1123,7 @@ class GameProvider extends ChangeNotifier {
     if (containsProhibitedWords(name)) return t("error_name_profanity");
     if (name.trim().length > 16) return t("error_player_name_max");
 
-    String? valid = validateInput(name);
+    String? valid = validateNameInput(name);
     if (valid == null) return t("error_name_invalid");
     if (teamA.contains(valid) || teamB.contains(valid)) {
       return t("error_player_exists");
@@ -1155,8 +1196,8 @@ class GameProvider extends ChangeNotifier {
             "Anlam Ustası",
           ];
     final existing = {
-      ...teamA.map((e) => e.toUpperCase()),
-      ...teamB.map((e) => e.toUpperCase()),
+      ...teamA.map(languageUpper),
+      ...teamB.map(languageUpper),
     };
     final available = options.where((n) => !existing.contains(n)).toList();
     final list = available.isNotEmpty ? available : options;
@@ -1215,9 +1256,9 @@ class GameProvider extends ChangeNotifier {
             "Son Turcular",
           ];
     pool.shuffle(Random());
-    final otherName = (forTeamA ? teamBName : teamAName).toUpperCase();
+    final otherName = languageUpper(forTeamA ? teamBName : teamAName);
     for (final name in pool) {
-      if (name.toUpperCase() != otherName) {
+      if (languageUpper(name) != otherName) {
         return name;
       }
     }
@@ -1349,7 +1390,9 @@ class GameProvider extends ChangeNotifier {
     final int correctCount = statusList
         .where((s) => s == CardStatus.correct)
         .length;
-    final int passCount = statusList.where((s) => s == CardStatus.pass).length;
+    final int passCount = roundHistory
+        .where((e) => e.status == CardStatus.pass && !e.timedOut)
+        .length;
     final int tabooCount = statusList
         .where((s) => s == CardStatus.taboo)
         .length;

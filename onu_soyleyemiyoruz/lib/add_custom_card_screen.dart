@@ -76,14 +76,14 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
       _showSnack(messenger, error, isError: true);
       return;
     }
-    final addedWord = _wordController.text.trim().toUpperCase();
+    final addedWord = game.languageUpper(_wordController.text.trim());
     _showSnack(
       messenger,
       game.t(
         "custom_added",
         params: {
           "word": addedWord,
-          "category": game.categoryLabel("Özel").toUpperCase(),
+          "category": game.languageUpper(game.categoryLabel("Özel")),
         },
       ),
       isSuccess: true,
@@ -112,12 +112,12 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
         .map(
           (e) => e.value.text.isEmpty
               ? game.t("taboo_hint", params: {"index": "${e.key + 1}"})
-              : e.value.text.toUpperCase(),
+              : game.languageUpper(e.value.text),
         )
         .toList();
     final wordText = _wordController.text.isEmpty
         ? game.t("word_hint")
-        : _wordController.text.toUpperCase();
+        : game.languageUpper(_wordController.text);
 
     return Container(
       decoration: BoxDecoration(
@@ -145,7 +145,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
             height: 64,
             alignment: Alignment.center,
             child: Text(
-              game.categoryLabel("Özel").toUpperCase(),
+              game.languageUpper(game.categoryLabel("Özel")),
               style: TextStyle(
                 color: Colors.white70,
                 letterSpacing: 2,
@@ -166,9 +166,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
               fontWeight: FontWeight.w900,
             ),
             inputFormatters: [
-              FilteringTextInputFormatter.allow(
-                RegExp('[A-Za-zÇçĞğİıÖöŞşÜü ]'),
-              ),
+              FilteringTextInputFormatter.allow(game.wordAllowedChars),
             ],
             decoration: InputDecoration(
               counterText: "",
@@ -201,9 +199,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                     fontSize: 16,
                   ),
                   inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp('[A-Za-zÇçĞğİıÖöŞşÜü ]'),
-                    ),
+                    FilteringTextInputFormatter.allow(game.wordAllowedChars),
                   ],
                   decoration: InputDecoration(
                     counterText: "",

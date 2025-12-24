@@ -552,7 +552,7 @@ class TeamManagerPanel extends StatelessWidget {
                       await game.playClick();
                       if (!context.mounted) return;
                       game.removePlayer(p, isTeamA);
-                      final upperName = _turkishUpper(p);
+                      final upperName = game.languageUpper(p);
                       _showSnack(
                         messenger,
                         game.t(
@@ -626,9 +626,7 @@ class TeamManagerPanel extends StatelessWidget {
               maxLength: 20,
               textCapitalization: TextCapitalization.words,
               inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                  RegExp('[A-Za-zÇçĞğİıÖöŞşÜü ]'),
-                ),
+                FilteringTextInputFormatter.allow(game.nameAllowedChars),
               ],
             ),
             Align(
@@ -712,9 +710,7 @@ class TeamManagerPanel extends StatelessWidget {
               maxLength: 16,
               textCapitalization: TextCapitalization.words,
               inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                  RegExp('[A-Za-zÇçĞğİıÖöŞşÜü ]'),
-                ),
+                FilteringTextInputFormatter.allow(game.nameAllowedChars),
               ],
             ),
             Align(
@@ -756,7 +752,7 @@ class TeamManagerPanel extends StatelessWidget {
                 return;
               }
               Navigator.pop(dialogContext);
-              final upperName = _turkishUpper(c.text);
+              final upperName = game.languageUpper(c.text);
               _showSnack(
                 messenger,
                 game.t(
