@@ -456,6 +456,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
   }
 
   Widget _buildScoreHeader(GameProvider game) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       child: Stack(
@@ -464,7 +465,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
           Container(
             height: 90,
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.45),
+              color: isDark
+                  ? Colors.black.withValues(alpha: 0.6)
+                  : Colors.black.withValues(alpha: 0.45),
               borderRadius: BorderRadius.circular(40),
             ),
             child: Row(
@@ -475,6 +478,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                     game.teamAScore,
                     Colors.blueAccent,
                     game.isTeamATurn,
+                    isDark: isDark,
                   ),
                 ),
                 Container(
@@ -510,6 +514,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                     game.teamBScore,
                     Colors.redAccent,
                     !game.isTeamATurn,
+                    isDark: isDark,
                   ),
                 ),
               ],
@@ -548,16 +553,29 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     String name,
     int score,
     Color color,
-    bool isActive,
-  ) {
+    bool isActive, {
+    required bool isDark,
+  }) {
+    final Color activeFill = Colors.black.withValues(
+      alpha: isDark ? 0.5 : 0.35,
+    );
+    final Color inactiveFill = Colors.white.withValues(
+      alpha: isDark ? 0.06 : 0.04,
+    );
     return AnimatedContainer(
       duration: _reduceMotion
           ? Duration.zero
           : const Duration(milliseconds: 300),
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
-        color: isActive ? color.withValues(alpha: 0.8) : Colors.transparent,
+        color: isActive ? activeFill : inactiveFill,
         borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: isActive
+              ? color.withValues(alpha: isDark ? 0.9 : 0.75)
+              : Colors.white.withValues(alpha: isDark ? 0.12 : 0.08),
+          width: 1.2,
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -569,9 +587,16 @@ class _GamePlayScreenState extends State<GamePlayScreen>
               child: Text(
                 name,
                 style: TextStyle(
-                  color: color,
+                  color: Colors.white,
                   fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                   fontSize: 14,
+                  shadows: const [
+                    BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -605,8 +630,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         : Colors.deepPurple;
     final Color wordColor = isDark ? Colors.white : Colors.black87;
     final Color tabooColor = isDark ? Colors.white70 : Colors.grey[700]!;
-    final Color dividerColor =
-        isDark ? Colors.white24 : const Color(0xFFE0E0E0);
+    final Color dividerColor = isDark
+        ? Colors.white24
+        : const Color(0xFFE0E0E0);
     final double cardWidth = MediaQuery.of(context).size.width * 0.7;
     return Align(
       alignment: Alignment.center,
@@ -645,11 +671,15 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final double wordSize =
-                        (constraints.biggest.shortestSide * 0.1)
-                            .clamp(16.0, 30.0);
+                        (constraints.biggest.shortestSide * 0.1).clamp(
+                          16.0,
+                          30.0,
+                        );
                     final double tabooSize =
-                        (constraints.biggest.shortestSide * 0.06)
-                            .clamp(11.0, 18.0);
+                        (constraints.biggest.shortestSide * 0.06).clamp(
+                          11.0,
+                          18.0,
+                        );
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -657,8 +687,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                           flex: 2,
                           child: Center(
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(

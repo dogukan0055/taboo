@@ -477,6 +477,7 @@ Future<bool> _confirmExitToMenu(
   if (shouldExit) {
     if (onConfirm != null) {
       await onConfirm();
+      if (!context.mounted) return false;
     }
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const MainMenuScreen()),
