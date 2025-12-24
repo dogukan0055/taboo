@@ -395,6 +395,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             label: "Kalan: ${game.remainingCards} Kart",
             isActive: false,
             onTap: () {},
+            enabled: false,
           ),
         ],
       ),
@@ -408,18 +409,21 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     required VoidCallback onTap,
     bool playClickOnTap = true,
     bool forceClick = false,
+    bool enabled = true,
   }) {
     return InkWell(
-      onTap: () async {
-        if (playClickOnTap) {
-          await Provider.of<GameProvider>(
-            context,
-            listen: false,
-          ).playClick(force: forceClick);
-          if (!context.mounted) return;
-        }
-        onTap();
-      },
+      onTap: enabled
+          ? () async {
+              if (playClickOnTap) {
+                await Provider.of<GameProvider>(
+                  context,
+                  listen: false,
+                ).playClick(force: forceClick);
+                if (!context.mounted) return;
+              }
+              onTap();
+            }
+          : null,
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
