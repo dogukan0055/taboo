@@ -40,37 +40,31 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Hızlı Başlangıç İpucu"),
+        title: Text(game.t("quick_tip_title")),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.timer),
-              title: Text("Süre"),
-              subtitle: Text(
-                "Her turda geri sayılan zaman dolunca tur otomatik biter.",
-              ),
+              title: Text(game.t("tip_time_title")),
+              subtitle: Text(game.t("tip_time_body")),
             ),
             ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.skip_next),
-              title: Text("Pas"),
-              subtitle: Text(
-                "En fazla 3 kez pas geçme hakkın var; her bastığında bir hak azalır.",
-              ),
+              title: Text(game.t("tip_pass_title")),
+              subtitle: Text(game.t("tip_pass_body")),
             ),
             ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.block),
-              title: Text("Tabu"),
-              subtitle: Text(
-                "Yasaklı kelimelerden birini söylersen puan kaybedersin, kart değişir.",
-              ),
+              title: Text(game.t("tip_taboo_title")),
+              subtitle: Text(game.t("tip_taboo_body")),
             ),
           ],
         ),
@@ -84,7 +78,7 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
               if (!mounted) return;
               Navigator.pop(context);
             },
-            child: const Text("Anladım"),
+            child: Text(game.t("got_it")),
           ),
         ],
       ),
@@ -93,11 +87,12 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
 
   @override
   Widget build(BuildContext context) {
+    final game = Provider.of<GameProvider>(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text("Nasıl Oynanır?"),
+        title: Text(game.t("how_to_play")),
         backgroundColor: Colors.transparent,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -130,9 +125,9 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Oyunun Özeti",
-                      style: TextStyle(
+                    Text(
+                      game.t("game_summary_title"),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -140,7 +135,7 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Takımlar, anlatıcının tabu kelimelerini kullanmadan karttaki ana kelimeyi anlattığı bir tahmin oyunu oynar.",
+                      game.t("game_summary_body"),
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.9),
                       ),
@@ -151,33 +146,28 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
               const SizedBox(height: 16),
               _TutorialTipCard(
                 icon: Icons.timer,
-                title: "Süre Yönetimi",
-                description:
-                    "Her tur 30 ila 90 (isteğe bağlı) saniye arasında sürer. Sayaç ekranın ortasındadır; 0 olunca tur biter ve puanlar görünür.",
+                title: game.t("tip_time_management_title"),
+                description: game.t("tip_time_management_body"),
               ),
               _TutorialTipCard(
                 icon: Icons.skip_next,
-                title: "Pas Hakkı",
-                description:
-                    "Tur başlangıcında 3 pas hakkın olur. 3 defa kart geçtiğinde, yani 'PAS' butonuna bastığında daha fazla kart geçemezsin.",
+                title: game.t("tip_pass_right_title"),
+                description: game.t("tip_pass_right_body"),
               ),
               _TutorialTipCard(
                 icon: Icons.block,
-                title: "Tabu Cezası",
-                description:
-                    "Tabu kelime söylendiğinde (yakalandığında) takım puanı bir azalır ve yeni karta geçilir.",
+                title: game.t("tip_taboo_penalty_title"),
+                description: game.t("tip_taboo_penalty_body"),
               ),
               _TutorialTipCard(
                 icon: Icons.record_voice_over,
-                title: "Anlatıcı Döngüsü",
-                description:
-                    "Takım sırası ekrandaki 'Anlatıcı' alanında görünür; her tur sonunda sıra bir sonraki oyuncuya geçer.",
+                title: game.t("tip_narrator_cycle_title"),
+                description: game.t("tip_narrator_cycle_body"),
               ),
               _TutorialTipCard(
                 icon: Icons.settings_voice,
-                title: "Geri Bildirim",
-                description:
-                    "Tabu/Doğru/Pas butonlarının üstündeki ses ve titreşim kısayolları ile anında dokunsal/işitsel geri bildirimi aç/kapa yapabilirsin.",
+                title: game.t("tip_feedback_title"),
+                description: game.t("tip_feedback_body"),
               ),
             ],
           ),

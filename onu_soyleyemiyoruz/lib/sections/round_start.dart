@@ -59,9 +59,9 @@ class RoundStartScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  "SIRADAKİ",
-                  style: TextStyle(
+                Text(
+                  game.t("next_label"),
+                  style: const TextStyle(
                     color: Colors.white,
                     letterSpacing: 2,
                     fontSize: 26,
@@ -74,7 +74,7 @@ class RoundStartScreen extends StatelessWidget {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      "TAKIM",
+                      game.t("team_label"),
                       style: const TextStyle(
                         fontSize: 22,
                         color: Colors.white,
@@ -108,7 +108,7 @@ class RoundStartScreen extends StatelessWidget {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      "ANLATICI",
+                      game.t("narrator_label"),
                       style: const TextStyle(
                         fontSize: 22,
                         color: Colors.white,
@@ -278,7 +278,10 @@ class RoundStartScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 _InfoChip(
                   icon: Icons.style,
-                  label: "${game.remainingCards} kalan kart",
+                  label: game.t(
+                    "remaining_cards_short",
+                    params: {"count": "${game.remainingCards}"},
+                  ),
                 ),
 
                 const SizedBox(height: 40),
@@ -306,9 +309,9 @@ class RoundStartScreen extends StatelessWidget {
                       vertical: 20,
                     ),
                   ),
-                  child: const Text(
-                    "BAŞLA",
-                    style: TextStyle(fontSize: 24, color: Colors.black),
+                  child: Text(
+                    game.t("start"),
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
                   ),
                 ),
               ],

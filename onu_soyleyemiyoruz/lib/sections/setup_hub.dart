@@ -34,7 +34,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text("Oyun Ayarları"),
+        title: Text(game.t("setup_title")),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -75,7 +75,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                     children: [
                       SizedBox(height: isCompactHeight ? 8 : 16),
                       _MenuButton(
-                        label: "TAKIM YÖNETİMİ",
+                        label: game.t("team_management"),
                         color: Colors.purple,
                         icon: Icons.groups,
                         trailingIcon: _teamsExpanded
@@ -124,7 +124,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                         ),
                       const SizedBox(height: 12),
                       _MenuButton(
-                        label: "KATEGORİLERİ YÖNET",
+                        label: game.t("manage_categories"),
                         color: Colors.orange,
                         icon: Icons.category,
                         onTap: () => Navigator.push(
@@ -145,7 +145,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                         child: Column(
                           children: [
                             _buildUniqueSelector(
-                              "⏱️ Süre (saniye)",
+                              game.t("round_time_label"),
                               [30, 45, 60, 75, 90],
                               game.roundTime,
                               (val) {
@@ -153,7 +153,10 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                                 game.updateSettings(time: val);
                                 _showSnack(
                                   messenger,
-                                  "⏱️ Tur süresi $val sn olarak değiştirildi.",
+                                  game.t(
+                                    "round_time_changed",
+                                    params: {"seconds": "$val"},
+                                  ),
                                 );
                               },
                               labelBuilder: (val) => "$val",
@@ -161,15 +164,18 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                             ),
                             const Divider(color: Colors.white24),
                             _buildUniqueSelector(
-                              "🏆 Hedef Puan",
+                              game.t("target_score_label"),
                               [20, 30, 50, 75, -1],
                               game.targetScore,
                               (val) {
                                 if (val == game.targetScore) return;
                                 game.updateSettings(score: val);
                                 final label = val == -1
-                                    ? "🏆 Oyun istenildiği zaman bitirebilir!"
-                                    : "🏆 $val puana ulaşan kazanır!";
+                                    ? game.t("target_score_unlimited")
+                                    : game.t(
+                                        "target_score_changed",
+                                        params: {"score": "$val"},
+                                      );
                                 _showSnack(messenger, label);
                               },
                               labelBuilder: (val) => val == -1 ? "∞" : "$val",
@@ -187,13 +193,19 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                         children: [
                           _InfoChip(
                             icon: Icons.timer,
-                            label: "Tur süresi: ${game.roundTime} saniye",
+                            label: game.t(
+                              "round_time_chip",
+                              params: {"seconds": "${game.roundTime}"},
+                            ),
                           ),
                           _InfoChip(
                             icon: Icons.flag,
                             label: game.targetScore == -1
-                                ? "Oyun istenildiği zaman bitirilebilir!"
-                                : "Oyunu kazanmak için hedef: ${game.targetScore} puan",
+                                ? game.t("target_score_unlimited")
+                                : game.t(
+                                    "target_score_chip",
+                                    params: {"score": "${game.targetScore}"},
+                                  ),
                           ),
                         ],
                       ),
@@ -213,11 +225,15 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                           if (game.teamA.length < 2 || game.teamB.length < 2) {
                             String msg = "";
                             if (game.teamA.length < 2) {
-                              msg =
-                                  "${game.teamAName} takımında eksik oyuncu var.";
+                              msg = game.t(
+                                "missing_players",
+                                params: {"team": game.teamAName},
+                              );
                             } else if (game.teamB.length < 2) {
-                              msg =
-                                  "${game.teamBName} takımında eksik oyuncu var.";
+                              msg = game.t(
+                                "missing_players",
+                                params: {"team": game.teamBName},
+                              );
                             }
                             _showSnack(messenger, msg, isError: true);
                             return;
@@ -225,7 +241,7 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                           if (game.teamA.length != game.teamB.length) {
                             _showSnack(
                               messenger,
-                              "Takımlardaki oyuncu sayıları eşit olmalı.",
+                              game.t("equal_players_required"),
                               isError: true,
                             );
                             return;
@@ -237,9 +253,9 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                             builder: (_) => const DiceRollDialog(),
                           );
                         },
-                        child: const Text(
-                          "ZAR AT & OYNA",
-                          style: TextStyle(
+                        child: Text(
+                          game.t("roll_and_play"),
+                          style: const TextStyle(
                             color: Colors.deepPurple,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -363,13 +379,18 @@ Future<String> _applySuggestionEffectSetupHub({
   required void Function(String) applyValue,
   required ScaffoldMessengerState messenger,
 }) async {
+  final game = Provider.of<GameProvider>(messenger.context, listen: false);
   String suggestion = nextValue();
   for (int i = 0; i < 6; i++) {
     suggestion = nextValue();
     applyValue(suggestion);
     await Future.delayed(const Duration(milliseconds: 40));
   }
-  _showSnack(messenger, "✨ $suggestion önerildi", isSuccess: true);
+  _showSnack(
+    messenger,
+    game.t("suggested_name", params: {"name": suggestion}),
+    isSuccess: true,
+  );
   return suggestion;
 }
 
@@ -408,9 +429,9 @@ class TeamManagerPanel extends StatelessWidget {
                   backgroundColor: Colors.amber,
                   padding: const EdgeInsets.all(14),
                 ),
-                child: const Text(
-                  "KAYDET VE DÖN",
-                  style: TextStyle(
+                child: Text(
+                  game.t("save_and_back"),
+                  style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
@@ -499,11 +520,11 @@ class TeamManagerPanel extends StatelessWidget {
             ],
           ),
           if (isTeamA ? game.teamA.isEmpty : game.teamB.isEmpty)
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                "Oyuncu yok",
-                style: TextStyle(color: Colors.white38, fontSize: 12),
+                game.t("no_players"),
+                style: const TextStyle(color: Colors.white38, fontSize: 12),
               ),
             ),
           Padding(
@@ -534,7 +555,13 @@ class TeamManagerPanel extends StatelessWidget {
                       final upperName = _turkishUpper(p);
                       _showSnack(
                         messenger,
-                        "$upperName adlı oyuncu ${isTeamA ? game.teamAName : game.teamBName} takımından çıkarıldı",
+                        game.t(
+                          "player_removed",
+                          params: {
+                            "player": upperName,
+                            "team": isTeamA ? game.teamAName : game.teamBName,
+                          },
+                        ),
                         isSuccess: true,
                       );
                     },
@@ -561,14 +588,14 @@ class TeamManagerPanel extends StatelessWidget {
               if (!context.mounted) return;
               _showAddPlayer(context, game, isTeamA);
             },
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.add_circle, color: Colors.greenAccent, size: 24),
                 SizedBox(width: 8),
                 Text(
-                  "Oyuncu Ekle",
-                  style: TextStyle(color: Colors.greenAccent),
+                  game.t("add_player"),
+                  style: const TextStyle(color: Colors.greenAccent),
                 ),
               ],
             ),
@@ -590,7 +617,7 @@ class TeamManagerPanel extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text("Takım İsmi"),
+        title: Text(game.t("team_name_title")),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -621,7 +648,7 @@ class TeamManagerPanel extends StatelessWidget {
                   );
                 },
                 icon: const Icon(Icons.casino, size: 22),
-                label: const Text("Öner"),
+                label: Text(game.t("suggest")),
               ),
             ),
           ],
@@ -632,7 +659,7 @@ class TeamManagerPanel extends StatelessWidget {
               game.playClick();
               Navigator.pop(dialogContext);
             },
-            child: const Text("İptal"),
+            child: Text(game.t("cancel")),
           ),
           ElevatedButton(
             onPressed: () {
@@ -646,11 +673,11 @@ class TeamManagerPanel extends StatelessWidget {
               Navigator.pop(dialogContext);
               _showSnack(
                 messenger,
-                "Takım adı $newName olarak kaydedildi",
+                game.t("team_name_saved", params: {"name": newName}),
                 isSuccess: true,
               );
             },
-            child: const Text("Kaydet"),
+            child: Text(game.t("save")),
           ),
         ],
       ),
@@ -662,7 +689,7 @@ class TeamManagerPanel extends StatelessWidget {
     if ((isTeamA ? game.teamA.length : game.teamB.length) >= 6) {
       _showSnack(
         messenger,
-        "Bir takımda en fazla 6 oyuncu olabilir",
+        game.t("error_team_max_players"),
         isError: true,
       );
       return;
@@ -672,7 +699,10 @@ class TeamManagerPanel extends StatelessWidget {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(
-          "${isTeamA ? game.teamAName : game.teamBName} takımına oyuncu ekle",
+          game.t(
+            "add_player_to_team",
+            params: {"team": isTeamA ? game.teamAName : game.teamBName},
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -704,7 +734,7 @@ class TeamManagerPanel extends StatelessWidget {
                   );
                 },
                 icon: const Icon(Icons.casino, size: 22),
-                label: const Text("Öner"),
+                label: Text(game.t("suggest")),
               ),
             ),
           ],
@@ -715,7 +745,7 @@ class TeamManagerPanel extends StatelessWidget {
               game.playClick();
               Navigator.pop(dialogContext);
             },
-            child: const Text("İptal"),
+            child: Text(game.t("cancel")),
           ),
           ElevatedButton(
             onPressed: () {
@@ -729,11 +759,17 @@ class TeamManagerPanel extends StatelessWidget {
               final upperName = _turkishUpper(c.text);
               _showSnack(
                 messenger,
-                "$upperName adlı oyuncu ${isTeamA ? game.teamAName : game.teamBName} takımına eklendi",
+                game.t(
+                  "player_added",
+                  params: {
+                    "player": upperName,
+                    "team": isTeamA ? game.teamAName : game.teamBName,
+                  },
+                ),
                 isSuccess: true,
               );
             },
-            child: const Text("Ekle"),
+            child: Text(game.t("add")),
           ),
         ],
       ),

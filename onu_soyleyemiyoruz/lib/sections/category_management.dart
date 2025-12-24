@@ -52,7 +52,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text("Kategorileri Yönet"),
+        title: Text(game.t("manage_categories_title")),
         backgroundColor: Colors.transparent,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -101,10 +101,16 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                         : Colors.white;
 
                     return _CategoryCard(
-                      title: cat,
+                      title: game.categoryLabel(cat),
                       icon: _categoryIcons[cat] ?? Icons.category,
                       titleColor: titleColor,
-                      countLabel: "$activeCount / ${words.length} Kelime",
+                      countLabel: game.t(
+                        "category_word_count",
+                        params: {
+                          "active": "$activeCount",
+                          "total": "${words.length}",
+                        },
+                      ),
                       isSelected: isCatSelected,
                       isPartial: isPartial,
                       reduceMotion: reduceMotion,
@@ -113,7 +119,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                         if (val && cat == "Özel" && words.isEmpty) {
                           _showSnack(
                             messenger,
-                            "Özel kategorisi boş. Önce kelime ekleyin.",
+                            game.t("custom_empty_warning"),
                             isError: true,
                           );
                           return;
@@ -170,7 +176,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                     );
                     _showSnack(
                       messenger,
-                      "Kategoriler güncellendi",
+                      game.t("categories_updated"),
                       isSuccess: true,
                     );
                     Navigator.pop(context);
@@ -179,9 +185,9 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                     backgroundColor: Colors.amber,
                     padding: const EdgeInsets.all(16),
                   ),
-                  child: const Text(
-                    "KAYDET VE DÖN",
-                    style: TextStyle(
+                  child: Text(
+                    game.t("save_and_back"),
+                    style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
@@ -221,6 +227,7 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final game = Provider.of<GameProvider>(context, listen: false);
     final Color accent = isSelected
         ? Colors.amber
         : isPartial
@@ -245,10 +252,10 @@ class _CategoryCard extends StatelessWidget {
     final Duration animDuration =
         reduceMotion ? Duration.zero : const Duration(milliseconds: 220);
     final String statusLabel = isSelected
-        ? "AÇIK"
+        ? game.t("status_on")
         : isPartial
-        ? "KISMİ"
-        : "KAPALI";
+        ? game.t("status_partial")
+        : game.t("status_off");
     return AnimatedContainer(
       duration: animDuration,
       decoration: BoxDecoration(
@@ -415,7 +422,7 @@ class _CategoryCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                "KELİMELER",
+                                game.t("words_button"),
                                 style: TextStyle(
                                   color: Colors.white70,
                                   fontWeight: FontWeight.bold,
@@ -550,6 +557,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
   }
 
   Widget _buildEmptyCustomState(BuildContext context) {
+    final game = Provider.of<GameProvider>(context, listen: false);
     return SafeArea(
       child: Center(
         child: Padding(
@@ -557,10 +565,10 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                "Kart Yok",
+              Text(
+                game.t("no_cards"),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -568,7 +576,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
               ),
               const SizedBox(height: 10),
               Text(
-                "Özel kart eklemek için sağ üstteki + ikonuna basınız",
+                game.t("custom_add_hint"),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.8),
@@ -594,7 +602,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(widget.category),
+        title: Text(game.categoryLabel(widget.category)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -623,7 +631,13 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                 if (added != null) {
                   _showSnack(
                     messenger,
-                    "$added ÖZEL kategorisine eklendi",
+                    game.t(
+                      "custom_added",
+                      params: {
+                        "word": added,
+                        "category": game.categoryLabel("Özel").toUpperCase(),
+                      },
+                    ),
                     isSuccess: true,
                   );
                   setState(() {});
@@ -724,14 +738,14 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                                           children: [
                                             _buildWordChip(
                                               label: isEnabled
-                                                  ? "AÇIK"
-                                                  : "KAPALI",
+                                                  ? game.t("status_on")
+                                                  : game.t("status_off"),
                                               color: accent,
                                               compact: compact,
                                             ),
                                             if (isCustom && !compact)
                                               _buildWordChip(
-                                                label: "ÖZEL",
+                                                label: game.t("custom_label"),
                                                 color:
                                                     Colors.deepPurpleAccent,
                                                 compact: compact,
@@ -791,16 +805,21 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                                                     ),
                                                   );
                                                   if (!context.mounted) return;
-                                                  if (updated != null) {
-                                                    setState(() {});
-                                                    widget.onChanged();
-                                                    _showSnack(
-                                                      messenger,
-                                                      "$updated güncellendi",
-                                                      isSuccess: true,
-                                                    );
-                                                  }
-                                                },
+                                                    if (updated != null) {
+                                                      setState(() {});
+                                                      widget.onChanged();
+                                                      _showSnack(
+                                                        messenger,
+                                                        game.t(
+                                                          "custom_updated",
+                                                          params: {
+                                                            "word": updated,
+                                                          },
+                                                        ),
+                                                        isSuccess: true,
+                                                      );
+                                                    }
+                                                  },
                                               ),
                                               const SizedBox(width: 8),
                                               _buildActionButton(
@@ -836,9 +855,14 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                                                   widget.onChanged();
                                                   _showSnack(
                                                     messenger,
-                                                    "${word.word} silindi",
+                                                    game.t(
+                                                      "custom_deleted",
+                                                      params: {
+                                                        "word": word.word,
+                                                      },
+                                                    ),
                                                     isSuccess: true,
-                                                    actionLabel: "GERİ AL",
+                                                    actionLabel: game.t("undo"),
                                                     actionIcon: Icons.undo,
                                                     onAction: () {
                                                       game.restoreCustomCard(

@@ -43,7 +43,7 @@ class RoundReportScreen extends StatelessWidget {
           backgroundColor: scaffoldColor,
           appBar: AppBar(
             title: Text(
-              "TUR SONUCU",
+              game.t("round_result_title"),
               style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
             ),
             backgroundColor: surfaceColor,
@@ -71,10 +71,10 @@ class RoundReportScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
               unselectedLabelStyle: const TextStyle(fontSize: 12),
-              tabs: const [
-                Tab(text: "BİLİNENLER"),
-                Tab(text: "TABU OLANLAR"),
-                Tab(text: "PAS GEÇİLENLER"),
+              tabs: [
+                Tab(text: game.t("tab_correct")),
+                Tab(text: game.t("tab_taboo")),
+                Tab(text: game.t("tab_pass")),
               ],
             ),
           ),
@@ -92,14 +92,19 @@ class RoundReportScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _statCol(
-                        "DOĞRU",
+                        game.t("stat_correct"),
                         correctList.length,
                         Colors.green,
                         textColor,
                       ),
-                      _statCol("TABU", tabooList.length, Colors.red, textColor),
                       _statCol(
-                        "PUAN",
+                        game.t("stat_taboo"),
+                        tabooList.length,
+                        Colors.red,
+                        textColor,
+                      ),
+                      _statCol(
+                        game.t("stat_score"),
                         correctList.length - tabooList.length,
                         Colors.deepPurple,
                         textColor,
@@ -118,8 +123,11 @@ class RoundReportScreen extends StatelessWidget {
                       _InfoChip(
                         icon: Icons.style,
                         label: game.allCardsUsed
-                            ? "Kartlar bitti"
-                            : "Kalan kart: ${game.remainingCards}",
+                            ? game.t("cards_finished")
+                            : game.t(
+                                "remaining_cards",
+                                params: {"count": "${game.remainingCards}"},
+                              ),
                         textColor: textColor,
                         fillColor: chipFillColor,
                       ),
@@ -130,18 +138,21 @@ class RoundReportScreen extends StatelessWidget {
                   child: TabBarView(
                     children: [
                       _buildSimpleCardList(
+                        game,
                         correctList,
                         Colors.green,
                         reduceMotion,
                         isDark,
                       ),
                       _buildSimpleCardList(
+                        game,
                         tabooList,
                         Colors.red,
                         reduceMotion,
                         isDark,
                       ),
                       _buildSimpleCardList(
+                        game,
                         passList,
                         Colors.blue,
                         reduceMotion,
@@ -191,9 +202,9 @@ class RoundReportScreen extends StatelessWidget {
                                 );
                               }
                             },
-                            child: const Text(
-                              "DEVAM ET",
-                              style: TextStyle(
+                            child: Text(
+                              game.t("continue"),
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -234,9 +245,9 @@ class RoundReportScreen extends StatelessWidget {
                                   ),
                                 );
                               },
-                              child: const Text(
-                                "OYUNU BİTİR",
-                                style: TextStyle(
+                              child: Text(
+                                game.t("end_game"),
+                                style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -275,6 +286,7 @@ class RoundReportScreen extends StatelessWidget {
 
   // SIMPLE RECTANGLE CARD
   Widget _buildSimpleCardList(
+    GameProvider game,
     List<RoundEvent> events,
     Color color,
     bool reduceMotion,
@@ -282,7 +294,10 @@ class RoundReportScreen extends StatelessWidget {
   ) {
     if (events.isEmpty) {
       return Center(
-        child: Text("Kart yok", style: TextStyle(color: Colors.grey[500])),
+        child: Text(
+          game.t("no_cards_lower"),
+          style: TextStyle(color: Colors.grey[500]),
+        ),
       );
     }
     return GridView.builder(
@@ -358,7 +373,7 @@ class RoundReportScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        card.category.toUpperCase(),
+                        game.categoryLabel(card.category).toUpperCase(),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: categoryFont,
@@ -464,8 +479,8 @@ class RoundReportScreen extends StatelessWidget {
                                   height: footerHeight,
                                   child: FittedBox(
                                     fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      "Süre bitti",
+                                      child: Text(
+                                      game.t("time_up"),
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Colors.amber[200],

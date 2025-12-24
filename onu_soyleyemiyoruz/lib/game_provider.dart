@@ -11,6 +11,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'models.dart';
 
 class GameProvider extends ChangeNotifier {
+  static const String _teamADefaultTr = "TAKIM A";
+  static const String _teamBDefaultTr = "TAKIM B";
+  static const String _teamADefaultEn = "TEAM A";
+  static const String _teamBDefaultEn = "TEAM B";
   // --- Global Settings ---
   bool soundEnabled = true;
   bool musicEnabled = true;
@@ -19,6 +23,7 @@ class GameProvider extends ChangeNotifier {
   bool reducedMotion = false;
   bool onboardingSeen = false;
   ThemeMode themeMode = ThemeMode.light;
+  String languageCode = "tr";
   bool hydrated = false;
   SharedPreferences? _prefs;
   bool _audioFailed = false;
@@ -83,8 +88,8 @@ class GameProvider extends ChangeNotifier {
   bool _allowRepeats = false;
 
   // --- Teams & Players ---
-  String teamAName = "TAKIM A";
-  String teamBName = "TAKIM B";
+  String teamAName = _teamADefaultTr;
+  String teamBName = _teamBDefaultTr;
   List<String> teamA = [];
   List<String> teamB = [];
 
@@ -129,6 +134,7 @@ class GameProvider extends ChangeNotifier {
     reducedMotion = _prefs?.getBool("reducedMotion") ?? reducedMotion;
     onboardingSeen = _prefs?.getBool("onboardingSeen") ?? onboardingSeen;
     themeMode = _themeModeFromString(_prefs?.getString("themeMode"));
+    languageCode = _prefs?.getString("languageCode") ?? languageCode;
     tutorialTipShown = _prefs?.getBool("tutorialTipShown") ?? tutorialTipShown;
     teamAName = _prefs?.getString("teamAName") ?? teamAName;
     teamBName = _prefs?.getString("teamBName") ?? teamBName;
@@ -162,6 +168,21 @@ class GameProvider extends ChangeNotifier {
       customCards = [];
     }
     _syncDisabledWithCategories();
+    final bool isEnglishNow = languageCode == "en";
+    final String expectedTeamA = isEnglishNow
+        ? _teamADefaultEn
+        : _teamADefaultTr;
+    final String expectedTeamB = isEnglishNow
+        ? _teamBDefaultEn
+        : _teamBDefaultTr;
+    final String otherLangTeamA = isEnglishNow
+        ? _teamADefaultTr
+        : _teamADefaultEn;
+    final String otherLangTeamB = isEnglishNow
+        ? _teamBDefaultTr
+        : _teamBDefaultEn;
+    if (teamAName == otherLangTeamA) teamAName = expectedTeamA;
+    if (teamBName == otherLangTeamB) teamBName = expectedTeamB;
     hydrated = true;
     notifyListeners();
     if (musicEnabled) {
@@ -176,6 +197,7 @@ class GameProvider extends ChangeNotifier {
     _prefs!.setBool("vibrationEnabled", vibrationEnabled);
     _prefs!.setBool("reducedMotion", reducedMotion);
     _prefs!.setString("themeMode", _themeModeToString(themeMode));
+    _prefs!.setString("languageCode", languageCode);
     _prefs!.setBool("tutorialTipShown", tutorialTipShown);
     _prefs!.setBool("onboardingSeen", onboardingSeen);
     _prefs!.setString("teamAName", teamAName);
@@ -221,10 +243,10 @@ class GameProvider extends ChangeNotifier {
 
   String get currentNarrator {
     if (isTeamATurn) {
-      if (teamA.isEmpty) return "Oyuncu Yok";
+      if (teamA.isEmpty) return t("no_player");
       return teamA[_teamAPlayerIndex % teamA.length];
     } else {
-      if (teamB.isEmpty) return "Oyuncu Yok";
+      if (teamB.isEmpty) return t("no_player");
       return teamB[_teamBPlayerIndex % teamB.length];
     }
   }
@@ -293,9 +315,7 @@ class GameProvider extends ChangeNotifier {
   }
 
   void cycleThemeMode() {
-    themeMode = themeMode == ThemeMode.dark
-        ? ThemeMode.light
-        : ThemeMode.dark;
+    themeMode = themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
     _persist();
     notifyListeners();
   }
@@ -318,6 +338,441 @@ class GameProvider extends ChangeNotifier {
       default:
         return "light";
     }
+  }
+
+  bool get isEnglish => languageCode == "en";
+
+  void toggleLanguage() {
+    final bool wasEnglish = isEnglish;
+    final String previousTeamA = wasEnglish ? _teamADefaultEn : _teamADefaultTr;
+    final String previousTeamB = wasEnglish ? _teamBDefaultEn : _teamBDefaultTr;
+    languageCode = wasEnglish ? "tr" : "en";
+    final String nextTeamA = isEnglish ? _teamADefaultEn : _teamADefaultTr;
+    final String nextTeamB = isEnglish ? _teamBDefaultEn : _teamBDefaultTr;
+    if (teamAName == previousTeamA) {
+      teamAName = nextTeamA;
+    }
+    if (teamBName == previousTeamB) {
+      teamBName = nextTeamB;
+    }
+    _persist();
+    notifyListeners();
+  }
+
+  String t(String key, {Map<String, String> params = const {}}) {
+    const Map<String, Map<String, String>> strings = {
+      "tr": {
+        "app_title": "Onu Söyleyemiyoruz",
+        "menu_title": "ONU\nSÖYLEYEMİYORUZ",
+        "menu_play": "OYNA",
+        "menu_settings": "AYARLAR",
+        "menu_how_to_play": "NASIL OYNANIR?",
+        "menu_exit": "ÇIKIŞ",
+        "theme_dark": "Tema: Koyu",
+        "theme_light": "Tema: Açık",
+        "lang_tr": "TR",
+        "lang_en": "EN",
+        "lang_tooltip": "Dil değiştir",
+        "yes": "EVET",
+        "no": "HAYIR",
+        "cancel": "İptal",
+        "save": "Kaydet",
+        "close": "Kapat",
+        "undo": "GERİ AL",
+        "seconds_short": "sn",
+        "team_a": _teamADefaultTr,
+        "team_b": _teamBDefaultTr,
+        "settings_title": "AYARLAR",
+        "settings_music": "Müzik",
+        "settings_sfx": "Ses Efektleri",
+        "settings_vibration": "Titreşim",
+        "settings_performance": "Performans Modu",
+        "setup_title": "Oyun Ayarları",
+        "team_management": "TAKIM YÖNETİMİ",
+        "manage_categories": "KATEGORİLERİ YÖNET",
+        "manage_categories_title": "Kategorileri Yönet",
+        "round_time_label": "⏱️ Süre (saniye)",
+        "target_score_label": "🏆 Hedef Puan",
+        "round_time_changed": "⏱️ Tur süresi {seconds} sn olarak değiştirildi.",
+        "target_score_changed": "🏆 {score} puana ulaşan kazanır!",
+        "target_score_unlimited": "🏆 Oyun istenildiği zaman bitirebilir!",
+        "round_time_chip": "Tur süresi: {seconds} saniye",
+        "target_score_chip": "Oyunu kazanmak için hedef: {score} puan",
+        "roll_and_play": "ZAR AT & OYNA",
+        "missing_players": "{team} takımında eksik oyuncu var.",
+        "equal_players_required": "Takımlardaki oyuncu sayıları eşit olmalı.",
+        "suggested_name": "✨ {name} önerildi",
+        "save_and_back": "KAYDET VE DÖN",
+        "no_players": "Oyuncu yok",
+        "add_player": "Oyuncu Ekle",
+        "team_name_title": "Takım İsmi",
+        "suggest": "Öner",
+        "team_name_saved": "Takım adı {name} olarak kaydedildi",
+        "add_player_to_team": "{team} takımına oyuncu ekle",
+        "add": "Ekle",
+        "player_added": "{player} adlı oyuncu {team} takımına eklendi",
+        "player_removed": "{player} adlı oyuncu {team} takımından çıkarıldı",
+        "category_word_count": "{active} / {total} Kelime",
+        "custom_empty_warning": "Özel kategorisi boş. Önce kelime ekleyin.",
+        "categories_updated": "Kategoriler güncellendi",
+        "status_on": "AÇIK",
+        "status_partial": "KISMİ",
+        "status_off": "KAPALI",
+        "words_button": "KELİMELER",
+        "no_cards": "Kart Yok",
+        "custom_add_hint":
+            "Özel kart eklemek için sağ üstteki + ikonuna basınız",
+        "custom_label": "ÖZEL",
+        "custom_added": "{word} {category} kategorisine eklendi",
+        "custom_updated": "{word} güncellendi",
+        "custom_deleted": "{word} silindi",
+        "add_custom_card": "Özel Kart Ekle",
+        "edit_custom_card": "Özel Kartı Düzenle",
+        "word_hint": "KELİME",
+        "taboo_hint": "Tabu {index}",
+        "save_and_exit": "Kaydet ve Çık",
+        "save_and_continue": "Kaydet ve Devam Et",
+        "exit": "Çık",
+        "exit_without_save": "Kaydetmeden Çık",
+        "exit_game_title": "Oyundan çıkılsın mı?",
+        "exit_game_body": "Oyunu bırakmak üzeresiniz. Emin misiniz?",
+        "exit_game_action": "Oyundan Çık",
+        "label_taboo": "TABU",
+        "label_pass": "PAS",
+        "label_correct": "DOĞRU",
+        "floating_taboo": "TABU!",
+        "floating_pass": "PAS",
+        "floating_correct": "DOĞRU!",
+        "paused_title": "DURDURULDU",
+        "paused_body":
+            "Oyun durduruldu. Devam edebilir veya ana menüye dönebilirsin.",
+        "paused_background":
+            "Uygulama arka plana alındığı için oyun otomatik durduruldu.",
+        "resume": "DEVAM ET",
+        "return_menu": "ANA MENÜYE DÖN",
+        "sound_on": "Ses Açık",
+        "sound_off": "Ses Kapalı",
+        "vibration_on": "Titreşim Açık",
+        "vibration_off": "Titreşim Kapalı",
+        "remaining_cards_label": "Kalan: {count} Kart",
+        "next_label": "SIRADAKİ",
+        "team_label": "TAKIM",
+        "narrator_label": "ANLATICI",
+        "remaining_cards_short": "{count} kalan kart",
+        "start": "BAŞLA",
+        "round_result_title": "TUR SONUCU",
+        "tab_correct": "BİLİNENLER",
+        "tab_taboo": "TABU OLANLAR",
+        "tab_pass": "PAS GEÇİLENLER",
+        "stat_correct": "DOĞRU",
+        "stat_taboo": "TABU",
+        "stat_score": "PUAN",
+        "cards_finished": "Kartlar bitti",
+        "remaining_cards": "Kalan kart: {count}",
+        "continue": "DEVAM ET",
+        "end_game": "OYUNU BİTİR",
+        "no_cards_lower": "Kart yok",
+        "time_up": "Süre bitti",
+        "rolling_dice": "ZARLAR ATILIYOR!",
+        "game_starts_with_team": "Oyuna {team} TAKIMI BAŞLIYOR!",
+        "game_over_title": "OYUN BİTTİ",
+        "winner_label": "KAZANAN",
+        "tie_label": "BERABERE",
+        "share": "Paylaş",
+        "rematch": "RÖVANŞ?",
+        "score_summary": "Skor özeti",
+        "share_winner": "Kazanan: {winner}",
+        "share_tie": "Berabere",
+        "return_menu_button": "ANA MENÜYE DÖN",
+        "quick_tip_title": "Hızlı Başlangıç İpucu",
+        "tip_time_title": "Süre",
+        "tip_time_body":
+            "Her turda geri sayılan zaman dolunca tur otomatik biter.",
+        "tip_pass_title": "Pas",
+        "tip_pass_body":
+            "En fazla 3 kez pas geçme hakkın var; her bastığında bir hak azalır.",
+        "tip_taboo_title": "Tabu",
+        "tip_taboo_body":
+            "Yasaklı kelimelerden birini söylersen puan kaybedersin, kart değişir.",
+        "got_it": "Anladım",
+        "how_to_play": "Nasıl Oynanır?",
+        "game_summary_title": "Oyunun Özeti",
+        "game_summary_body":
+            "Takımlar, anlatıcının tabu kelimelerini kullanmadan karttaki ana kelimeyi anlattığı bir tahmin oyunu oynar.",
+        "tip_time_management_title": "Süre Yönetimi",
+        "tip_time_management_body":
+            "Her tur 30 ila 90 (isteğe bağlı) saniye arasında sürer. Sayaç ekranın ortasındadır; 0 olunca tur biter ve puanlar görünür.",
+        "tip_pass_right_title": "Pas Hakkı",
+        "tip_pass_right_body":
+            "Tur başlangıcında 3 pas hakkın olur. 3 defa kart geçtiğinde, yani 'PAS' butonuna bastığında daha fazla kart geçemezsin.",
+        "tip_taboo_penalty_title": "Tabu Cezası",
+        "tip_taboo_penalty_body":
+            "Tabu kelime söylendiğinde (yakalandığında) takım puanı bir azalır ve yeni karta geçilir.",
+        "tip_narrator_cycle_title": "Anlatıcı Döngüsü",
+        "tip_narrator_cycle_body":
+            "Takım sırası ekrandaki 'Anlatıcı' alanında görünür; her tur sonunda sıra bir sonraki oyuncuya geçer.",
+        "tip_feedback_title": "Geri Bildirim",
+        "tip_feedback_body":
+            "Tabu/Doğru/Pas butonlarının üstündeki ses ve titreşim kısayolları ile anında dokunsal/işitsel geri bildirimi aç/kapa yapabilirsin.",
+        "onboard_title_1": "Takımını Kur",
+        "onboard_subtitle_1":
+            "Arkadaşlarını ekle, kategorini seç.\nOyun başlarken her şey hazır olsun.",
+        "onboard_title_2": "Anlat ama Dikkat!",
+        "onboard_subtitle_2":
+            "Yasaklı kelimeyi söylersen buzzer çalar 😈\nHızlı anlat, puanı kap!",
+        "onboard_title_3": "Eğlen & Kazan",
+        "onboard_subtitle_3":
+            "Tur sonunda skorları paylaş.\nRövanş için tek dokunuş yeter!",
+        "onboard_back": "Geri",
+        "onboard_next": "İleri",
+        "onboard_start": "Oyuna Başla 🚀",
+        "onboard_skip": "Geç",
+        "confirm_exit_title": "Ana menüye dönülsün mü?",
+        "confirm_exit_body": "Oyundan çıkmak istediğine emin misin?",
+        "end_all_cards": "Tüm kartlar kullanıldı",
+        "no_player": "Oyuncu Yok",
+        "error_word_empty": "Kelime boş olamaz",
+        "error_word_profanity": "Uygunsuz kelime tespit edildi",
+        "error_word_max": "Kelime en fazla {max} karakter olabilir",
+        "error_word_invalid": "Kelime geçersiz",
+        "error_taboo_profanity": "Uygunsuz tabu kelimesi tespit edildi",
+        "error_taboo_count": "5 tabu kelime girmelisin",
+        "error_taboo_unique": "Tabu kelimeleri benzersiz olmalı",
+        "error_word_exists": "Bu kelime zaten var",
+        "error_name_empty": "İsim boş olamaz",
+        "error_name_profanity": "Uygunsuz isim tespit edildi",
+        "error_team_name_max": "İsim en fazla 20 karakter olabilir",
+        "error_player_name_max": "İsim en fazla 16 karakter olabilir",
+        "error_name_invalid": "İsim geçersiz",
+        "error_team_name_same": "Diğer takımla aynı isim olamaz",
+        "error_player_exists": "Bu oyuncu zaten ekli",
+        "error_team_max_players": "Bir takımda en fazla 6 oyuncu olabilir",
+        "category_genel": "Genel",
+        "category_spor": "Spor",
+        "category_bilim": "Bilim",
+        "category_yemek": "Yemek",
+        "category_sanat": "Sanat",
+        "category_teknoloji": "Teknoloji",
+        "category_doga": "Doğa",
+        "category_tarih": "Tarih",
+        "category_ozel": "Özel",
+      },
+      "en": {
+        "app_title": "Don't Say It",
+        "menu_title": "DON'T\nSAY IT",
+        "menu_play": "PLAY",
+        "menu_settings": "SETTINGS",
+        "menu_how_to_play": "HOW TO PLAY",
+        "menu_exit": "EXIT",
+        "theme_dark": "Theme: Dark",
+        "theme_light": "Theme: Light",
+        "lang_tr": "TR",
+        "lang_en": "EN",
+        "lang_tooltip": "Switch language",
+        "yes": "YES",
+        "no": "NO",
+        "cancel": "Cancel",
+        "save": "Save",
+        "close": "Close",
+        "undo": "UNDO",
+        "seconds_short": "s",
+        "team_a": _teamADefaultEn,
+        "team_b": _teamBDefaultEn,
+        "settings_title": "SETTINGS",
+        "settings_music": "Music",
+        "settings_sfx": "Sound Effects",
+        "settings_vibration": "Vibration",
+        "settings_performance": "Performance Mode",
+        "setup_title": "Game Settings",
+        "team_management": "TEAM MANAGEMENT",
+        "manage_categories": "MANAGE CATEGORIES",
+        "manage_categories_title": "Manage Categories",
+        "round_time_label": "⏱️ Time (seconds)",
+        "target_score_label": "🏆 Target Score",
+        "round_time_changed": "⏱️ Round time set to {seconds} s.",
+        "target_score_changed": "🏆 First to {score} points wins!",
+        "target_score_unlimited": "End the game anytime!",
+        "round_time_chip": "Round time: {seconds} seconds",
+        "target_score_chip": "Target to win: {score} points",
+        "roll_and_play": "ROLL & PLAY",
+        "missing_players": "{team} team is missing players.",
+        "equal_players_required": "Teams must have the same number of players.",
+        "suggested_name": "✨ Suggested: {name}",
+        "save_and_back": "SAVE & BACK",
+        "no_players": "No players",
+        "add_player": "Add Player",
+        "team_name_title": "Team Name",
+        "suggest": "Suggest",
+        "team_name_saved": "Team name saved as {name}",
+        "add_player_to_team": "Add player to {team}",
+        "add": "Add",
+        "player_added": "{player} added to {team}",
+        "player_removed": "{player} removed from {team}",
+        "category_word_count": "{active} / {total} Words",
+        "custom_empty_warning": "Custom category is empty. Add words first.",
+        "categories_updated": "Categories updated",
+        "status_on": "ON",
+        "status_partial": "PARTIAL",
+        "status_off": "OFF",
+        "words_button": "WORDS",
+        "no_cards": "No Cards",
+        "custom_add_hint": "Tap the + icon at top right to add a custom card",
+        "custom_label": "CUSTOM",
+        "custom_added": "{word} added to {category}",
+        "custom_updated": "{word} updated",
+        "custom_deleted": "{word} deleted",
+        "add_custom_card": "Add Custom Card",
+        "edit_custom_card": "Edit Custom Card",
+        "word_hint": "WORD",
+        "taboo_hint": "Taboo {index}",
+        "save_and_exit": "Save & Exit",
+        "save_and_continue": "Save & Continue",
+        "exit": "Exit",
+        "exit_without_save": "Exit Without Saving",
+        "exit_game_title": "Exit the game?",
+        "exit_game_body": "You're about to leave the game. Are you sure?",
+        "exit_game_action": "Exit Game",
+        "label_taboo": "TABOO",
+        "label_pass": "PASS",
+        "label_correct": "CORRECT",
+        "floating_taboo": "TABOO!",
+        "floating_pass": "PASS",
+        "floating_correct": "CORRECT!",
+        "paused_title": "PAUSED",
+        "paused_body": "Game paused. You can resume or return to main menu.",
+        "paused_background":
+            "Game paused automatically when the app was sent to background.",
+        "resume": "RESUME",
+        "return_menu": "MAIN MENU",
+        "sound_on": "Sound On",
+        "sound_off": "Sound Off",
+        "vibration_on": "Vibration On",
+        "vibration_off": "Vibration Off",
+        "remaining_cards_label": "Remaining: {count} Cards",
+        "next_label": "NEXT",
+        "team_label": "TEAM",
+        "narrator_label": "NARRATOR",
+        "remaining_cards_short": "{count} cards left",
+        "start": "START",
+        "round_result_title": "ROUND RESULT",
+        "tab_correct": "CORRECT",
+        "tab_taboo": "TABOO",
+        "tab_pass": "PASSED",
+        "stat_correct": "CORRECT",
+        "stat_taboo": "TABOO",
+        "stat_score": "SCORE",
+        "cards_finished": "Cards finished",
+        "remaining_cards": "Remaining cards: {count}",
+        "continue": "CONTINUE",
+        "end_game": "END GAME",
+        "no_cards_lower": "No cards",
+        "time_up": "Time's up",
+        "rolling_dice": "ROLLING DICE!",
+        "game_starts_with_team": "TEAM {team} starts the game!",
+        "game_over_title": "GAME OVER",
+        "winner_label": "WINNER",
+        "tie_label": "TIE",
+        "share": "Share",
+        "rematch": "REMATCH?",
+        "score_summary": "Score summary",
+        "share_winner": "Winner: {winner}",
+        "share_tie": "Tie",
+        "return_menu_button": "RETURN TO MENU",
+        "quick_tip_title": "Quick Start Tip",
+        "tip_time_title": "Timer",
+        "tip_time_body": "When time runs out, the round ends automatically.",
+        "tip_pass_title": "Pass",
+        "tip_pass_body": "You have up to 3 passes; each tap uses one.",
+        "tip_taboo_title": "Taboo",
+        "tip_taboo_body":
+            "Say a taboo word and you lose a point; the card changes.",
+        "got_it": "Got it",
+        "how_to_play": "How to Play",
+        "game_summary_title": "Game Summary",
+        "game_summary_body":
+            "Teams play a guessing game where the narrator describes the main word without using taboo words.",
+        "tip_time_management_title": "Time Management",
+        "tip_time_management_body":
+            "Each round lasts 30 to 90 seconds (optional). The timer is in the center; when it hits 0, the round ends and scores appear.",
+        "tip_pass_right_title": "Pass Right",
+        "tip_pass_right_body":
+            "You start with 3 passes. After pressing PASS three times, you can't skip more cards.",
+        "tip_taboo_penalty_title": "Taboo Penalty",
+        "tip_taboo_penalty_body":
+            "If a taboo word is said, the team loses a point and moves to the next card.",
+        "tip_narrator_cycle_title": "Narrator Rotation",
+        "tip_narrator_cycle_body":
+            "The current narrator is shown on screen; after each round, it moves to the next player.",
+        "tip_feedback_title": "Feedback",
+        "tip_feedback_body":
+            "Use the sound and vibration shortcuts above the Taboo/Correct/Pass buttons to toggle feedback.",
+        "onboard_title_1": "Build Your Team",
+        "onboard_subtitle_1":
+            "Add friends and pick categories.\nBe ready when the game starts.",
+        "onboard_title_2": "Describe, But Careful!",
+        "onboard_subtitle_2":
+            "Say a taboo word and the buzzer hits 😈\nExplain fast, grab the points!",
+        "onboard_title_3": "Have Fun & Win",
+        "onboard_subtitle_3":
+            "Share scores after each round.\nOne tap for a rematch!",
+        "onboard_back": "Back",
+        "onboard_next": "Next",
+        "onboard_start": "Start Game 🚀",
+        "onboard_skip": "Skip",
+        "confirm_exit_title": "Return to main menu?",
+        "confirm_exit_body": "Are you sure you want to leave the game?",
+        "end_all_cards": "All cards used",
+        "no_player": "No Player",
+        "error_word_empty": "Word cannot be empty",
+        "error_word_profanity": "Inappropriate word detected",
+        "error_word_max": "Word can be at most {max} characters",
+        "error_word_invalid": "Invalid word",
+        "error_taboo_profanity": "Inappropriate taboo word detected",
+        "error_taboo_count": "Enter 5 taboo words",
+        "error_taboo_unique": "Taboo words must be unique",
+        "error_word_exists": "This word already exists",
+        "error_name_empty": "Name cannot be empty",
+        "error_name_profanity": "Inappropriate name detected",
+        "error_team_name_max": "Name can be at most 20 characters",
+        "error_player_name_max": "Name can be at most 16 characters",
+        "error_name_invalid": "Invalid name",
+        "error_team_name_same": "Cannot match the other team name",
+        "error_player_exists": "Player already added",
+        "error_team_max_players": "A team can have at most 6 players",
+        "category_genel": "General",
+        "category_spor": "Sports",
+        "category_bilim": "Science",
+        "category_yemek": "Food",
+        "category_sanat": "Art",
+        "category_teknoloji": "Technology",
+        "category_doga": "Nature",
+        "category_tarih": "History",
+        "category_ozel": "Custom",
+      },
+    };
+    String value = strings[languageCode]?[key] ?? strings["tr"]?[key] ?? key;
+    params.forEach((k, v) {
+      value = value.replaceAll("{$k}", v);
+    });
+    return value;
+  }
+
+  static const Map<String, String> _categoryKeys = {
+    "Genel": "category_genel",
+    "Spor": "category_spor",
+    "Bilim": "category_bilim",
+    "Yemek": "category_yemek",
+    "Sanat": "category_sanat",
+    "Teknoloji": "category_teknoloji",
+    "Doğa": "category_doga",
+    "Tarih": "category_tarih",
+    "Özel": "category_ozel",
+  };
+
+  String categoryLabel(String category) {
+    final key = _categoryKeys[category];
+    if (key == null) return category;
+    return t(key);
   }
 
   void toggleRepeats(bool val) {
@@ -411,27 +866,29 @@ class GameProvider extends ChangeNotifier {
   }
 
   String? addCustomCard(String word, List<String> taboos) {
-    if (word.trim().isEmpty) return "Kelime boş olamaz";
-    if (containsProhibitedWords(word)) return "Uygunsuz kelime tespit edildi";
-    if (word.trim().length > 16) return "Kelime en fazla 16 karakter olabilir";
+    if (word.trim().isEmpty) return t("error_word_empty");
+    if (containsProhibitedWords(word)) return t("error_word_profanity");
+    if (word.trim().length > 16) {
+      return t("error_word_max", params: {"max": "16"});
+    }
     String? cleanWord = validateInput(word);
-    if (cleanWord == null) return "Kelime geçersiz";
+    if (cleanWord == null) return t("error_word_invalid");
     final cleanTaboos = taboos
         .map((e) => validateInput(e) ?? "")
         .where((e) => e.isNotEmpty)
         .toList();
     if (cleanTaboos.any((t) => containsProhibitedWords(t))) {
-      return "Uygunsuz tabu kelimesi tespit edildi";
+      return t("error_taboo_profanity");
     }
     if (cleanTaboos.length < 5) {
-      return "5 tabu kelime girmelisin";
+      return t("error_taboo_count");
     }
     if (cleanTaboos.toSet().length < 5) {
-      return "Tabu kelimeleri benzersiz olmalı";
+      return t("error_taboo_unique");
     }
     final id = _stableId(cleanWord, "Özel");
     if (_idsForCategory("Özel").contains(id)) {
-      return "Bu kelime zaten var";
+      return t("error_word_exists");
     }
     final formattedTaboos = cleanTaboos
         .take(5)
@@ -475,31 +932,31 @@ class GameProvider extends ChangeNotifier {
     String newWord,
     List<String> taboos,
   ) {
-    if (newWord.trim().isEmpty) return "Kelime boş olamaz";
+    if (newWord.trim().isEmpty) return t("error_word_empty");
     if (containsProhibitedWords(newWord)) {
-      return "Uygunsuz kelime tespit edildi";
+      return t("error_word_profanity");
     }
     if (newWord.trim().length > 16) {
-      return "Kelime en fazla 16 karakter olabilir";
+      return t("error_word_max", params: {"max": "16"});
     }
     String? cleanWord = validateInput(newWord);
-    if (cleanWord == null) return "Kelime geçersiz";
+    if (cleanWord == null) return t("error_word_invalid");
 
     final cleanTaboos = taboos
         .map((e) => validateInput(e) ?? "")
         .where((e) => e.isNotEmpty)
         .toList();
-    if (cleanTaboos.length < 5) return "5 tabu kelime girmelisin";
+    if (cleanTaboos.length < 5) return t("error_taboo_count");
     if (cleanTaboos.any((t) => containsProhibitedWords(t))) {
-      return "Uygunsuz tabu kelimesi tespit edildi";
+      return t("error_taboo_profanity");
     }
     if (cleanTaboos.toSet().length < 5) {
-      return "Tabu kelimeleri benzersiz olmalı";
+      return t("error_taboo_unique");
     }
 
     final newId = _stableId(cleanWord, "Özel");
     if (newId != original.id && _idsForCategory("Özel").contains(newId)) {
-      return "Bu kelime zaten var";
+      return t("error_word_exists");
     }
 
     final formattedTaboos = cleanTaboos
@@ -536,13 +993,19 @@ class GameProvider extends ChangeNotifier {
   }
 
   String? setTeamName(bool isTeamA, String name) {
-    if (name.trim().isEmpty) return "İsim boş olamaz";
-    if (containsProhibitedWords(name)) return "Uygunsuz isim tespit edildi";
-    if (name.trim().length > 20) return "İsim en fazla 20 karakter olabilir";
+    if (name.trim().isEmpty) return t("error_name_empty");
+    if (containsProhibitedWords(name)) return t("error_name_profanity");
+    if (name.trim().length > 20) {
+      return t("error_team_name_max");
+    }
     String? valid = validateInput(name);
-    if (valid == null) return "İsim geçersiz";
-    if (isTeamA && valid == teamBName) return "Diğer takımla aynı isim olamaz";
-    if (!isTeamA && valid == teamAName) return "Diğer takımla aynı isim olamaz";
+    if (valid == null) return t("error_name_invalid");
+    if (isTeamA && valid == teamBName) {
+      return t("error_team_name_same");
+    }
+    if (!isTeamA && valid == teamAName) {
+      return t("error_team_name_same");
+    }
 
     if (isTeamA) {
       teamAName = valid;
@@ -555,20 +1018,20 @@ class GameProvider extends ChangeNotifier {
   }
 
   String? addPlayer(String name, bool toTeamA) {
-    if (name.trim().isEmpty) return "İsim boş olamaz";
-    if (containsProhibitedWords(name)) return "Uygunsuz isim tespit edildi";
-    if (name.trim().length > 16) return "İsim en fazla 16 karakter olabilir";
+    if (name.trim().isEmpty) return t("error_name_empty");
+    if (containsProhibitedWords(name)) return t("error_name_profanity");
+    if (name.trim().length > 16) return t("error_player_name_max");
 
     String? valid = validateInput(name);
-    if (valid == null) return "İsim geçersiz";
+    if (valid == null) return t("error_name_invalid");
     if (teamA.contains(valid) || teamB.contains(valid)) {
-      return "Bu oyuncu zaten ekli";
+      return t("error_player_exists");
     }
     if (toTeamA && teamA.length >= 6) {
-      return "Bir takımda en fazla 6 oyuncu olabilir";
+      return t("error_team_max_players");
     }
     if (!toTeamA && teamB.length >= 6) {
-      return "Bir takımda en fazla 6 oyuncu olabilir";
+      return t("error_team_max_players");
     }
 
     if (toTeamA) {
@@ -582,31 +1045,55 @@ class GameProvider extends ChangeNotifier {
   }
 
   String randomPlayerName() {
-    final options = [
-      "Şeyci",
-      "Buzzer Mağduru",
-      "Dil Sürçmesi",
-      "Yasak Avcısı",
-      "Anlatamayan",
-      "Son Anda Söyledi",
-      "WordMaster",
-      "TabuBoss",
-      "QuickMind",
-      "NoBuzzer",
-      "FastTalker",
-      "SilentBrain",
-      "Kaptan",
-      "Anlatıcı",
-      "Tahminci",
-      "Joker",
-      "Sessiz Oyuncu",
-      "Stratejist",
-      "Yasaklı Kahraman",
-      "Kelime Büyücüsü",
-      "Dil Ninja",
-      "Buzzer Lordu",
-      "Anlam Ustası",
-    ];
+    final options = isEnglish
+        ? [
+            "Buzzer Victim",
+            "Slip of Tongue",
+            "Taboo Hunter",
+            "Clueless Hero",
+            "Last Second",
+            "Word Master",
+            "Taboo Boss",
+            "Quick Mind",
+            "No Buzzer",
+            "Fast Talker",
+            "Silent Brain",
+            "Captain",
+            "Narrator",
+            "Guesser",
+            "Wildcard",
+            "Quiet Player",
+            "Strategist",
+            "Word Wizard",
+            "Mind Ninja",
+            "Buzzer Lord",
+            "Meaning Master",
+          ]
+        : [
+            "Şeyci",
+            "Buzzer Mağduru",
+            "Dil Sürçmesi",
+            "Yasak Avcısı",
+            "Anlatamayan",
+            "Son Anda Söyledi",
+            "WordMaster",
+            "TabuBoss",
+            "QuickMind",
+            "NoBuzzer",
+            "FastTalker",
+            "SilentBrain",
+            "Kaptan",
+            "Anlatıcı",
+            "Tahminci",
+            "Joker",
+            "Sessiz Oyuncu",
+            "Stratejist",
+            "Yasaklı Kahraman",
+            "Kelime Büyücüsü",
+            "Dil Ninja",
+            "Buzzer Lordu",
+            "Anlam Ustası",
+          ];
     final existing = {
       ...teamA.map((e) => e.toUpperCase()),
       ...teamB.map((e) => e.toUpperCase()),
@@ -617,33 +1104,56 @@ class GameProvider extends ChangeNotifier {
   }
 
   String randomTeamName(bool forTeamA) {
-    final List<String> pool = [
-      "Yasaklılar",
-      "Dili Sürçenler",
-      "Tabu Canavarları",
-      "Kelime Avcıları",
-      "Buzzer Kaçakları",
-      "Anlatamayanlar",
-      "Son Saniyeciler",
-      "Şeyciler",
-      "Dilim Yandı",
-      "Söyleyemediklerimiz",
-      "Yanlışlıkla Söyledik",
-      "Ağızdan Kaçtı",
-      "Yasak Ama Güzel",
-      "Beyin Fırtınası",
-      "Kelime Cambazları",
-      "Anlam Avcıları",
-      "Çağrışımcılar",
-      "İma Edenler",
-      "Sessiz Anlatıcılar",
-      "Kelime Kralları",
-      "Tabu Elite",
-      "Finalistler",
-      "Rakipsizler",
-      "Hızlı ve Yasaklı",
-      "Son Turcular",
-    ];
+    final List<String> pool = isEnglish
+        ? [
+            "Taboo Masters",
+            "Word Hunters",
+            "Buzzer Dodgers",
+            "Slip Squad",
+            "Quick Thinkers",
+            "Silent Narrators",
+            "Mind Raiders",
+            "Last Seconders",
+            "No Buzzer Crew",
+            "Clue Makers",
+            "Word Wizards",
+            "Taboo Elite",
+            "Finalists",
+            "Untouchables",
+            "Fast & Forbidden",
+            "Brainstormers",
+            "Guessing Kings",
+            "Meaning Seekers",
+            "Clue Sprinters",
+            "Buzzer Monsters",
+          ]
+        : [
+            "Yasaklılar",
+            "Dili Sürçenler",
+            "Tabu Canavarları",
+            "Kelime Avcıları",
+            "Buzzer Kaçakları",
+            "Anlatamayanlar",
+            "Son Saniyeciler",
+            "Şeyciler",
+            "Dilim Yandı",
+            "Söyleyemediklerimiz",
+            "Yanlışlıkla Söyledik",
+            "Ağızdan Kaçtı",
+            "Yasak Ama Güzel",
+            "Beyin Fırtınası",
+            "Kelime Cambazları",
+            "Anlam Avcıları",
+            "Çağrışımcılar",
+            "İma Edenler",
+            "Sessiz Anlatıcılar",
+            "Kelime Kralları",
+            "Tabu Elite",
+            "Finalistler",
+            "Rakipsizler",
+            "Hızlı ve Yasaklı",
+            "Son Turcular",
+          ];
     pool.shuffle(Random());
     final otherName = (forTeamA ? teamBName : teamAName).toUpperCase();
     for (final name in pool) {
@@ -651,7 +1161,9 @@ class GameProvider extends ChangeNotifier {
         return name;
       }
     }
-    return "TEAM ${Random().nextInt(90) + 10}";
+    return isEnglish
+        ? "TEAM ${Random().nextInt(90) + 10}"
+        : "TAKIM ${Random().nextInt(90) + 10}";
   }
 
   void removePlayer(String name, bool fromTeamA) {
@@ -777,7 +1289,7 @@ class GameProvider extends ChangeNotifier {
 
     if (!_allowRepeats && _activeDeck.isEmpty && currentCard == null) {
       endedByCards = true;
-      endMessage = "Tüm kartlar kullanıldı";
+      endMessage = t("end_all_cards");
       if (gameWinner == null) {
         if (teamAScore > teamBScore) {
           gameWinner = teamAName;
@@ -841,11 +1353,7 @@ class GameProvider extends ChangeNotifier {
       teamBScore++;
     }
     if (vibrationEnabled) HapticFeedback.mediumImpact();
-    _playSfx(
-      "correct",
-      restartIfPlaying: true,
-      bypassThrottle: true,
-    );
+    _playSfx("correct", restartIfPlaying: true, bypassThrottle: true);
     _logEvent(CardStatus.correct);
     nextCard();
   }
@@ -858,11 +1366,7 @@ class GameProvider extends ChangeNotifier {
       teamBScore--;
     }
     if (vibrationEnabled) HapticFeedback.heavyImpact();
-    _playSfx(
-      "taboo",
-      restartIfPlaying: true,
-      bypassThrottle: true,
-    );
+    _playSfx("taboo", restartIfPlaying: true, bypassThrottle: true);
     _logEvent(CardStatus.taboo);
     nextCard();
   }
@@ -872,11 +1376,7 @@ class GameProvider extends ChangeNotifier {
     if (currentPasses > 0) {
       currentPasses--;
       if (vibrationEnabled) HapticFeedback.mediumImpact();
-      _playSfx(
-        "pass",
-        restartIfPlaying: true,
-        bypassThrottle: true,
-      );
+      _playSfx("pass", restartIfPlaying: true, bypassThrottle: true);
       _logEvent(CardStatus.pass);
       nextCard();
     }

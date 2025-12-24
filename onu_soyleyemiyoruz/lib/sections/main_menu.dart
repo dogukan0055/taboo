@@ -5,6 +5,7 @@ class MainMenuScreen extends StatelessWidget {
   const MainMenuScreen({super.key});
   @override
   Widget build(BuildContext context) {
+    final game = Provider.of<GameProvider>(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -26,8 +27,8 @@ class MainMenuScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    "ONU\nSÖYLEYEMİYORUZ",
+                  Text(
+                    game.t("menu_title"),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     softWrap: false,
@@ -40,7 +41,7 @@ class MainMenuScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   _MenuButton(
-                    label: "OYNA",
+                    label: game.t("menu_play"),
                     color: Colors.green,
                     onTap: () => Navigator.push(
                       context,
@@ -49,7 +50,7 @@ class MainMenuScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 15),
                   _MenuButton(
-                    label: "AYARLAR",
+                    label: game.t("menu_settings"),
                     color: Colors.teal,
                     onTap: () {
                       showModalBottomSheet(
@@ -62,7 +63,7 @@ class MainMenuScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 15),
                   _MenuButton(
-                    label: "NASIL OYNANIR?",
+                    label: game.t("menu_how_to_play"),
                     color: Colors.blue,
                     onTap: () => Navigator.push(
                       context,
@@ -71,13 +72,18 @@ class MainMenuScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 15),
                   _MenuButton(
-                    label: "ÇIKIŞ",
+                    label: game.t("menu_exit"),
                     color: Colors.red,
                     onTap: () => SystemNavigator.pop(),
                   ),
                   const Spacer(),
                 ],
               ),
+            ),
+            const Positioned(
+              top: 10,
+              left: 10,
+              child: _LanguageToggle(),
             ),
             const Positioned(
               top: 10,
@@ -152,7 +158,8 @@ class _ThemeModeToggle extends StatelessWidget {
     final game = Provider.of<GameProvider>(context);
     final bool isDark = game.themeMode == ThemeMode.dark;
     final IconData icon = isDark ? Icons.dark_mode : Icons.light_mode;
-    final String tooltip = isDark ? "Tema: Koyu" : "Tema: Açık";
+    final String tooltip =
+        isDark ? game.t("theme_dark") : game.t("theme_light");
     return SafeArea(
       child: IconButton(
         tooltip: tooltip,
@@ -161,6 +168,48 @@ class _ThemeModeToggle extends StatelessWidget {
           await game.playClick();
           game.cycleThemeMode();
         },
+      ),
+    );
+  }
+}
+
+class _LanguageToggle extends StatelessWidget {
+  const _LanguageToggle();
+
+  @override
+  Widget build(BuildContext context) {
+    final game = Provider.of<GameProvider>(context);
+    final bool isEnglish = game.isEnglish;
+    final String flag = isEnglish ? "🇺🇸" : "🇹🇷";
+    return SafeArea(
+      child: Tooltip(
+        message: game.t("lang_tooltip"),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () async {
+            await game.playClick();
+            game.toggleLanguage();
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.35),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.2),
+              ),
+            ),
+            child: Text(
+              "$flag ${isEnglish ? game.t("lang_en") : game.t("lang_tr")}",
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.6,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

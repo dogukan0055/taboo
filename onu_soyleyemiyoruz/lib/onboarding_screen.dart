@@ -21,25 +21,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   int _index = 0;
 
-  final List<_OnboardPage> _pages = const [
-    _OnboardPage(
-      title: "Takımını Kur",
-      subtitle:
-          "Arkadaşlarını ekle, kategorini seç.\nOyun başlarken her şey hazır olsun.",
-      lottie: "assets/lottie/team.json",
-    ),
-    _OnboardPage(
-      title: "Anlat ama Dikkat!",
-      subtitle:
-          "Yasaklı kelimeyi söylersen buzzer çalar 😈\nHızlı anlat, puanı kap!",
-      lottie: "assets/lottie/talk.json",
-    ),
-    _OnboardPage(
-      title: "Eğlen & Kazan",
-      subtitle: "Tur sonunda skorları paylaş.\nRövanş için tek dokunuş yeter!",
-      lottie: "assets/lottie/trophy.json",
-    ),
-  ];
+  List<_OnboardPage> _buildPages(GameProvider game) {
+    return [
+      _OnboardPage(
+        title: game.t("onboard_title_1"),
+        subtitle: game.t("onboard_subtitle_1"),
+        lottie: "assets/lottie/team.json",
+      ),
+      _OnboardPage(
+        title: game.t("onboard_title_2"),
+        subtitle: game.t("onboard_subtitle_2"),
+        lottie: "assets/lottie/talk.json",
+      ),
+      _OnboardPage(
+        title: game.t("onboard_title_3"),
+        subtitle: game.t("onboard_subtitle_3"),
+        lottie: "assets/lottie/trophy.json",
+      ),
+    ];
+  }
 
   // ----------------- FEEDBACK -----------------
 
@@ -109,7 +109,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLast = _index == _pages.length - 1;
+    final game = Provider.of<GameProvider>(context);
+    final pages = _buildPages(game);
+    final isLast = _index == pages.length - 1;
 
     return Scaffold(
       body: AnimatedContainer(
@@ -123,12 +125,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Expanded(
                     child: PageView.builder(
                       controller: _controller,
-                      itemCount: _pages.length,
+                      itemCount: pages.length,
                       onPageChanged: (i) {
                         setState(() => _index = i);
                       },
                       itemBuilder: (context, i) {
-                        final page = _pages[i];
+                        final page = pages[i];
                         return Padding(
                           padding: const EdgeInsets.all(24),
                           child: AnimatedScale(
@@ -180,7 +182,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
-                      _pages.length,
+                      pages.length,
                       (i) => AnimatedContainer(
                         duration: const Duration(milliseconds: 250),
                         curve: Curves.easeOutBack,
@@ -206,9 +208,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         if (_index > 0)
                           TextButton(
                             onPressed: _previous,
-                            child: const Text(
-                              "Geri",
-                              style: TextStyle(color: Colors.white),
+                            child: Text(
+                              game.t("onboard_back"),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           )
                         else
@@ -226,7 +228,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                             ),
                             child: Text(
-                              isLast ? "Oyuna Başla 🚀" : "İleri",
+                              isLast
+                                  ? game.t("onboard_start")
+                                  : game.t("onboard_next"),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -247,9 +251,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   right: 12,
                   child: TextButton(
                     onPressed: () => _finish(context),
-                    child: const Text(
-                      "Geç",
-                      style: TextStyle(
+                    child: Text(
+                      game.t("onboard_skip"),
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontWeight: FontWeight.w600,
                       ),

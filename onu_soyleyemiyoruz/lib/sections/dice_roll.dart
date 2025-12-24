@@ -68,10 +68,10 @@ class _DiceRollDialogState extends State<DiceRollDialog>
     var game = Provider.of<GameProvider>(context, listen: false);
     return AlertDialog(
       backgroundColor: Colors.deepPurple,
-      title: const Text(
-        "ZARLAR ATILIYOR!",
+      title: Text(
+        game.t("rolling_dice"),
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -99,7 +99,12 @@ class _DiceRollDialogState extends State<DiceRollDialog>
           const SizedBox(height: 20),
           if (!_ctrl.isAnimating)
             Text(
-              "Oyuna ${game.isTeamATurn ? game.teamAName : game.teamBName} TAKIMI BAŞLIYOR!",
+              game.t(
+                "game_starts_with_team",
+                params: {
+                  "team": game.isTeamATurn ? game.teamAName : game.teamBName,
+                },
+              ),
               style: const TextStyle(
                 color: Colors.amber,
                 fontSize: 18,

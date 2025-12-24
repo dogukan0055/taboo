@@ -63,7 +63,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
     if (_wordController.text.trim().length > 16) {
       _showSnack(
         messenger,
-        "Kelime en fazla 16 karakter olabilir",
+        game.t("error_word_max", params: {"max": "16"}),
         isError: true,
       );
       return;
@@ -79,7 +79,13 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
     final addedWord = _wordController.text.trim().toUpperCase();
     _showSnack(
       messenger,
-      "$addedWord ÖZEL kategorisine eklendi",
+      game.t(
+        "custom_added",
+        params: {
+          "word": addedWord,
+          "category": game.categoryLabel("Özel").toUpperCase(),
+        },
+      ),
       isSuccess: true,
     );
     if (exitAfter || _editing) {
@@ -91,6 +97,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
   }
 
   Widget _cardPreview() {
+    final game = Provider.of<GameProvider>(context, listen: false);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final Color headerColor =
@@ -104,12 +111,12 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
         .entries
         .map(
           (e) => e.value.text.isEmpty
-              ? "Tabu ${e.key + 1}"
+              ? game.t("taboo_hint", params: {"index": "${e.key + 1}"})
               : e.value.text.toUpperCase(),
         )
         .toList();
     final wordText = _wordController.text.isEmpty
-        ? "KELİME"
+        ? game.t("word_hint")
         : _wordController.text.toUpperCase();
 
     return Container(
@@ -138,7 +145,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
             height: 64,
             alignment: Alignment.center,
             child: Text(
-              "ÖZEL",
+              game.categoryLabel("Özel").toUpperCase(),
               style: TextStyle(
                 color: Colors.white70,
                 letterSpacing: 2,
@@ -220,6 +227,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final game = Provider.of<GameProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final saveColor = isDark ? Colors.amber[400]! : Colors.amber;
     final saveTextColor = Colors.black;
@@ -231,7 +239,9 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text(_editing ? "Özel Kartı Düzenle" : "Özel Kart Ekle"),
+        title: Text(
+          _editing ? game.t("edit_custom_card") : game.t("add_custom_card"),
+        ),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -285,9 +295,9 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                             foregroundColor: saveTextColor,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                          child: const Text(
-                            "Kaydet",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          child: Text(
+                            game.t("save"),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                       const SizedBox(height: 10),
@@ -304,7 +314,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                             side: BorderSide(color: dangerBorderColor),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                          child: const Text("Çık"),
+                          child: Text(game.t("exit")),
                         ),
                       ] else ...[
                         Row(
@@ -318,9 +328,9 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 14),
                                 ),
-                                child: const Text(
-                                  "Kaydet ve Çık",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                child: Text(
+                                  game.t("save_and_exit"),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -334,9 +344,9 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 14),
                                 ),
-                                child: const Text(
-                                  "Kaydet ve Devam Et",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                child: Text(
+                                  game.t("save_and_continue"),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -357,7 +367,7 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                             side: BorderSide(color: dangerBorderColor),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                          child: const Text("Kaydetmeden Çık"),
+                          child: Text(game.t("exit_without_save")),
                         ),
                       ],
                     ],
@@ -392,6 +402,7 @@ void _showSnack(
   bool notifierDisposed = false;
   bool actionHandled = false;
   Timer? timer;
+  final game = Provider.of<GameProvider>(messenger.context, listen: false);
   final Color background = isError
       ? const Color(0xFFB00020)
       : isSuccess
@@ -512,7 +523,7 @@ void _showSnack(
                   ValueListenableBuilder<int>(
                     valueListenable: secondsLeft,
                     builder: (context, value, _) => Text(
-                      "$value sn",
+                      "$value ${game.t("seconds_short")}",
                       style: const TextStyle(color: Colors.white70),
                     ),
                   ),

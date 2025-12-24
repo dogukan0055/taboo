@@ -119,7 +119,7 @@ class MyApp extends StatelessWidget {
 
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Onu Söyleyemiyoruz',
+          title: game.t("app_title"),
           theme: theme,
           darkTheme: darkTheme,
           themeMode: game.themeMode,
@@ -164,6 +164,7 @@ void _showSnack(
   bool notifierDisposed = false;
   bool actionHandled = false;
   Timer? timer;
+  final game = Provider.of<GameProvider>(messenger.context, listen: false);
   final Color background = isError
       ? const Color(0xFFB00020)
       : isSuccess
@@ -284,7 +285,7 @@ void _showSnack(
                   ValueListenableBuilder<int>(
                     valueListenable: secondsLeft,
                     builder: (context, value, _) => Text(
-                      "$value sn",
+                      "$value ${game.t("seconds_short")}",
                       style: const TextStyle(color: Colors.white70),
                     ),
                   ),
@@ -333,6 +334,7 @@ void _showCardPreview(BuildContext context, WordCard card) {
     barrierDismissible: true,
     useSafeArea: false,
     builder: (_) {
+      final game = Provider.of<GameProvider>(context, listen: false);
       final bool isDark = Theme.of(context).brightness == Brightness.dark;
       final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
       final Color headerColor = isDark
@@ -386,7 +388,7 @@ void _showCardPreview(BuildContext context, WordCard card) {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        card.category.toUpperCase(),
+                        game.categoryLabel(card.category).toUpperCase(),
                         style: const TextStyle(
                           color: Colors.white70,
                           letterSpacing: 2,
@@ -458,6 +460,7 @@ Future<bool> _confirmExitToMenu(
   bool force = false,
   Future<void> Function()? onConfirm,
 }) async {
+  final game = Provider.of<GameProvider>(context, listen: false);
   final shouldExit =
       await showDialog<bool>(
         context: context,
@@ -477,8 +480,8 @@ Future<bool> _confirmExitToMenu(
             ),
             Center(
               child: AlertDialog(
-          title: const Text("Ana menüye dönülsün mü?"),
-          content: const Text("Oyundan çıkmak istediğine emin misin?"),
+          title: Text(game.t("confirm_exit_title")),
+          content: Text(game.t("confirm_exit_body")),
           actions: [
             TextButton(
               onPressed: () async {
@@ -489,7 +492,7 @@ Future<bool> _confirmExitToMenu(
                 if (!context.mounted) return;
                 Navigator.pop(context, false);
               },
-              child: const Text("HAYIR"),
+              child: Text(game.t("no")),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -500,7 +503,7 @@ Future<bool> _confirmExitToMenu(
                 if (!context.mounted) return;
                 Navigator.pop(context, true);
               },
-              child: const Text("EVET"),
+              child: Text(game.t("yes")),
             ),
           ],
               ),

@@ -93,8 +93,8 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         showDialog(
           context: context,
           builder: (dialogCtx) => AlertDialog(
-            title: const Text("Oyundan çıkılsın mı?"),
-            content: const Text("Oyunu bırakmak üzeresiniz. Emin misiniz?"),
+            title: Text(game.t("exit_game_title")),
+            content: Text(game.t("exit_game_body")),
             actions: [
               TextButton(
                 onPressed: () async {
@@ -102,7 +102,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                   if (!context.mounted) return;
                   Navigator.pop(dialogCtx);
                 },
-                child: const Text("Vazgeç"),
+                child: Text(game.t("cancel")),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -115,7 +115,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,
                 ),
-                child: const Text("Oyundan Çık"),
+                child: Text(game.t("exit_game_action")),
               ),
             ],
           ),
@@ -148,10 +148,13 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                         BouncingButton(
                           icon: Icons.close,
                           color: tabooColor,
-                          label: "TABU",
+                          label: game.t("label_taboo"),
                           disabled: game.isCoolingDown,
                           onTap: () {
-                            _showFloatingText("TABU!", Colors.redAccent);
+                            _showFloatingText(
+                              game.t("floating_taboo"),
+                              Colors.redAccent,
+                            );
                             game.actionTaboo();
                           },
                         ),
@@ -159,11 +162,14 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                             ? BouncingButton(
                                 icon: Icons.skip_next,
                                 color: passColor,
-                                label: "PAS",
+                                label: game.t("label_pass"),
                                 badgeText: "${game.currentPasses}",
                                 disabled: game.isCoolingDown,
                                 onTap: () {
-                                  _showFloatingText("PAS", Colors.blueAccent);
+                                  _showFloatingText(
+                                    game.t("floating_pass"),
+                                    Colors.blueAccent,
+                                  );
                                   game.actionPass();
                                 },
                               )
@@ -172,7 +178,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                                 child: BouncingButton(
                                 icon: Icons.skip_next,
                                 color: disabledPassColor,
-                                label: "PAS",
+                                label: game.t("label_pass"),
                                 badgeText: "0",
                                 disabled: true,
                                 onTap: () {},
@@ -181,10 +187,13 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                         BouncingButton(
                           icon: Icons.check,
                           color: correctColor,
-                          label: "DOĞRU",
+                          label: game.t("label_correct"),
                           disabled: game.isCoolingDown,
                           onTap: () {
-                            _showFloatingText("DOĞRU!", Colors.greenAccent);
+                            _showFloatingText(
+                              game.t("floating_correct"),
+                              Colors.greenAccent,
+                            );
                             game.actionCorrect();
                           },
                         ),
@@ -269,9 +278,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                       size: 46,
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      "DURDURULDU",
-                      style: TextStyle(
+                    Text(
+                      game.t("paused_title"),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
                         fontSize: 20,
@@ -279,22 +288,28 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                       ),
                     ),
                     const SizedBox(height: 6),
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        "Oyun durduruldu. Devam edebilir veya ana menüye dönebilirsin.",
+                        game.t("paused_body"),
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                     if (fromBackground) ...[
                       const SizedBox(height: 6),
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          "Uygulama arka plana alındığı için oyun otomatik durduruldu.",
+                          game.t("paused_background"),
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white70, fontSize: 12),
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],
@@ -332,9 +347,11 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: const Text(
-                                "DEVAM ET",
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              child: Text(
+                                game.t("resume"),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -362,9 +379,11 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: const Text(
-                                "ANA MENÜYE DÖN",
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              child: Text(
+                                game.t("return_menu"),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -403,7 +422,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         children: [
           _buildFeedbackToggle(
             icon: game.soundEnabled ? Icons.volume_up : Icons.volume_off,
-            label: game.soundEnabled ? "Ses Açık" : "Ses Kapalı",
+            label: game.soundEnabled
+                ? game.t("sound_on")
+                : game.t("sound_off"),
             isActive: game.soundEnabled,
             onTap: () async {
               if (!game.soundEnabled) {
@@ -415,13 +436,18 @@ class _GamePlayScreenState extends State<GamePlayScreen>
           ),
           _buildFeedbackToggle(
             icon: game.vibrationEnabled ? Icons.vibration : Icons.phone_android,
-            label: game.vibrationEnabled ? "Titreşim Açık" : "Titreşim Kapalı",
+            label: game.vibrationEnabled
+                ? game.t("vibration_on")
+                : game.t("vibration_off"),
             isActive: game.vibrationEnabled,
             onTap: () => game.toggleVibration(!game.vibrationEnabled),
           ),
           _buildFeedbackToggle(
             icon: Icons.style,
-            label: "Kalan: ${game.remainingCards} Kart",
+            label: game.t(
+              "remaining_cards_label",
+              params: {"count": "${game.remainingCards}"},
+            ),
             isActive: false,
             onTap: () {},
             enabled: false,
@@ -652,6 +678,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
 
   Widget _buildCardContent(WordCard? card) {
     if (card == null) return Container(key: const ValueKey("empty"));
+    final game = Provider.of<GameProvider>(context, listen: false);
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final Color headerColor = isDark
@@ -688,7 +715,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  card.category.toUpperCase(),
+                  game.categoryLabel(card.category).toUpperCase(),
                   style: const TextStyle(
                     color: Colors.white38,
                     letterSpacing: 2,

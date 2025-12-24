@@ -31,13 +31,16 @@ class SettingsSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              const Text(
-                "AYARLAR",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              Text(
+                game.t("settings_title"),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               const SizedBox(height: 10),
               SwitchListTile(
-                title: Text("Müzik", style: TextStyle(color: textColor)),
+                title: Text(
+                  game.t("settings_music"),
+                  style: TextStyle(color: textColor),
+                ),
                 secondary: game.musicEnabled
                     ? Icon(Icons.music_note, color: iconColor)
                     : Icon(Icons.music_off, color: iconColor),
@@ -48,7 +51,10 @@ class SettingsSheet extends StatelessWidget {
                 },
               ),
               SwitchListTile(
-                title: Text("Ses Efektleri", style: TextStyle(color: textColor)),
+                title: Text(
+                  game.t("settings_sfx"),
+                  style: TextStyle(color: textColor),
+                ),
                 secondary: game.soundEnabled
                     ? Icon(Icons.volume_up_outlined, color: iconColor)
                     : Icon(Icons.volume_off_outlined, color: iconColor),
@@ -61,7 +67,10 @@ class SettingsSheet extends StatelessWidget {
                 },
               ),
               SwitchListTile(
-                title: Text("Titreşim", style: TextStyle(color: textColor)),
+                title: Text(
+                  game.t("settings_vibration"),
+                  style: TextStyle(color: textColor),
+                ),
                 secondary: game.vibrationEnabled
                     ? Icon(Icons.vibration, color: iconColor)
                     : Icon(Icons.phone_iphone, color: iconColor),
@@ -72,7 +81,10 @@ class SettingsSheet extends StatelessWidget {
                 },
               ),
               SwitchListTile(
-                title: Text("Performans Modu", style: TextStyle(color: textColor)),
+                title: Text(
+                  game.t("settings_performance"),
+                  style: TextStyle(color: textColor),
+                ),
                 secondary: Icon(
                   Icons.speed,
                   color: game.reducedMotion ? Colors.amber : iconColor,
@@ -96,9 +108,9 @@ class SettingsSheet extends StatelessWidget {
                     backgroundColor: Colors.deepPurple,
                     padding: const EdgeInsets.all(14),
                   ),
-                  child: const Text(
-                    "Kapat",
-                    style: TextStyle(
+                  child: Text(
+                    game.t("close"),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),

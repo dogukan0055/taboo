@@ -10,9 +10,15 @@ class GameOverScreen extends StatelessWidget {
     final GlobalKey boundaryKey = GlobalKey();
     Future<void> shareSummary() async {
       try {
+        final winnerLine = game.gameWinner != null
+            ? game.t(
+                "share_winner",
+                params: {"winner": game.gameWinner!},
+              )
+            : game.t("share_tie");
         if (kIsWeb) {
           final summary =
-              "${game.teamAName}: ${game.teamAScore}\n${game.teamBName}: ${game.teamBScore}\n${game.gameWinner != null ? "Kazanan: ${game.gameWinner}" : "Berabere"}";
+              "${game.teamAName}: ${game.teamAScore}\n${game.teamBName}: ${game.teamBScore}\n$winnerLine";
           await SharePlus.instance.share(ShareParams(text: summary));
           return;
         }
@@ -33,12 +39,18 @@ class GameOverScreen extends StatelessWidget {
         );
         await file.writeAsBytes(bytes, flush: true);
         await SharePlus.instance.share(
-          ShareParams(text: "Skor özeti", files: [XFile(file.path)]),
+          ShareParams(text: game.t("score_summary"), files: [XFile(file.path)]),
         );
       } catch (e) {
         if (!context.mounted) return;
+        final winnerLine = game.gameWinner != null
+            ? game.t(
+                "share_winner",
+                params: {"winner": game.gameWinner!},
+              )
+            : game.t("share_tie");
         final summary =
-            "${game.teamAName}: ${game.teamAScore}\n${game.teamBName}: ${game.teamBScore}\n${game.gameWinner != null ? "Kazanan: ${game.gameWinner}" : "Berabere"}";
+            "${game.teamAName}: ${game.teamAScore}\n${game.teamBName}: ${game.teamBScore}\n$winnerLine";
         await SharePlus.instance.share(ShareParams(text: summary));
       }
     }
@@ -63,9 +75,9 @@ class GameOverScreen extends StatelessWidget {
                       color: Colors.amber,
                     ),
                     const SizedBox(height: 20),
-                    const Text(
-                      "OYUN BİTTİ",
-                      style: TextStyle(
+                    Text(
+                      game.t("game_over_title"),
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 24,
                         letterSpacing: 5,
@@ -84,9 +96,9 @@ class GameOverScreen extends StatelessWidget {
                       ),
                     if (game.endMessage != null) const SizedBox(height: 10),
                     if (game.gameWinner != null)
-                      const Text(
-                        "KAZANAN",
-                        style: TextStyle(
+                      Text(
+                        game.t("winner_label"),
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
@@ -98,7 +110,7 @@ class GameOverScreen extends StatelessWidget {
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
-                          game.gameWinner ?? "BERABERE",
+                          game.gameWinner ?? game.t("tie_label"),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.amber,
@@ -159,9 +171,9 @@ class GameOverScreen extends StatelessWidget {
                         await shareSummary();
                       },
                       icon: const Icon(Icons.share),
-                      label: const Text(
-                        "Paylaş",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      label: Text(
+                        game.t("share"),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -193,9 +205,9 @@ class GameOverScreen extends StatelessWidget {
                           vertical: 14,
                         ),
                       ),
-                      child: const Text(
-                        "RÖVANŞ?",
-                        style: TextStyle(
+                      child: Text(
+                        game.t("rematch"),
+                        style: const TextStyle(
                           color: Colors.deepPurple,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -219,9 +231,9 @@ class GameOverScreen extends StatelessWidget {
                           vertical: 15,
                         ),
                       ),
-                      child: const Text(
-                        "ANA MENÜYE DÖN",
-                        style: TextStyle(
+                      child: Text(
+                        game.t("return_menu_button"),
+                        style: const TextStyle(
                           color: Colors.deepPurple,
                           fontSize: 18,
                         ),
