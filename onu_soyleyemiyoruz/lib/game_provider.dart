@@ -270,7 +270,10 @@ class GameProvider extends ChangeNotifier {
     }
   }
 
-  List<WordCard> get allCards => [...initialDeck, ...customCards];
+  List<WordCard> get allCards => [
+        ...(isEnglish ? initialDeckEn : initialDeckTr),
+        ...customCards,
+      ];
 
   Map<String, List<WordCard>> get wordsByCategory {
     Map<String, List<WordCard>> map = {};
@@ -281,16 +284,13 @@ class GameProvider extends ChangeNotifier {
   }
 
   // --- INPUT VALIDATION ---
-  RegExp get nameAllowedChars => isEnglish
-      ? RegExp(r'[A-Za-z ]')
-      : RegExp(r'[A-Za-zÇçĞğİıÖöŞşÜü ]');
+  RegExp get nameAllowedChars =>
+      isEnglish ? RegExp(r'[A-Za-z ]') : RegExp(r'[A-Za-zÇçĞğİıÖöŞşÜü ]');
 
-  RegExp get wordAllowedChars =>
-      RegExp(r'[A-Za-zÇçĞğİıÖöŞşÜü ]');
+  RegExp get wordAllowedChars => RegExp(r'[A-Za-zÇçĞğİıÖöŞşÜü ]');
 
-  RegExp get _nameValidationPattern => isEnglish
-      ? RegExp(r'^[A-Z ]+$')
-      : RegExp(r'^[A-ZÇĞİÖŞÜ ]+$');
+  RegExp get _nameValidationPattern =>
+      isEnglish ? RegExp(r'^[A-Z ]+$') : RegExp(r'^[A-ZÇĞİÖŞÜ ]+$');
 
   RegExp get _wordValidationPattern => RegExp(r'^[A-ZÇĞİÖŞÜ ]+$');
 
@@ -583,7 +583,7 @@ class GameProvider extends ChangeNotifier {
             "Takımlar, anlatıcının tabu kelimelerini kullanmadan karttaki ana kelimeyi anlattığı bir tahmin oyunu oynar.",
         "tip_time_management_title": "Süre Yönetimi",
         "tip_time_management_body":
-            "Her tur 30 ila 90 (isteğe bağlı) saniye arasında sürer. Sayaç ekranın ortasındadır; 0 olunca tur biter ve puanlar görünür.",
+            "Her tur 30 ila 90 saniye arasında sürer. Sayaç ekranın ortasındadır; 0 olunca tur biter ve tur özeti görünür.",
         "tip_pass_right_title": "Pas Hakkı",
         "tip_pass_right_body":
             "Tur başlangıcında 3 pas hakkın olur. 3 defa kart geçtiğinde, yani 'PAS' butonuna bastığında daha fazla kart geçemezsin.",
@@ -802,7 +802,7 @@ class GameProvider extends ChangeNotifier {
             "Teams play a guessing game where the narrator describes the main word without using taboo words.",
         "tip_time_management_title": "Time Management",
         "tip_time_management_body":
-            "Each round lasts 30 to 90 seconds (optional). The timer is in the center; when it hits 0, the round ends and scores appear.",
+            "Each round lasts between 30 to 90 seconds. The timer is in the center of the screen; when it hits 0, the round ends and round summary appears.",
         "tip_pass_right_title": "Pass Right",
         "tip_pass_right_body":
             "You start with 3 passes. After pressing PASS three times, you can't skip more cards.",
@@ -1195,10 +1195,7 @@ class GameProvider extends ChangeNotifier {
             "Buzzer Lordu",
             "Anlam Ustası",
           ];
-    final existing = {
-      ...teamA.map(languageUpper),
-      ...teamB.map(languageUpper),
-    };
+    final existing = {...teamA.map(languageUpper), ...teamB.map(languageUpper)};
     final available = options.where((n) => !existing.contains(n)).toList();
     final list = available.isNotEmpty ? available : options;
     return list[Random().nextInt(list.length)];

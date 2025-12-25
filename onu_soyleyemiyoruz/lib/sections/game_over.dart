@@ -52,19 +52,31 @@ class _GameOverScreenState extends State<GameOverScreen>
     final Color scoreTextColor = isDark ? Colors.white : Colors.black87;
     final Color dividerColor = isDark ? Colors.white70 : Colors.black54;
     final GlobalKey boundaryKey = GlobalKey();
+    final GlobalKey shareButtonKey = GlobalKey();
     final String appTitle = game.t("app_title");
+    Rect? shareOriginRect() {
+      RenderBox? box =
+          shareButtonKey.currentContext?.findRenderObject() as RenderBox?;
+      box ??= context.findRenderObject() as RenderBox?;
+      if (box == null || !box.hasSize) return null;
+      final rect = box.localToGlobal(Offset.zero) & box.size;
+      return rect.isEmpty ? null : rect;
+    }
     Future<void> shareSummary() async {
+      final shareMessage = _buildShareMessage(game);
+      final scoreLines =
+          "${game.teamAName}: ${game.teamAScore}\n${game.teamBName}: ${game.teamBScore}";
+      final summary = "$shareMessage\n$scoreLines";
       try {
-        final shareMessage = _buildShareMessage(game);
-        final scoreLines =
-            "${game.teamAName}: ${game.teamAScore}\n${game.teamBName}: ${game.teamBScore}";
-        final summary = "$shareMessage\n$scoreLines";
-        if (kIsWeb) {
-          await SharePlus.instance.share(ShareParams(text: summary));
-          return;
-        }
         await WidgetsBinding.instance.endOfFrame;
         if (!context.mounted) return;
+        final origin = shareOriginRect();
+        if (kIsWeb) {
+          await SharePlus.instance.share(
+            ShareParams(text: summary, sharePositionOrigin: origin),
+          );
+          return;
+        }
         final boundary =
             boundaryKey.currentContext?.findRenderObject()
                 as RenderRepaintBoundary?;
@@ -80,14 +92,17 @@ class _GameOverScreenState extends State<GameOverScreen>
         );
         await file.writeAsBytes(bytes, flush: true);
         await SharePlus.instance.share(
-          ShareParams(text: summary, files: [XFile(file.path)]),
+          ShareParams(
+            text: summary,
+            files: [XFile(file.path)],
+            sharePositionOrigin: origin,
+          ),
         );
       } catch (e) {
         if (!context.mounted) return;
-        final shareMessage = _buildShareMessage(game);
-        final summary =
-            "$shareMessage\n${game.teamAName}: ${game.teamAScore}\n${game.teamBName}: ${game.teamBScore}";
-        await SharePlus.instance.share(ShareParams(text: summary));
+        await SharePlus.instance.share(
+          ShareParams(text: summary, sharePositionOrigin: shareOriginRect()),
+        );
       }
     }
 
@@ -222,6 +237,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                             ),
                             const SizedBox(height: 24),
                             ElevatedButton.icon(
+                              key: shareButtonKey,
                               onPressed: () async {
                                 await Provider.of<GameProvider>(
                                   context,

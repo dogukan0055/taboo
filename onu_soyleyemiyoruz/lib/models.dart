@@ -65,7 +65,7 @@ class RoundSummary {
 }
 
 // --- DUMMY DATA ---
-final List<WordCard> initialDeck = [
+final List<WordCard> initialDeckTr = [
   // Genel Kategori
   WordCard(
     word: "SAAT",
@@ -74,7 +74,7 @@ final List<WordCard> initialDeck = [
   ),
   WordCard(
     word: "ANAHTAR",
-    tabooWords: ["Kapı", "Kilit", "Açmak", "Ev", "Metal"],
+    tabooWords: ["Kapı", "Kilit", "Açmak", "Ev", "Girmek"],
     category: "Genel",
   ),
   WordCard(
@@ -84,17 +84,17 @@ final List<WordCard> initialDeck = [
   ),
   WordCard(
     word: "AYNA",
-    tabooWords: ["Bakmak", "Görüntü", "Cam", "Yüz", "Yansıma"],
+    tabooWords: ["Bakmak", "Görmek", "Cam", "Yüz", "Yansıma"],
     category: "Genel",
   ),
   WordCard(
     word: "ÇANTA",
-    tabooWords: ["Taşımak", "Okul", "Omuz", "Fermuar", "Eşya"],
+    tabooWords: ["Taşımak", "Okul", "Omuz", "Sırt", "Eşya"],
     category: "Genel",
   ),
   WordCard(
     word: "ŞEMSİYE",
-    tabooWords: ["Yağmur", "Islanmak", "Açmak", "Hava", "Sap"],
+    tabooWords: ["Yağmur", "Islanmak", "Açmak", "Hava", "Korunmak"],
     category: "Genel",
   ),
   WordCard(
@@ -114,7 +114,7 @@ final List<WordCard> initialDeck = [
   ),
   WordCard(
     word: "FIRÇA",
-    tabooWords: ["Saç", "Tarama", "Boya", "Diş", "Kıl"],
+    tabooWords: ["Saç", "Taramak", "Boyamak", "Diş", "Kıl"],
     category: "Genel",
   ),
   WordCard(
@@ -1824,6 +1824,1769 @@ final List<WordCard> initialDeck = [
   WordCard(
     word: "KİTABE",
     tabooWords: ["Yazı", "Taş", "Tarih", "Anıt", "Eski"],
+    category: "Tarih",
+  ),
+];
+
+final List<WordCard> initialDeckEn = [
+  // General Category
+  WordCard(
+    word: "WATCH",
+    tabooWords: ["Time", "Minute", "Second", "Wrist", "Hour"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "KEY",
+    tabooWords: ["Door", "Lock", "Open", "House", "Enter"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "PILLOW",
+    tabooWords: ["Sleep", "Bed", "Head", "Soft", "Night"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "MIRROR",
+    tabooWords: ["Look", "See", "Glass", "Face", "Reflection"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "BAG",
+    tabooWords: ["Carry", "School", "Shoulder", "Back", "Stuff"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "UMBRELLA",
+    tabooWords: ["Rain", "Wet", "Open", "Weather", "Protect"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "STAIRS",
+    tabooWords: ["Step", "Up", "Down", "Floor", "Building"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "LID",
+    tabooWords: ["Close", "Bottle", "Box", "Open", "Top"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "DUVET",
+    tabooWords: ["Sleep", "Bed", "Warm", "Night", "Cover"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "BRUSH",
+    tabooWords: ["Hair", "Comb", "Paint", "Tooth", "Bristle"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "PLATE",
+    tabooWords: ["Food", "Kitchen", "Serve", "Glass", "Porcelain"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "SPOON",
+    tabooWords: ["Fork", "Food", "Soup", "Metal", "Mouth"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "CURTAIN",
+    tabooWords: ["Window", "Sun", "Close", "Sheer", "Home"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "CARPET",
+    tabooWords: ["Floor", "Home", "Pattern", "Kilim", "Lay"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "CABINET",
+    tabooWords: ["Clothes", "Door", "Kitchen", "Shelf", "Store"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "PILLOWCASE",
+    tabooWords: ["Fabric", "Sleep", "Bed", "Cover", "Head"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "REMOTE",
+    tabooWords: ["TV", "Button", "Battery", "Channel", "Change"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "LAMP",
+    tabooWords: ["Light", "Lighting", "Bulb", "Night", "Electricity"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "OUTLET",
+    tabooWords: ["Electricity", "Plug", "Wall", "Charge", "Current"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "NOTEBOOK",
+    tabooWords: ["Write", "School", "Page", "Pen", "Note"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "CHAIR",
+    tabooWords: ["Sit", "Table", "Wood", "Leg", "Home"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "TABLE",
+    tabooWords: ["Eat", "Work", "Leg", "Top", "Furniture"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "BLANKET",
+    tabooWords: ["Cold", "Cover", "Bed", "Warm", "Fabric"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "DRAWER",
+    tabooWords: ["Cabinet", "Open", "Close", "Store", "Furniture"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "OVEN",
+    tabooWords: ["Food", "Heat", "Kitchen", "Bake", "Electricity"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "VACUUM",
+    tabooWords: ["Cleaning", "Electricity", "Dust", "Carpet", "Home"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "TRAY",
+    tabooWords: ["Food", "Oven", "Metal", "Carry", "Kitchen"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "CUSHION",
+    tabooWords: ["Sit", "Soft", "Floor", "Sofa", "Home"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "ALARM CLOCK",
+    tabooWords: ["Wake Up", "Morning", "Bell", "Ring", "Time"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "LOCK",
+    tabooWords: ["Key", "Door", "Security", "Open", "Close"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "WINDOW",
+    tabooWords: ["Glass", "Curtain", "Open", "Home", "Light"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "SOFA",
+    tabooWords: ["Sit", "Living Room", "Comfort", "Furniture", "Home"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "TOWEL",
+    tabooWords: ["Bathroom", "Dry", "Water", "Fabric", "Hand"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "SOAP",
+    tabooWords: ["Wash", "Foam", "Cleaning", "Bathroom", "Hand"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "TOOTHBRUSH",
+    tabooWords: ["Tooth", "Paste", "Mouth", "Cleaning", "Bathroom"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "SUITCASE",
+    tabooWords: ["Travel", "Luggage", "Clothes", "Carry", "Trip"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "TRASH CAN",
+    tabooWords: ["Throw", "Trash", "Cleaning", "Home", "Bag"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "NOTEPAD",
+    tabooWords: ["Write", "Small", "Carry", "Page", "Pen"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "SLIPPERS",
+    tabooWords: ["Home", "Foot", "Comfort", "Wear", "Inside"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "CHARGER",
+    tabooWords: ["Phone", "Battery", "Electricity", "Cable", "Fill"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "GLASS DOME",
+    tabooWords: ["Glass", "Protect", "Top", "Cover", "Clear"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "CALENDAR",
+    tabooWords: ["Day", "Month", "Year", "Date", "Time"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "BOX",
+    tabooWords: ["Put", "Lid", "Store", "Cardboard", "Inside"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "CLOTHESPIN",
+    tabooWords: ["Laundry", "Hang", "Balcony", "Clip", "Line"],
+    category: "Genel",
+  ),
+  WordCard(
+    word: "LIGHTER",
+    tabooWords: ["Fire", "Light", "Cigarette", "Gas", "Hand"],
+    category: "Genel",
+  ),
+
+  // Art Category
+  WordCard(
+    word: "MONA LISA",
+    tabooWords: ["Painting", "Leonardo", "Smile", "Art", "Louvre"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "PICASSO",
+    tabooWords: ["Painter", "Cubism", "Painting", "Spain", "Modern"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "VAN GOGH",
+    tabooWords: ["Painter", "Ear", "Starry", "Netherlands", "Painting"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "SCULPTURE",
+    tabooWords: ["Stone", "Bronze", "Carve", "Figure", "Artist"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "THEATER",
+    tabooWords: ["Stage", "Actor", "Curtain", "Play", "Hall"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "OPERA",
+    tabooWords: ["Singing", "Stage", "Classical", "Voice", "Performance"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "BALLET",
+    tabooWords: ["Dance", "Tutu", "Stage", "Music", "Graceful"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "PAINTING",
+    tabooWords: ["Paint", "Canvas", "Brush", "Color", "Picture"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "PORTRAIT",
+    tabooWords: ["Face", "Painting", "Person", "Picture", "Draw"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "LANDSCAPE",
+    tabooWords: ["Nature", "Painting", "Mountain", "Sea", "Picture"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "ABSTRACT",
+    tabooWords: ["Shape", "Modern", "Painting", "Color", "Nonfigurative"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "CARICATURE",
+    tabooWords: ["Drawing", "Humor", "Exaggeration", "Newspaper", "Funny"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "GRAFFITI",
+    tabooWords: ["Wall", "Spray", "Street", "Writing", "Drawing"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "PHOTOGRAPH",
+    tabooWords: ["Camera", "Shoot", "Image", "Light", "Frame"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "CINEMA",
+    tabooWords: ["Movie", "Hall", "Screen", "Actor", "Director"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "DIRECTOR",
+    tabooWords: ["Movie", "Camera", "Set", "Cinema", "Actor"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "SCREENPLAY",
+    tabooWords: ["Film", "Writing", "Story", "Scene", "Script"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "CAMERA",
+    tabooWords: ["Shoot", "Video", "Photo", "Lens", "Film"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "NOVEL",
+    tabooWords: ["Book", "Author", "Story", "Page", "Fiction"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "POEM",
+    tabooWords: ["Verse", "Poet", "Short", "Emotion", "Writing"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "POET",
+    tabooWords: ["Poem", "Write", "Verse", "Literature", "Pen"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "COMPOSER",
+    tabooWords: ["Music", "Note", "Write", "Classical", "Piece"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "ORCHESTRA",
+    tabooWords: ["Music", "Instrument", "Conductor", "Concert", "Group"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "CONCERT",
+    tabooWords: ["Music", "Stage", "Live", "Listen", "Crowd"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "INSTRUMENT",
+    tabooWords: ["Music", "Play", "Sound", "Note", "Tool"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "GUITAR",
+    tabooWords: ["String", "Play", "Music", "Acoustic", "Electric"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "VIOLIN",
+    tabooWords: ["Bow", "String", "Music", "Play", "Classical"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "PIANO",
+    tabooWords: ["Key", "Music", "Play", "Note", "Grand"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "NOTE",
+    tabooWords: ["Music", "Writing", "Sound", "Paper", "Play"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "EXHIBITION",
+    tabooWords: ["Art", "Gallery", "Work", "Visit", "Painting"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "GALLERY",
+    tabooWords: ["Exhibition", "Painting", "Art", "Hall", "Wall"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "MUSEUM",
+    tabooWords: ["History", "Artifact", "Exhibition", "Visit", "Building"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "COSTUME",
+    tabooWords: ["Clothing", "Stage", "Role", "Theater", "Film"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "SET DESIGN",
+    tabooWords: ["Stage", "Background", "Theater", "Film", "Location"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "MAKEUP",
+    tabooWords: ["Face", "Stage", "Actor", "Cosmetics", "Prep"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "EDITING",
+    tabooWords: ["Film", "Cut", "Montage", "Scene", "Video"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "MONTAGE",
+    tabooWords: ["Video", "Cut", "Film", "Editing", "Computer"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "ADVERTISEMENT",
+    tabooWords: ["Promotion", "Film", "Wall", "Poster", "Ad"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "POSTER",
+    tabooWords: ["Wall", "Movie", "Picture", "Hang", "Large"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "CARTOON",
+    tabooWords: ["Animation", "Kids", "Character", "TV", "Voice"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "ANIMATION",
+    tabooWords: ["Drawing", "Motion", "Film", "Character", "Computer"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "COMEDY",
+    tabooWords: ["Funny", "Laugh", "Movie", "Humor", "Genre"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "DRAMA",
+    tabooWords: ["Film", "Emotion", "Cry", "Genre", "Story"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "CLASSICAL MUSIC",
+    tabooWords: ["Orchestra", "Composer", "Note", "Concert", "Old"],
+    category: "Sanat",
+  ),
+  WordCard(
+    word: "MODERN ART",
+    tabooWords: ["Abstract", "Contemporary", "Gallery", "Meaning", "New"],
+    category: "Sanat",
+  ),
+
+  // Science Category
+  WordCard(
+    word: "ATOM",
+    tabooWords: ["Particle", "Nucleus", "Electron", "Physics", "Matter"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "CELL",
+    tabooWords: ["Living", "Microscope", "DNA", "Biology", "Nucleus"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "DNA",
+    tabooWords: ["Gene", "Heredity", "Cell", "Biology", "Code"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "GENE",
+    tabooWords: ["DNA", "Heredity", "Mother", "Father", "Trait"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "MICROSCOPE",
+    tabooWords: ["Tiny", "Lens", "Laboratory", "Bacteria", "See"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "TELESCOPE",
+    tabooWords: ["Space", "Star", "Planet", "Look", "Observe"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "ENERGY",
+    tabooWords: ["Power", "Electricity", "Motion", "Heat", "Source"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "LIGHT",
+    tabooWords: ["See", "Speed", "Wave", "Dark", "Sun"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "SOUND",
+    tabooWords: ["Wave", "Hear", "Vibration", "Ear", "Noise"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "WAVE",
+    tabooWords: ["Water", "Sound", "Light", "Vibration", "Spread"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "ELECTRON",
+    tabooWords: ["Atom", "Charge", "Negative", "Nucleus", "Particle"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "CHEMISTRY",
+    tabooWords: ["Experiment", "Matter", "Reaction", "Laboratory", "Science"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "PHYSICS",
+    tabooWords: ["Force", "Motion", "Energy", "Science", "Newton"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "BIOLOGY",
+    tabooWords: ["Living", "Cell", "Science", "Human", "Life"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "EXPERIMENT",
+    tabooWords: ["Laboratory", "Test", "Science", "Result", "Research"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "LABORATORY",
+    tabooWords: ["Experiment", "Science", "Chemistry", "Tube", "Research"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "BACTERIA",
+    tabooWords: ["Germ", "Illness", "Microscope", "Tiny", "Living"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "VIRUS",
+    tabooWords: ["Disease", "Contagious", "Germ", "Immunity", "Infection"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "VACCINE",
+    tabooWords: ["Disease", "Protection", "Needle", "Immunity", "Virus"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "IMMUNITY",
+    tabooWords: ["Body", "Disease", "Defense", "Vaccine", "Protection"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "HUMAN BODY",
+    tabooWords: ["Organ", "Muscle", "Bone", "System", "Living"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "BRAIN",
+    tabooWords: ["Think", "Nerve", "Head", "Intelligence", "Organ"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "HEART",
+    tabooWords: ["Blood", "Beat", "Circulation", "Organ", "Chest"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "BLOOD",
+    tabooWords: ["Circulation", "Red", "Body", "Heart", "Vein"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "VEIN",
+    tabooWords: ["Blood", "Body", "Heart", "Carry", "Inside"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "SKELETON",
+    tabooWords: ["Bone", "Body", "Support", "Human", "Structure"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "MUSCLE",
+    tabooWords: ["Motion", "Body", "Strength", "Human", "Pull"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "DIGESTION",
+    tabooWords: ["Stomach", "Intestine", "Food", "Body", "System"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "RESPIRATION",
+    tabooWords: ["Breath", "Lung", "Oxygen", "Body", "Air"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "LUNG",
+    tabooWords: ["Breath", "Respiration", "Oxygen", "Organ", "Chest"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "SPACE",
+    tabooWords: ["Universe", "Star", "Planet", "Vacuum", "Astronomy"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "PLANET",
+    tabooWords: ["Earth", "Space", "Sun", "Orbit", "Astronomy"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "SUN",
+    tabooWords: ["Star", "Light", "Heat", "Center", "Day"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "MOON",
+    tabooWords: ["Earth", "Night", "Satellite", "Orbit", "Sky"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "STAR",
+    tabooWords: ["Space", "Light", "Sun", "Sky", "Shine"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "ASTRONOMY",
+    tabooWords: ["Space", "Planet", "Star", "Science", "Telescope"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "EVOLUTION",
+    tabooWords: ["Change", "Living", "Time", "Species", "Science"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "ECOSYSTEM",
+    tabooWords: ["Living", "Nature", "Balance", "Environment", "System"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "CLIMATE",
+    tabooWords: ["Weather", "Long", "Temperature", "Earth", "Change"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "AIR",
+    tabooWords: ["Breath", "Atmosphere", "Gas", "Wind", "Oxygen"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "WATER",
+    tabooWords: ["Liquid", "Drink", "Life", "Basic", "H2O"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "BOILING",
+    tabooWords: ["Heat", "Water", "Temperature", "Steam", "Degree"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "MELTING",
+    tabooWords: ["Ice", "Heat", "Solid", "Liquid", "Change"],
+    category: "Bilim",
+  ),
+  WordCard(
+    word: "CONDENSATION",
+    tabooWords: ["Steam", "Gas", "Liquid", "Cold", "Transition"],
+    category: "Bilim",
+  ),
+
+  // Food Category
+  WordCard(
+    word: "DUMPLINGS",
+    tabooWords: ["Dough", "Ground Meat", "Yogurt", "Garlic", "Boiled"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "TURKISH PIZZA",
+    tabooWords: ["Dough", "Ground Meat", "Oven", "Thin", "Spicy"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "BAKLAVA",
+    tabooWords: ["Dessert", "Syrup", "Pistachio", "Phyllo", "Tray"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "STUFFED EGGPLANT",
+    tabooWords: ["Eggplant", "Fried", "Ground Meat", "Pot", "Dish"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "DONER KEBAB",
+    tabooWords: ["Meat", "Spit", "Bread", "Chicken", "Slice"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "TURKISH FLATBREAD",
+    tabooWords: ["Oven", "Dough", "Cheese", "Long", "Black Sea"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "MEATBALL",
+    tabooWords: ["Ground Meat", "Grill", "Meat", "Round", "Bread"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "ISKENDER KEBAB",
+    tabooWords: ["Doner", "Yogurt", "Butter", "Bursa", "Meat"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "SCRAMBLED EGGS",
+    tabooWords: ["Egg", "Tomato", "Pepper", "Breakfast", "Pan"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "RICE PILAF",
+    tabooWords: ["Rice", "Grain", "Butter", "Water", "Side"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "SAVORY PASTRY",
+    tabooWords: ["Phyllo", "Cheese", "Oven", "Layer", "Dough"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "STUFFED FLATBREAD",
+    tabooWords: ["Griddle", "Phyllo", "Cheese", "Fold", "Village"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "SOUP",
+    tabooWords: ["Hot", "Spoon", "Starter", "Pot", "Liquid"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "LENTIL SOUP",
+    tabooWords: ["Soup", "Lentil", "Bulgur", "Red", "Hot"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "TARHANA SOUP",
+    tabooWords: ["Soup", "Dried", "Sour", "Winter", "Powder"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "WHITE BEANS",
+    tabooWords: ["Legume", "Rice", "White", "Pot", "Dish"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "CHICKPEA",
+    tabooWords: ["Legume", "Round", "Pot", "Dish", "Protein"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "LENTIL",
+    tabooWords: ["Legume", "Red", "Soup", "Yellow", "Grain"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "OLIVE OIL EGGPLANT",
+    tabooWords: ["Eggplant", "Olive Oil", "Cold", "Vegetable", "Dish"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "SALAD",
+    tabooWords: ["Greens", "Raw", "Mix", "Lemon", "Side"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "TZATZIKI",
+    tabooWords: ["Yogurt", "Cucumber", "Garlic", "Cold", "Summer"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "YOGURT DRINK",
+    tabooWords: ["Yogurt", "Water", "Salt", "Drink", "Cold"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "KEBAB",
+    tabooWords: ["Meat", "Skewer", "Grill", "Spicy", "Adana"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "ADANA KEBAB",
+    tabooWords: ["Kebab", "Spicy", "Skewer", "Meat", "Urfa"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "URFA KEBAB",
+    tabooWords: ["Kebab", "Mild", "Meat", "Skewer", "Adana"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "SPICY SAUSAGE",
+    tabooWords: ["Meat", "Spice", "Breakfast", "Fry", "Sausage"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "CURED BEEF",
+    tabooWords: ["Meat", "Kayseri", "Fenugreek", "Dry", "Slice"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "OMELET",
+    tabooWords: ["Egg", "Pan", "Breakfast", "Cook", "Mix"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "CLOTTED CREAM",
+    tabooWords: ["Milk", "Breakfast", "Honey", "Fatty", "White"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "HONEY",
+    tabooWords: ["Bee", "Sweet", "Breakfast", "Yellow", "Natural"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "CHEESE",
+    tabooWords: ["Milk", "Breakfast", "White", "Salty", "Slice"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "YOGURT",
+    tabooWords: ["Milk", "White", "Cold", "Bowl", "Sour"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "BREAKFAST",
+    tabooWords: ["Morning", "Egg", "Cheese", "Tea", "Table"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "TEA",
+    tabooWords: ["Glass", "Brew", "Hot", "Black", "Drink"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "COFFEE",
+    tabooWords: ["Turkish", "Cup", "Caffeine", "Grounds", "Drink"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "TURKISH DELIGHT",
+    tabooWords: ["Dessert", "Sugar", "Soft", "Treat", "Turkish"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "HALVA",
+    tabooWords: ["Dessert", "Flour", "Semolina", "Toast", "Sugar"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "RICE PUDDING",
+    tabooWords: ["Dessert", "Milk", "Rice", "Oven", "Bowl"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "CARAMELIZED PUDDING",
+    tabooWords: ["Dessert", "Milk", "Burnt", "Custard", "Tray"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "ICE CREAM",
+    tabooWords: ["Cold", "Dessert", "Summer", "Cone", "Melt"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "WAFFLE",
+    tabooWords: ["Dessert", "Chocolate", "Fruit", "Batter", "Square"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "PIZZA",
+    tabooWords: ["Dough", "Cheese", "Oven", "Slice", "Italian"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "HAMBURGER",
+    tabooWords: ["Bun", "Patty", "Fast Food", "Sandwich", "Meat"],
+    category: "Yemek",
+  ),
+  WordCard(
+    word: "PASTA",
+    tabooWords: ["Dough", "Boil", "Sauce", "Spaghetti", "Plate"],
+    category: "Yemek",
+  ),
+
+  // Sports Category
+  WordCard(
+    word: "SOCCER",
+    tabooWords: ["Ball", "Goal", "Match", "Field", "Team"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "BASKETBALL",
+    tabooWords: ["Hoop", "Ball", "Court", "NBA", "Match"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "VOLLEYBALL",
+    tabooWords: ["Net", "Ball", "Spike", "Set", "Court"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "TENNIS",
+    tabooWords: ["Racket", "Ball", "Court", "Serve", "Match"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "TABLE TENNIS",
+    tabooWords: ["Racket", "Ball", "Table", "Net", "Ping Pong"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "SWIMMING",
+    tabooWords: ["Pool", "Sea", "Water", "Stroke", "Swim"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "RUNNING",
+    tabooWords: ["Athletics", "Speed", "Track", "Breath", "Feet"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "ATHLETICS",
+    tabooWords: ["Running", "Jumping", "Field", "Olympics", "Athlete"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "WEIGHTLIFTING",
+    tabooWords: ["Weight", "Lift", "Bar", "Strength", "Muscle"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "BOXING",
+    tabooWords: ["Ring", "Gloves", "Punch", "Match", "Fighter"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "WRESTLING",
+    tabooWords: ["Wrestler", "Oil", "Grapple", "Hold", "Mat"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "JUDO",
+    tabooWords: ["Fight", "Opponent", "Throw", "Mat", "Japan"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "KARATE",
+    tabooWords: ["Fight", "Kick", "Kata", "Japan", "Sport"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "FITNESS",
+    tabooWords: ["Gym", "Weights", "Exercise", "Muscle", "Training"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "BODYBUILDING",
+    tabooWords: ["Muscle", "Weights", "Fitness", "Protein", "Gym"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "SKIING",
+    tabooWords: ["Snow", "Mountain", "Slope", "Winter", "Slide"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "SNOWBOARDING",
+    tabooWords: ["Snow", "Board", "Slide", "Mountain", "Winter"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "ICE SKATING",
+    tabooWords: ["Ice", "Glide", "Rink", "Foot", "Cold"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "ROLLER SKATING",
+    tabooWords: ["Wheel", "Glide", "Foot", "Helmet", "Balance"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "BICYCLE",
+    tabooWords: ["Pedal", "Two Wheels", "Ride", "Helmet", "Road"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "MOUNTAINEERING",
+    tabooWords: ["Climb", "Summit", "Rope", "Mountain", "Risk"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "ARCHERY",
+    tabooWords: ["Bow", "Arrow", "Target", "Shoot", "Aim"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "FENCING",
+    tabooWords: ["Sword", "Mask", "Duel", "Point", "French"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "HANDBALL",
+    tabooWords: ["Ball", "Goal", "Team", "Throw", "Indoor"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "WATER POLO",
+    tabooWords: ["Pool", "Ball", "Goal", "Team", "Swim"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "DARTS",
+    tabooWords: ["Arrow", "Target", "Throw", "Points", "Board"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "BILLIARDS",
+    tabooWords: ["Ball", "Cue", "Table", "Pocket", "Hit"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "BOWLING",
+    tabooWords: ["Ball", "Pins", "Alley", "Roll", "Hit"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "GOLF",
+    tabooWords: ["Club", "Ball", "Grass", "Hole", "Hit"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "SURFING",
+    tabooWords: ["Wave", "Sea", "Board", "Ride", "Balance"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "SAILING",
+    tabooWords: ["Wind", "Sea", "Boat", "Race", "Sailboat"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "CANOEING",
+    tabooWords: ["Paddle", "Water", "Boat", "River", "Sport"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "RACKET",
+    tabooWords: ["Tennis", "Hit", "Ball", "Handle", "Net"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "REFEREE",
+    tabooWords: ["Match", "Rule", "Whistle", "Decision", "Manage"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "COACH",
+    tabooWords: ["Team", "Train", "Teacher", "Athlete", "Match"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "ATHLETE",
+    tabooWords: ["Training", "Match", "Team", "Success", "Performance"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "OLYMPICS",
+    tabooWords: ["Games", "Country", "Medal", "Four Years", "Sport"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "MEDAL",
+    tabooWords: ["Gold", "Silver", "Bronze", "Win", "Neck"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "RECORD",
+    tabooWords: ["Best", "Score", "Break", "Success", "Time"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "SCORE",
+    tabooWords: ["Points", "Count", "Match", "Win", "Number"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "SET",
+    tabooWords: ["Volleyball", "Tennis", "Segment", "Match", "Game"],
+    category: "Spor",
+  ),
+  WordCard(
+    word: "GOAL",
+    tabooWords: ["Soccer", "Net", "Score", "Ball", "Shoot"],
+    category: "Spor",
+  ),
+
+  // Nature Category
+  WordCard(
+    word: "FOREST",
+    tabooWords: ["Tree", "Green", "Leaf", "Nature", "Animal"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "SEA",
+    tabooWords: ["Water", "Salty", "Wave", "Beach", "Blue"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "MOUNTAIN",
+    tabooWords: ["High", "Summit", "Climb", "Snow", "Peak"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "LAKE",
+    tabooWords: ["Water", "Still", "Fresh", "Shore", "Fish"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "RIVER",
+    tabooWords: ["Flow", "Water", "Long", "Bridge", "Bed"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "WATERFALL",
+    tabooWords: ["Water", "High", "Fall", "Flow", "Noise"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "VALLEY",
+    tabooWords: ["Mountain", "Between", "Deep", "River", "Nature"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "PLAIN",
+    tabooWords: ["Flat", "Field", "Wide", "Soil", "Farming"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "BEACH",
+    tabooWords: ["Sand", "Sea", "Sun", "Umbrella", "Summer"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "SAND",
+    tabooWords: ["Beach", "Yellow", "Grain", "Sea", "Foot"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "SOIL",
+    tabooWords: ["Mud", "Field", "Plant", "Ground", "Brown"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "TREE",
+    tabooWords: ["Forest", "Trunk", "Branch", "Leaf", "Green"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "LEAF",
+    tabooWords: ["Tree", "Green", "Autumn", "Branch", "Fall"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "FLOWER",
+    tabooWords: ["Scent", "Colorful", "Spring", "Plant", "Bloom"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "GRASS",
+    tabooWords: ["Green", "Garden", "Ground", "Cut", "Soil"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "RAIN",
+    tabooWords: ["Water", "Cloud", "Wet", "Umbrella", "Weather"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "SNOW",
+    tabooWords: ["White", "Cold", "Winter", "Fall", "Ice"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "ICE",
+    tabooWords: ["Cold", "Freeze", "Slippery", "Water", "Melt"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "WIND",
+    tabooWords: ["Air", "Breeze", "Storm", "Blow", "Cold"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "STORM",
+    tabooWords: ["Wind", "Rain", "Strong", "Weather", "Wave"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "THUNDER",
+    tabooWords: ["Lightning", "Sound", "Storm", "Fear", "Cloud"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "LIGHTNING",
+    tabooWords: ["Light", "Sky", "Storm", "Strike", "Cloud"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "CLOUD",
+    tabooWords: ["Sky", "White", "Rain", "Weather", "Fly"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "SUN",
+    tabooWords: ["Warm", "Light", "Day", "Sky", "Star"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "MOON",
+    tabooWords: ["Night", "Satellite", "Sky", "Earth", "Round"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "STAR",
+    tabooWords: ["Sky", "Night", "Bright", "Space", "Light"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "RAINBOW",
+    tabooWords: ["Color", "Rain", "Sun", "Seven", "Sky"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "DESERT",
+    tabooWords: ["Sand", "Hot", "Dry", "Little", "Water"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "SWAMP",
+    tabooWords: ["Mud", "Water", "Mosquito", "Soft", "Ground"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "CAVE",
+    tabooWords: ["Dark", "Rock", "Underground", "Cold", "Deep"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "ROCK",
+    tabooWords: ["Stone", "Hard", "Mountain", "Big", "Heavy"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "STONE",
+    tabooWords: ["Hard", "Small", "Throw", "Ground", "Nature"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "VOLCANO",
+    tabooWords: ["Lava", "Eruption", "Explode", "Fire", "Mountain"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "LAVA",
+    tabooWords: ["Volcano", "Hot", "Flow", "Fire", "Red"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "WILDFIRE",
+    tabooWords: ["Fire", "Smoke", "Tree", "Burn", "Disaster"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "NATURE",
+    tabooWords: ["Environment", "Forest", "Sea", "Animal", "Earth"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "ECOSYSTEM",
+    tabooWords: ["Living", "Balance", "Nature", "Environment", "System"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "SEASON",
+    tabooWords: ["Summer", "Winter", "Autumn", "Spring", "Time"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "SUMMER",
+    tabooWords: ["Hot", "Sea", "Vacation", "Sun", "Season"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "WINTER",
+    tabooWords: ["Cold", "Snow", "Coat", "Season", "Ice"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "AUTUMN",
+    tabooWords: ["Leaf", "Yellow", "Cool", "Season", "Fall"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "SPRING",
+    tabooWords: ["Flower", "Rain", "Season", "Green", "Warm"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "ANIMAL",
+    tabooWords: ["Living", "Nature", "Wild", "Species", "Live"],
+    category: "Doğa",
+  ),
+  WordCard(
+    word: "WILDLIFE",
+    tabooWords: ["Animal", "Nature", "Forest", "Free", "Natural"],
+    category: "Doğa",
+  ),
+
+  // Technology Category
+  WordCard(
+    word: "COMPUTER",
+    tabooWords: ["Screen", "Keyboard", "Mouse", "Program", "Internet"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "SMARTPHONE",
+    tabooWords: ["Touchscreen", "iPhone", "Android", "Mobile", "Camera"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "INTERNET",
+    tabooWords: ["Connection", "Web", "Online", "WiFi", "Network"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "WI-FI",
+    tabooWords: ["Wireless", "Internet", "Modem", "Connect", "Network"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "MODEM",
+    tabooWords: ["Internet", "WiFi", "Connection", "Light", "Box"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "SOFTWARE",
+    tabooWords: ["Code", "Program", "Computer", "App", "Development"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "HARDWARE",
+    tabooWords: ["Part", "Computer", "Physical", "Screen", "Keyboard"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "APP",
+    tabooWords: ["Phone", "Program", "Download", "Mobile", "Store"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "GAME",
+    tabooWords: ["Play", "Console", "Computer", "Fun", "Score"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "CONSOLE",
+    tabooWords: ["Game", "PlayStation", "Xbox", "Controller", "TV"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "SERVER",
+    tabooWords: ["Data", "Internet", "Connection", "Storage", "Host"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "CLOUD",
+    tabooWords: ["Storage", "Online", "Data", "Server", "Internet"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "DATA",
+    tabooWords: ["Information", "File", "Store", "Digital", "Computer"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "FILE",
+    tabooWords: ["Document", "Save", "Computer", "Folder", "Data"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "FOLDER",
+    tabooWords: ["File", "Organize", "Computer", "Inside", "Store"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "EMAIL",
+    tabooWords: ["Mail", "Message", "Send", "Internet", "Address"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "BROWSER",
+    tabooWords: ["Chrome", "Web", "Internet", "Site", "Open"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "SEARCH ENGINE",
+    tabooWords: ["Google", "Internet", "Find", "Site", "Type"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "ARTIFICIAL INTELLIGENCE",
+    tabooWords: ["Machine", "Learning", "Algorithm", "Computer", "Mind"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "ROBOT",
+    tabooWords: ["Machine", "Automatic", "Metal", "Program", "Artificial"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "ALGORITHM",
+    tabooWords: ["Step", "Code", "Solution", "Logic", "Program"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "CODE",
+    tabooWords: ["Write", "Program", "Computer", "Language", "Software"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "PROGRAMMING",
+    tabooWords: ["Code", "Software", "Computer", "Language", "Development"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "BUG",
+    tabooWords: ["Error", "Problem", "Code", "Fail", "Fix"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "UPDATE",
+    tabooWords: ["New", "Version", "Software", "Download", "Change"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "CHARGE",
+    tabooWords: ["Battery", "Fill", "Cable", "Electricity", "Power"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "BATTERY",
+    tabooWords: ["Charge", "Energy", "Phone", "Fill", "Power"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "SCREEN",
+    tabooWords: ["Display", "Touch", "Light", "Phone", "Computer"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "KEYBOARD",
+    tabooWords: ["Key", "Type", "Computer", "Letter", "Input"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "MOUSE",
+    tabooWords: ["Click", "Cursor", "Computer", "Hand", "Cable"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "USB",
+    tabooWords: ["Cable", "Plug", "Connect", "File", "Port"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "BLUETOOTH",
+    tabooWords: ["Wireless", "Connection", "Headset", "Phone", "Turn On"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "HEADPHONES",
+    tabooWords: ["Sound", "Music", "Wear", "Bluetooth", "Cable"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "SPEAKER",
+    tabooWords: ["Sound", "Music", "Loud", "Listen", "Device"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "CAMERA",
+    tabooWords: ["Photo", "Video", "Shoot", "Lens", "Image"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "DRONE",
+    tabooWords: ["Fly", "Camera", "Remote", "Air", "Control"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "NAVIGATION",
+    tabooWords: ["Map", "Road", "GPS", "Find", "Go"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "GPS",
+    tabooWords: ["Location", "Satellite", "Map", "Phone", "Find"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "SOCIAL MEDIA",
+    tabooWords: ["Share", "Internet", "Follow", "App", "Photo"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "PASSWORD",
+    tabooWords: ["Secret", "Security", "Login", "Account", "Code"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "SECURITY",
+    tabooWords: ["Protection", "Password", "Data", "Danger", "System"],
+    category: "Teknoloji",
+  ),
+  WordCard(
+    word: "VIRUS",
+    tabooWords: ["Damage", "Computer", "Program", "Delete", "Threat"],
+    category: "Teknoloji",
+  ),
+
+  // History Category
+  WordCard(
+    word: "ATATURK",
+    tabooWords: ["Republic", "Mustafa Kemal", "Turkey", "Leader", "Independence"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "REPUBLIC",
+    tabooWords: ["Ataturk", "State", "Government", "Turkey", "1923"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "OTTOMAN",
+    tabooWords: ["Empire", "Sultan", "State", "History", "Istanbul"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "CONQUEST OF ISTANBUL",
+    tabooWords: ["1453", "Mehmed", "War", "Byzantium", "Istanbul"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "MEHMED THE CONQUEROR",
+    tabooWords: ["Istanbul", "Conquest", "Ottoman", "Sultan", "1453"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "OTTOMAN SULTAN",
+    tabooWords: ["Ottoman", "Throne", "Palace", "Ruler", "State"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "SULTAN",
+    tabooWords: ["Padishah", "Ottoman", "Ruler", "Throne", "State"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "PALACE",
+    tabooWords: ["Sultan", "Ottoman", "Life", "Building", "Throne"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "TOPKAPI PALACE",
+    tabooWords: ["Istanbul", "Ottoman", "Sultan", "Palace", "Museum"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "WAR OF INDEPENDENCE",
+    tabooWords: ["Ataturk", "War", "Turkey", "Independence", "Greece"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "CONSTITUTION",
+    tabooWords: ["Law", "State", "Rights", "Legal", "Article"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "PARLIAMENT",
+    tabooWords: ["TBMM", "Deputy", "Law", "Meeting", "State"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "TBMM",
+    tabooWords: ["Parliament", "Ankara", "Law", "People", "State"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "ANKARA",
+    tabooWords: ["Capital", "Turkey", "Parliament", "Ataturk", "City"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "EMPIRE",
+    tabooWords: ["State", "Large", "Land", "Rule", "Ottoman"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "KING",
+    tabooWords: ["Throne", "Kingdom", "Ruler", "Crown", "Rule"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "QUEEN",
+    tabooWords: ["Throne", "Kingdom", "Woman", "Crown", "Rule"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "WAR",
+    tabooWords: ["Army", "Weapon", "Conflict", "Front", "History"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "ARMY",
+    tabooWords: ["Soldier", "War", "Weapon", "Front", "Unit"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "SOLDIER",
+    tabooWords: ["Army", "Weapon", "War", "Uniform", "Duty"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "FRONTLINE",
+    tabooWords: ["War", "Soldier", "Line", "Battle", "Field"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "TREATY",
+    tabooWords: ["Signature", "Peace", "State", "War", "Agreement"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "LAUSANNE",
+    tabooWords: ["Treaty", "Turkey", "1923", "Peace", "Border"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "SEVRES",
+    tabooWords: ["Treaty", "Ottoman", "Partition", "War", "Rejected"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "CONQUEST",
+    tabooWords: ["Take", "War", "Land", "Victory", "Army"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "VICTORY",
+    tabooWords: ["Win", "War", "Success", "Army", "Celebration"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "THRONE",
+    tabooWords: ["Sultan", "King", "Sit", "Rule", "Palace"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "CROWN",
+    tabooWords: ["King", "Queen", "Head", "Gold", "Symbol"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "INSCRIPTION",
+    tabooWords: ["Stone", "History", "Ancient", "Writing", "Monument"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "MONUMENT",
+    tabooWords: ["Statue", "History", "Structure", "Memory", "Stone"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "MUSEUM",
+    tabooWords: ["History", "Artifact", "Exhibition", "Visit", "Building"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "ANCIENT AGE",
+    tabooWords: ["History", "Ancient", "First", "Civilization", "Era"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "MIDDLE AGES",
+    tabooWords: ["History", "Knight", "Castle", "Dark", "Era"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "MODERN AGE",
+    tabooWords: ["History", "Discovery", "Renaissance", "Era", "Beginning"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "RENAISSANCE",
+    tabooWords: ["Europe", "Art", "Rebirth", "History", "Era"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "REFORMATION",
+    tabooWords: ["Religion", "Change", "Europe", "Church", "History"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "CIVILIZATION",
+    tabooWords: ["Society", "Culture", "History", "Ancient", "People"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "CULTURE",
+    tabooWords: ["Civilization", "Society", "Tradition", "History", "Developed"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "WRITING",
+    tabooWords: ["Letters", "History", "First", "Tablet", "Communication"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "CALENDAR",
+    tabooWords: ["Time", "Day", "Month", "Year", "Date"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "CHRONOLOGY",
+    tabooWords: ["Order", "Time", "History", "Event", "Arrange"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "EPIC",
+    tabooWords: ["Story", "Hero", "Ancient", "Oral", "History"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "EPITAPH",
+    tabooWords: ["Writing", "Stone", "History", "Monument", "Old"],
     category: "Tarih",
   ),
 ];

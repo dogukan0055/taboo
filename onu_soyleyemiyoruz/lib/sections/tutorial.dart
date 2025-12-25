@@ -165,7 +165,7 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
                 description: game.t("tip_narrator_cycle_body"),
               ),
               _TutorialTipCard(
-                icon: Icons.settings_voice,
+                icon: Icons.feedback,
                 title: game.t("tip_feedback_title"),
                 description: game.t("tip_feedback_body"),
               ),
