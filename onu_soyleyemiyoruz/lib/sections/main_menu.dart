@@ -53,11 +53,11 @@ class MainMenuScreen extends StatelessWidget {
                     label: game.t("menu_settings"),
                     color: Colors.teal,
                     onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        backgroundColor: Colors.transparent,
-                        enableDrag: true,
-                        builder: (_) => const SettingsSheet(),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SettingsScreen(),
+                        ),
                       );
                     },
                   ),

@@ -5,16 +5,67 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:games_services/games_services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'models.dart';
+
+enum CategoryAccess { free, adUnlock, premium }
+
+enum _AchievementKey {
+  firstWin,
+  perfectRound,
+  quickThinker,
+  marathonRounds,
+}
+
+class _AchievementIds {
+  final String ios;
+  final String android;
+
+  const _AchievementIds({required this.ios, required this.android});
+}
 
 class GameProvider extends ChangeNotifier {
   static const String _teamADefaultTr = "TAKIM A";
   static const String _teamBDefaultTr = "TAKIM B";
   static const String _teamADefaultEn = "TEAM A";
   static const String _teamBDefaultEn = "TEAM B";
+  static const String _removeAdsProductId = "remove_ads";
+  static const Map<String, String> _premiumCategoryProductIds = {
+    "Futbol Paketi": "pack_football",
+    "90'lar Nostalji": "pack_90s",
+    "Zor Seviye Paketi": "pack_hard",
+    "Gece Yarısı Paketi": "pack_midnight",
+  };
+  // Replace these IDs with your App Store / Play Console achievement IDs.
+  static const Map<_AchievementKey, _AchievementIds> _achievementIds = {
+    _AchievementKey.firstWin:
+        _AchievementIds(ios: "first_win", android: "first_win"),
+    _AchievementKey.perfectRound:
+        _AchievementIds(ios: "perfect_round", android: "perfect_round"),
+    _AchievementKey.quickThinker:
+        _AchievementIds(ios: "quick_thinker", android: "quick_thinker"),
+    _AchievementKey.marathonRounds:
+        _AchievementIds(ios: "marathon_5_rounds", android: "marathon_5_rounds"),
+  };
+  static const Set<String> _freeCategories = {
+    "Genel",
+    "Doğa",
+    "Tarih",
+    "Sanat",
+    "Teknoloji",
+  };
+  static const Set<String> _adUnlockCategories = {"Spor", "Bilim", "Yemek"};
+  static const Set<String> _premiumCategories = {
+    "Futbol Paketi",
+    "90'lar Nostalji",
+    "Zor Seviye Paketi",
+    "Gece Yarısı Paketi",
+  };
   // --- Global Settings ---
   bool soundEnabled = true;
   bool musicEnabled = true;
@@ -60,24 +111,25 @@ class GameProvider extends ChangeNotifier {
   // --- Category & Word Data ---
   List<String> availableCategories = [
     "Genel",
+    "Doğa",
+    "Tarih",
+    "Sanat",
+    "Teknoloji",
     "Spor",
     "Bilim",
     "Yemek",
-    "Sanat",
-    "Teknoloji",
-    "Doğa",
-    "Tarih",
+    "Futbol Paketi",
+    "90'lar Nostalji",
+    "Zor Seviye Paketi",
+    "Gece Yarısı Paketi",
     "Özel",
   ];
   Set<String> selectedCategories = {
     "Genel",
-    "Spor",
-    "Bilim",
-    "Yemek",
-    "Sanat",
-    "Teknoloji",
     "Doğa",
     "Tarih",
+    "Sanat",
+    "Teknoloji",
   };
   Set<String> disabledCardIds = {};
   List<WordCard> customCards = [];
@@ -110,6 +162,22 @@ class GameProvider extends ChangeNotifier {
   late final AudioPlayer _musicPlayer;
   late final AudioPlayer _sfxPlayer;
   bool _audioReady = false;
+
+  // --- Monetization ---
+  bool adsRemoved = false;
+  bool iapAvailable = false;
+  final Set<String> _adUnlockedCategories = {};
+  final Set<String> _purchasedCategoryIds = {};
+  final Map<String, DateTime> _rewardedCategoryUnlocks = {};
+  final List<ProductDetails> _products = [];
+  StreamSubscription<List<PurchaseDetails>>? _purchaseSub;
+  InterstitialAd? _interstitialAd;
+  RewardedAd? _rewardedAd;
+  bool _loadingInterstitial = false;
+  bool _loadingRewarded = false;
+  bool _showingInterstitial = false;
+  bool _showingRewarded = false;
+  bool gameCenterSignedIn = false;
 
   int currentPasses = 0;
   final int maxPasses = 3;
@@ -163,6 +231,16 @@ class GameProvider extends ChangeNotifier {
             .toSet();
     disabledCardIds =
         (_prefs?.getStringList("disabledCardIds") ?? disabledCardIds).toSet();
+    adsRemoved = _prefs?.getBool("adsRemoved") ?? adsRemoved;
+    _adUnlockedCategories
+      ..clear()
+      ..addAll(_prefs?.getStringList("adUnlockedCategories") ?? const []);
+    _purchasedCategoryIds
+      ..clear()
+      ..addAll(_prefs?.getStringList("purchasedCategories") ?? const []);
+    _rewardedCategoryUnlocks
+      ..clear()
+      ..addAll(_decodeRewardUnlocks(_prefs?.getString("rewardedUnlocks")));
     try {
       final rawCustom = _prefs?.getString("customCards");
       if (rawCustom != null) {
@@ -182,6 +260,7 @@ class GameProvider extends ChangeNotifier {
     } catch (_) {
       customCards = [];
     }
+    _revalidateCategoryAccess();
     _syncDisabledWithCategories();
     final bool isEnglishNow = languageCode == "en";
     final String expectedTeamA = isEnglishNow
@@ -200,6 +279,7 @@ class GameProvider extends ChangeNotifier {
     if (teamBName == otherLangTeamB) teamBName = expectedTeamB;
     hydrated = true;
     notifyListeners();
+    _initMonetization();
     if (musicEnabled) {
       ensureAudioInitialized();
     }
@@ -224,6 +304,16 @@ class GameProvider extends ChangeNotifier {
     _prefs!.setBool("allowRepeats", _allowRepeats);
     _prefs!.setStringList("selectedCategories", selectedCategories.toList());
     _prefs!.setStringList("disabledCardIds", disabledCardIds.toList());
+    _prefs!.setBool("adsRemoved", adsRemoved);
+    _prefs!.setStringList(
+      "adUnlockedCategories",
+      _adUnlockedCategories.toList(),
+    );
+    _prefs!.setStringList(
+      "purchasedCategories",
+      _purchasedCategoryIds.toList(),
+    );
+    _prefs!.setString("rewardedUnlocks", jsonEncode(_encodeRewardUnlocks()));
     _prefs!.setString(
       "customCards",
       jsonEncode(
@@ -240,6 +330,339 @@ class GameProvider extends ChangeNotifier {
             .toList(),
       ),
     );
+  }
+
+  Map<String, int> _encodeRewardUnlocks() {
+    final now = DateTime.now();
+    final Map<String, int> data = {};
+    _rewardedCategoryUnlocks.forEach((key, value) {
+      if (value.isAfter(now)) {
+        data[key] = value.millisecondsSinceEpoch;
+      }
+    });
+    return data;
+  }
+
+  Map<String, DateTime> _decodeRewardUnlocks(String? raw) {
+    if (raw == null || raw.isEmpty) return {};
+    try {
+      final decoded = jsonDecode(raw) as Map<String, dynamic>;
+      return decoded.map(
+        (key, value) =>
+            MapEntry(key, DateTime.fromMillisecondsSinceEpoch(value as int)),
+      );
+    } catch (_) {
+      return {};
+    }
+  }
+
+  void _revalidateCategoryAccess() {
+    final now = DateTime.now();
+    _rewardedCategoryUnlocks.removeWhere((_, value) => !value.isAfter(now));
+    if (adsRemoved) {
+      _adUnlockedCategories.addAll(_adUnlockCategories);
+    }
+    for (final cat in availableCategories) {
+      if (cat == "Özel") continue;
+      if (!isCategoryUnlocked(cat) && selectedCategories.contains(cat)) {
+        _setCategoryEnabled(cat, false);
+      }
+    }
+  }
+
+  bool get _adsSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+  bool get _iapSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+
+  Future<void> _initMonetization() async {
+    if (_iapSupported && _purchaseSub == null) {
+      iapAvailable = await InAppPurchase.instance.isAvailable();
+      if (iapAvailable) {
+        _purchaseSub = InAppPurchase.instance.purchaseStream.listen(
+          _handlePurchaseUpdates,
+          onDone: () => _purchaseSub = null,
+        );
+        await _loadProducts();
+      }
+    }
+    if (_adsSupported && !adsRemoved) {
+      await MobileAds.instance.initialize();
+      _loadInterstitial();
+      _loadRewarded();
+    }
+    notifyListeners();
+  }
+
+  Future<void> _loadProducts() async {
+    final ids = {_removeAdsProductId, ..._premiumCategoryProductIds.values};
+    final response = await InAppPurchase.instance.queryProductDetails(ids);
+    _products
+      ..clear()
+      ..addAll(response.productDetails);
+  }
+
+  void _handlePurchaseUpdates(List<PurchaseDetails> purchases) {
+    for (final purchase in purchases) {
+      final status = purchase.status;
+      if (status == PurchaseStatus.purchased ||
+          status == PurchaseStatus.restored) {
+        _grantPurchase(purchase.productID);
+      }
+      if (purchase.pendingCompletePurchase) {
+        InAppPurchase.instance.completePurchase(purchase);
+      }
+    }
+  }
+
+  void _grantPurchase(String productId) {
+    if (productId == _removeAdsProductId) {
+      adsRemoved = true;
+      _adUnlockedCategories.addAll(_adUnlockCategories);
+      for (final cat in _adUnlockCategories) {
+        _setCategoryEnabled(cat, true);
+      }
+    } else {
+      final cat = _categoryForProduct(productId);
+      if (cat != null) {
+        _purchasedCategoryIds.add(cat);
+        _setCategoryEnabled(cat, true);
+      }
+    }
+    _persist();
+    notifyListeners();
+  }
+
+  String? _categoryForProduct(String productId) {
+    for (final entry in _premiumCategoryProductIds.entries) {
+      if (entry.value == productId) return entry.key;
+    }
+    return null;
+  }
+
+  ProductDetails? _productById(String productId) {
+    for (final p in _products) {
+      if (p.id == productId) return p;
+    }
+    return null;
+  }
+
+  String? priceForProduct(String productId) => _productById(productId)?.price;
+
+  String? priceForCategory(String category) {
+    final productId = _premiumCategoryProductIds[category];
+    if (productId == null) return null;
+    return priceForProduct(productId);
+  }
+
+  String? get removeAdsPrice => priceForProduct(_removeAdsProductId);
+
+  Future<void> buyRemoveAds() async {
+    if (!iapAvailable) return;
+    final product = _productById(_removeAdsProductId);
+    if (product == null) return;
+    final param = PurchaseParam(productDetails: product);
+    await InAppPurchase.instance.buyNonConsumable(purchaseParam: param);
+  }
+
+  Future<void> buyCategoryPack(String category) async {
+    if (!iapAvailable) return;
+    final productId = _premiumCategoryProductIds[category];
+    if (productId == null) return;
+    final product = _productById(productId);
+    if (product == null) return;
+    final param = PurchaseParam(productDetails: product);
+    await InAppPurchase.instance.buyNonConsumable(purchaseParam: param);
+  }
+
+  Future<void> restorePurchases() async {
+    if (!iapAvailable) return;
+    await InAppPurchase.instance.restorePurchases();
+  }
+
+  void _loadInterstitial() {
+    if (!_adsSupported || _loadingInterstitial || _interstitialAd != null) {
+      return;
+    }
+    _loadingInterstitial = true;
+    InterstitialAd.load(
+      adUnitId: _interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+          _loadingInterstitial = false;
+        },
+        onAdFailedToLoad: (error) {
+          _loadingInterstitial = false;
+        },
+      ),
+    );
+  }
+
+  void _loadRewarded() {
+    if (!_adsSupported || _loadingRewarded || _rewardedAd != null) return;
+    _loadingRewarded = true;
+    RewardedAd.load(
+      adUnitId: _rewardedAdUnitId,
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          _rewardedAd = ad;
+          _loadingRewarded = false;
+        },
+        onAdFailedToLoad: (error) {
+          _loadingRewarded = false;
+        },
+      ),
+    );
+  }
+
+  Future<bool> showInterstitialAd() async {
+    if (!_adsSupported || adsRemoved || _showingInterstitial) return false;
+    final ad = _interstitialAd;
+    if (ad == null) {
+      _loadInterstitial();
+      return false;
+    }
+    _interstitialAd = null;
+    final completer = Completer<bool>();
+    _showingInterstitial = true;
+    ad.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        _showingInterstitial = false;
+        _loadInterstitial();
+        completer.complete(true);
+      },
+      onAdFailedToShowFullScreenContent: (ad, _) {
+        ad.dispose();
+        _showingInterstitial = false;
+        _loadInterstitial();
+        completer.complete(false);
+      },
+    );
+    ad.show();
+    return completer.future;
+  }
+
+  Future<bool> showRewardedAd() async {
+    if (!_adsSupported || _showingRewarded) return false;
+    final ad = _rewardedAd;
+    if (ad == null) {
+      _loadRewarded();
+      return false;
+    }
+    _rewardedAd = null;
+    final completer = Completer<bool>();
+    bool earned = false;
+    _showingRewarded = true;
+    ad.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        _showingRewarded = false;
+        _loadRewarded();
+        completer.complete(earned);
+      },
+      onAdFailedToShowFullScreenContent: (ad, _) {
+        ad.dispose();
+        _showingRewarded = false;
+        _loadRewarded();
+        completer.complete(false);
+      },
+    );
+    ad.show(
+      onUserEarnedReward: (_, reward) {
+        earned = reward.amount >= 0;
+      },
+    );
+    return completer.future;
+  }
+
+  CategoryAccess categoryAccess(String category) {
+    if (category == "Özel" || _freeCategories.contains(category)) {
+      return CategoryAccess.free;
+    }
+    if (_adUnlockCategories.contains(category)) {
+      return CategoryAccess.adUnlock;
+    }
+    if (_premiumCategories.contains(category)) {
+      return CategoryAccess.premium;
+    }
+    return CategoryAccess.free;
+  }
+
+  bool isCategoryUnlocked(String category) {
+    final access = categoryAccess(category);
+    if (access == CategoryAccess.free) return true;
+    if (access == CategoryAccess.adUnlock) {
+      return adsRemoved || _adUnlockedCategories.contains(category);
+    }
+    final until = _rewardedCategoryUnlocks[category];
+    final rewardActive = until != null && until.isAfter(DateTime.now());
+    return _purchasedCategoryIds.contains(category) || rewardActive;
+  }
+
+  Duration? rewardRemaining(String category) {
+    final until = _rewardedCategoryUnlocks[category];
+    if (until == null) return null;
+    final remaining = until.difference(DateTime.now());
+    if (remaining.isNegative) return null;
+    return remaining;
+  }
+
+  Future<bool> unlockCategoryWithReward(String category) async {
+    final access = categoryAccess(category);
+    if (access == CategoryAccess.free) return true;
+    if (access == CategoryAccess.adUnlock && adsRemoved) {
+      _adUnlockedCategories.add(category);
+      _setCategoryEnabled(category, true);
+      _persist();
+      notifyListeners();
+      return true;
+    }
+    if (access == CategoryAccess.premium &&
+        _purchasedCategoryIds.contains(category)) {
+      return true;
+    }
+    final rewarded = await showRewardedAd();
+    if (!rewarded) return false;
+    if (access == CategoryAccess.adUnlock) {
+      _adUnlockedCategories.add(category);
+    } else if (access == CategoryAccess.premium) {
+      _rewardedCategoryUnlocks[category] = DateTime.now().add(
+        const Duration(hours: 1),
+      );
+    }
+    _setCategoryEnabled(category, true);
+    _persist();
+    notifyListeners();
+    return true;
+  }
+
+  void _setCategoryEnabled(String category, bool enabled) {
+    final ids = _idsForCategory(category);
+    if (enabled) {
+      selectedCategories.add(category);
+      disabledCardIds.removeWhere(ids.contains);
+    } else {
+      selectedCategories.remove(category);
+      disabledCardIds.addAll(ids);
+    }
+  }
+
+  String get _interstitialAdUnitId {
+    if (!_adsSupported) return "";
+    if (Platform.isAndroid) {
+      return "ca-app-pub-3940256099942544/1033173712";
+    }
+    return "ca-app-pub-3940256099942544/4411468910";
+  }
+
+  String get _rewardedAdUnitId {
+    if (!_adsSupported) return "";
+    if (Platform.isAndroid) {
+      return "ca-app-pub-3940256099942544/5224354917";
+    }
+    return "ca-app-pub-3940256099942544/1712485313";
   }
 
   GameProvider() {
@@ -259,6 +682,79 @@ class GameProvider extends ChangeNotifier {
       _targetScore != -1 &&
       (teamAScore >= _targetScore || teamBScore >= _targetScore);
   bool get isGameEnded => endedByCards || hasReachedTargetScore;
+  RoundSummary? get lastRoundSummary =>
+      roundSummaries.isNotEmpty ? roundSummaries.last : null;
+
+  bool shouldShowInterstitialAfter(RoundSummary summary) {
+    if (adsRemoved) return false;
+    if (summary.turnInRound != 2) return false;
+    final round = summary.roundNumber;
+    if (round == 2 || round == 4) return true;
+    return round > 4 && round % 4 == 0;
+  }
+
+  bool get gameCenterSupported => !kIsWeb && Platform.isIOS;
+
+  Achievement _achievement(_AchievementKey key) {
+    final ids = _achievementIds[key]!;
+    return Achievement(androidID: ids.android, iOSID: ids.ios);
+  }
+
+  Future<bool> _ensureGameCenterSignedIn({bool interactive = false}) async {
+    if (!gameCenterSupported) return false;
+    if (gameCenterSignedIn) return true;
+    if (!interactive) return false;
+    try {
+      await GamesServices.signIn();
+      gameCenterSignedIn = true;
+      notifyListeners();
+      return true;
+    } catch (_) {
+      gameCenterSignedIn = false;
+      return false;
+    }
+  }
+
+  Future<bool> connectGameCenter() async {
+    return _ensureGameCenterSignedIn(interactive: true);
+  }
+
+  Future<bool> openGameCenterAchievements() async {
+    if (!gameCenterSupported) return false;
+    final ok = await _ensureGameCenterSignedIn(interactive: true);
+    if (!ok) return false;
+    try {
+      await GamesServices.showAchievements();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> _unlockAchievement(_AchievementKey key) async {
+    if (!await _ensureGameCenterSignedIn()) return;
+    try {
+      await GamesServices.unlock(achievement: _achievement(key));
+    } catch (_) {}
+  }
+
+  Future<void> _maybeReportAchievements(RoundSummary summary) async {
+    if (!gameCenterSupported || !gameCenterSignedIn) return;
+    if (isGameEnded && gameWinner != null) {
+      await _unlockAchievement(_AchievementKey.firstWin);
+    }
+    if (summary.taboo == 0 &&
+        summary.pass == 0 &&
+        summary.correct >= 5) {
+      await _unlockAchievement(_AchievementKey.perfectRound);
+    }
+    if (summary.correct >= 8) {
+      await _unlockAchievement(_AchievementKey.quickThinker);
+    }
+    if (summary.roundNumber >= 5) {
+      await _unlockAchievement(_AchievementKey.marathonRounds);
+    }
+  }
 
   String get currentNarrator {
     if (isTeamATurn) {
@@ -271,9 +767,9 @@ class GameProvider extends ChangeNotifier {
   }
 
   List<WordCard> get allCards => [
-        ...(isEnglish ? initialDeckEn : initialDeckTr),
-        ...customCards,
-      ];
+    ...(isEnglish ? initialDeckEn : initialDeckTr),
+    ...customCards,
+  ];
 
   Map<String, List<WordCard>> get wordsByCategory {
     Map<String, List<WordCard>> map = {};
@@ -335,8 +831,9 @@ class GameProvider extends ChangeNotifier {
   }
 
   void applyCategoryChanges(Set<String> selected, Set<String> disabledIds) {
-    selectedCategories = selected;
+    selectedCategories = selected.where(isCategoryUnlocked).toSet();
     disabledCardIds = disabledIds;
+    _syncDisabledWithCategories();
     _persist();
     notifyListeners();
   }
@@ -638,6 +1135,39 @@ class GameProvider extends ChangeNotifier {
         "category_doga": "Doğa",
         "category_tarih": "Tarih",
         "category_ozel": "Özel",
+        "category_futbol_pack": "Futbol Paketi",
+        "category_90s": "90'lar Nostalji",
+        "category_hard_pack": "Zor Seviye Paketi",
+        "category_midnight_pack": "Gece Yarısı Paketi",
+        "ads_section_title": "Satın Alımlar",
+        "remove_ads": "Reklamları Kaldır",
+        "remove_ads_desc": "Reklamlar kapanır, Spor/Bilim/Yemek açılır",
+        "remove_ads_owned": "Reklamlar kaldırıldı",
+        "restore_purchases": "Satın Alımları Geri Yükle",
+        "watch_ad_unlock": "Reklam İzle",
+        "watch_ad_1h": "30 sn reklam izle, 1 saat aç",
+        "unlock_category_title": "Kategori Kilidi",
+        "unlock_category_body_ad": "{category} için reklam izle",
+        "unlock_category_body_premium":
+            "{category} için reklam izle (1 saat) veya satın al",
+        "unlock_success": "{category} açıldı",
+        "unlock_failed": "Reklam şu an hazır değil",
+        "badge_locked": "KAPALI",
+        "badge_paid": "PARALI",
+        "badge_ad": "REKLAMLA",
+        "buy": "Satın Al",
+        "unlock_button": "KİLİDİ AÇ",
+        "reward_active": "Geçici Açık",
+        "ad_break_title": "Kısa Ara",
+        "ad_break_body": "Reklam 5 saniye sonra geçilebilir",
+        "ads_skip": "Geç",
+        "game_center_title": "Game Center",
+        "game_center_desc": "Başarımlarını Game Center ile eşitle",
+        "game_center_connect": "Bağlan",
+        "game_center_connected": "Bağlandı",
+        "game_center_achievements": "Başarımlar",
+        "game_center_connect_failed": "Game Center bağlantısı kurulamadı",
+        "game_center_achievements_failed": "Başarımlar açılamadı",
       },
       "en": {
         "app_title": "We Can't Say It",
@@ -857,6 +1387,39 @@ class GameProvider extends ChangeNotifier {
         "category_doga": "Nature",
         "category_tarih": "History",
         "category_ozel": "Custom",
+        "category_futbol_pack": "Football Pack",
+        "category_90s": "90s Nostalgia",
+        "category_hard_pack": "Hard Mode Pack",
+        "category_midnight_pack": "Midnight Pack",
+        "ads_section_title": "Purchases",
+        "remove_ads": "Remove Ads",
+        "remove_ads_desc": "Ads off, Sports/Science/Food unlocked",
+        "remove_ads_owned": "Ads removed",
+        "restore_purchases": "Restore Purchases",
+        "watch_ad_unlock": "Watch Ad",
+        "watch_ad_1h": "Watch a 30s ad, unlock for 1 hour",
+        "unlock_category_title": "Category Lock",
+        "unlock_category_body_ad": "Watch an ad to unlock {category}",
+        "unlock_category_body_premium":
+            "Watch an ad (1 hour) or buy {category}",
+        "unlock_success": "{category} unlocked",
+        "unlock_failed": "Ad is not ready",
+        "badge_locked": "LOCKED",
+        "badge_paid": "PAID",
+        "badge_ad": "AD",
+        "buy": "Buy",
+        "unlock_button": "UNLOCK",
+        "reward_active": "Temporary Access",
+        "ad_break_title": "Short Break",
+        "ad_break_body": "You can skip in 5 seconds",
+        "ads_skip": "Skip",
+        "game_center_title": "Game Center",
+        "game_center_desc": "Sync your achievements with Game Center",
+        "game_center_connect": "Connect",
+        "game_center_connected": "Connected",
+        "game_center_achievements": "Achievements",
+        "game_center_connect_failed": "Could not connect to Game Center",
+        "game_center_achievements_failed": "Could not open achievements",
       },
     };
     String value = strings[languageCode]?[key] ?? strings["tr"]?[key] ?? key;
@@ -875,6 +1438,10 @@ class GameProvider extends ChangeNotifier {
     "Teknoloji": "category_teknoloji",
     "Doğa": "category_doga",
     "Tarih": "category_tarih",
+    "Futbol Paketi": "category_futbol_pack",
+    "90'lar Nostalji": "category_90s",
+    "Zor Seviye Paketi": "category_hard_pack",
+    "Gece Yarısı Paketi": "category_midnight_pack",
     "Özel": "category_ozel",
   };
 
@@ -891,6 +1458,7 @@ class GameProvider extends ChangeNotifier {
   }
 
   void toggleCategory(String cat) {
+    if (!isCategoryUnlocked(cat)) return;
     final ids = _idsForCategory(cat);
     if (selectedCategories.contains(cat)) {
       if (selectedCategories.length > 1) {
@@ -922,7 +1490,8 @@ class GameProvider extends ChangeNotifier {
 
   void _syncDisabledWithCategories() {
     for (final card in allCards) {
-      if (!selectedCategories.contains(card.category)) {
+      if (!selectedCategories.contains(card.category) ||
+          !isCategoryUnlocked(card.category)) {
         disabledCardIds.add(card.id);
       }
     }
@@ -1411,6 +1980,7 @@ class GameProvider extends ChangeNotifier {
       maxTabooStreak: _maxTabooStreak(statusList),
     );
     roundSummaries.add(summary);
+    unawaited(_maybeReportAchievements(summary));
 
     if (_targetScore != -1) {
       if (teamAScore >= _targetScore && teamAScore > teamBScore) {
@@ -1693,8 +2263,11 @@ class GameProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _purchaseSub?.cancel();
     _timer?.cancel();
     _cooldownTimer?.cancel();
+    _interstitialAd?.dispose();
+    _rewardedAd?.dispose();
     _musicPlayer.dispose();
     _sfxPlayer.dispose();
     super.dispose();

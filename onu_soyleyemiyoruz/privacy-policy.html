@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Privacy Policy</title>
+
+    <style>
+        :root {
+            --bg: #0f1115;
+            --text: #eaeaea;
+            --muted: #b3b3b3;
+            --border: #2a2d34;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body.light {
+            --bg: #ffffff;
+            --text: #111111;
+            --muted: #555555;
+            --border: #dddddd;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            line-height: 1.6;
+            max-width: 720px;
+            margin-inline: auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            gap: 12px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin: 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button.active {
+            background: rgba(127, 127, 127, 0.15);
+        }
+
+        section {
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        p,
+        li {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        ul {
+            padding-left: 18px;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            padding-top: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1 id="title">Privacy Policy</h1>
+
+        <div class="controls">
+            <!-- Language -->
+            <button id="btn-en" class="active">🇬🇧</button>
+            <button id="btn-tr">🇹🇷</button>
+
+            <!-- Theme -->
+            <button id="btn-theme" title="Toggle theme">🌙</button>
+        </div>
+    </header>
+
+    <main id="content"></main>
+
+    <footer>
+        <p style="display:flex;align-items:center;gap:6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="1.5" />
+                <path d="M4 6l8 6 8-6" stroke="currentColor" stroke-width="1.5" />
+            </svg>
+            <a style="text-decoration: none; color:red;"
+                href="mailto:dogukan.sihman97@gmail.com">dogukan.sihman97@gmail.com</a>
+        </p>
+    </footer>
+
+
+
+    <script>
+        const EMAIL = "dogukan.sihman97@gmail.com";
+
+        const content = {
+            en: `
+        <section>
+          <h2>Overview</h2>
+          <p><strong>We Can’t Say It</strong> is a party game. We respect your privacy and aim to be transparent.</p>
+        </section>
+
+        <section>
+          <h2>Data Collection</h2>
+          <p>The app itself does not directly collect personal data.</p>
+        </section>
+
+        <section>
+          <h2>Advertising</h2>
+          <p>The app displays ads. Advertising partners may collect limited data such as device identifiers for ad delivery and analytics, in accordance with their own privacy policies.</p>
+        </section>
+
+        <section>
+          <h2>In-App Purchases</h2>
+          <p>The app offers optional in-app purchases. Purchase transactions are processed securely by Apple. We do not receive or store your payment information.</p>
+        </section>
+
+        <section>
+          <h2>Permissions</h2>
+          <p>The app does not request access to location, camera, microphone, or contacts.</p>
+        </section>
+
+        <section>
+          <h2>Children’s Privacy</h2>
+          <p>The app does not knowingly collect personal information from children.</p>
+        </section>
+      `,
+            tr: `
+        <section>
+          <h2>Genel Bilgi</h2>
+          <p><strong>Onu Söyleyemiyoruz</strong> bir eğlence oyunudur. Gizliliğinize saygı duyar ve şeffaflığı önemseriz.</p>
+        </section>
+
+        <section>
+          <h2>Veri Toplama</h2>
+          <p>Uygulama doğrudan kişisel veri toplamaz.</p>
+        </section>
+
+        <section>
+          <h2>Reklamlar</h2>
+          <p>Uygulama reklam içermektedir. Reklam sağlayıcıları, reklam gösterimi ve analiz amacıyla cihaz tanımlayıcıları gibi sınırlı veriler toplayabilir. Bu işlemler kendi gizlilik politikalarına tabidir.</p>
+        </section>
+
+        <section>
+          <h2>Uygulama İçi Satın Alma</h2>
+          <p>Uygulama isteğe bağlı uygulama içi satın almalar sunar. Satın alma işlemleri Apple tarafından güvenli şekilde gerçekleştirilir. Ödeme bilgilerinize erişimimiz yoktur.</p>
+        </section>
+
+        <section>
+          <h2>İzinler</h2>
+          <p>Uygulama konum, kamera, mikrofon veya kişiler erişimi talep etmez.</p>
+        </section>
+
+        <section>
+          <h2>Çocukların Gizliliği</h2>
+          <p>Uygulama çocuklardan bilerek kişisel veri toplamaz.</p>
+        </section>
+      `
+        };
+
+        const contentEl = document.getElementById("content");
+        const titleEl = document.getElementById("title");
+        const btnEN = document.getElementById("btn-en");
+        const btnTR = document.getElementById("btn-tr");
+        const btnTheme = document.getElementById("btn-theme");
+
+        function setLang(lang) {
+            contentEl.innerHTML = content[lang];
+            titleEl.textContent = lang === "en" ? "Privacy Policy" : "Gizlilik Politikası";
+            btnEN.classList.toggle("active", lang === "en");
+            btnTR.classList.toggle("active", lang === "tr");
+            localStorage.setItem("lang", lang);
+            document.documentElement.lang = lang;
+        }
+
+        function setTheme(light) {
+            document.body.classList.toggle("light", light);
+            btnTheme.textContent = light ? "☀️" : "🌙";
+            localStorage.setItem("theme", light ? "light" : "dark");
+        }
+
+        // Init
+        const savedLang = localStorage.getItem("lang") || "en";
+        const savedTheme = localStorage.getItem("theme") || "dark";
+
+        setLang(savedLang);
+        setTheme(savedTheme === "light");
+
+        btnEN.onclick = () => setLang("en");
+        btnTR.onclick = () => setLang("tr");
+        btnTheme.onclick = () => {
+            setTheme(!document.body.classList.contains("light"));
+        };
+    </script>
+
+</body>
+
+</html>

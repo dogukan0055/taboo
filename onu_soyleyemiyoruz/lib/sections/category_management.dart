@@ -31,6 +31,10 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
       "Sanat": Icons.brush,
       "Teknoloji": Icons.memory,
       "Tarih": Icons.history_edu_outlined,
+      "Futbol Paketi": Icons.sports_soccer,
+      "90'lar Nostalji": Icons.album,
+      "Zor Seviye Paketi": Icons.psychology,
+      "Gece Yarısı Paketi": Icons.nights_stay,
       "Özel": Icons.star,
     };
   }
@@ -39,6 +43,81 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
   void dispose() {
     _categoryScrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _promptUnlockCategory(
+    BuildContext context,
+    GameProvider game,
+    String category,
+  ) async {
+    final access = game.categoryAccess(category);
+    if (access == CategoryAccess.free) return;
+    final messenger = ScaffoldMessenger.of(context);
+    final label = game.categoryLabel(category);
+    final body = access == CategoryAccess.adUnlock
+        ? game.t("unlock_category_body_ad", params: {"category": label})
+        : game.t("unlock_category_body_premium", params: {"category": label});
+    final price = game.priceForCategory(category);
+    await showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(game.t("unlock_category_title")),
+        content: Text(body),
+        actions: [
+          TextButton(
+            onPressed: () {
+              game.playClick();
+              Navigator.pop(dialogContext);
+            },
+            child: Text(game.t("cancel")),
+          ),
+          TextButton(
+            onPressed: () async {
+              game.playClick();
+              Navigator.pop(dialogContext);
+              final unlocked = await game.unlockCategoryWithReward(category);
+              if (!mounted) return;
+              if (!unlocked) {
+                _showSnack(
+                  messenger,
+                  game.t("unlock_failed"),
+                  isError: true,
+                );
+                return;
+              }
+              setState(() {
+                _selectedCategories = Set.of(game.selectedCategories);
+                _disabledIds = Set.of(game.disabledCardIds);
+              });
+              _showSnack(
+                messenger,
+                game.t("unlock_success", params: {"category": label}),
+                isSuccess: true,
+              );
+            },
+            child: Text(
+              access == CategoryAccess.adUnlock
+                  ? game.t("watch_ad_unlock")
+                  : game.t("watch_ad_1h"),
+            ),
+          ),
+          if (access == CategoryAccess.premium && game.iapAvailable)
+            ElevatedButton(
+              onPressed: () async {
+                game.playClick();
+                Navigator.pop(dialogContext);
+                await game.buyCategoryPack(category);
+              },
+              child: Text(
+                [
+                  game.t("buy"),
+                  if (price != null) "($price)",
+                ].join(" "),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -85,6 +164,10 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                   ),
                   children: game.availableCategories.map((cat) {
                     List<WordCard> words = wordsMap[cat] ?? [];
+                    final access = game.categoryAccess(cat);
+                    final bool isUnlocked = game.isCategoryUnlocked(cat);
+                    final bool isLocked =
+                        access != CategoryAccess.free && !isUnlocked;
                     bool isCatSelected = _selectedCategories.contains(cat);
                     final int activeCount = words
                         .where((w) => !_disabledIds.contains(w.id))
@@ -94,7 +177,9 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                         activeCount > 0 &&
                         activeCount < words.length;
 
-                    final Color titleColor = isCatSelected
+                    final Color titleColor = isLocked
+                        ? Colors.white38
+                        : isCatSelected
                         ? Colors.amber
                         : isPartial
                         ? Colors.lightBlueAccent
@@ -113,6 +198,19 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                       ),
                       isSelected: isCatSelected,
                       isPartial: isPartial,
+                      isLocked: isLocked,
+                      lockBadge: isLocked ? game.t("badge_locked") : null,
+                      paidBadge: access == CategoryAccess.premium
+                          ? game.t("badge_paid")
+                          : null,
+                      adBadge: access == CategoryAccess.adUnlock
+                          ? game.t("badge_ad")
+                          : null,
+                      unlockLabel: isLocked
+                          ? access == CategoryAccess.adUnlock
+                              ? game.t("watch_ad_unlock")
+                              : game.t("unlock_button")
+                          : null,
                       reduceMotion: reduceMotion,
                       onToggle: (val) async {
                         await game.playClick();
@@ -138,6 +236,9 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                           }
                         });
                       },
+                      onUnlock: isLocked
+                          ? () => _promptUnlockCategory(context, game, cat)
+                          : null,
                       onOpen: () async {
                         await game.playClick();
                         if (!context.mounted) return;
@@ -209,8 +310,14 @@ class _CategoryCard extends StatelessWidget {
   final String countLabel;
   final bool isSelected;
   final bool isPartial;
+  final bool isLocked;
+  final String? lockBadge;
+  final String? paidBadge;
+  final String? adBadge;
+  final String? unlockLabel;
   final bool reduceMotion;
   final ValueChanged<bool> onToggle;
+  final VoidCallback? onUnlock;
   final VoidCallback onOpen;
 
   const _CategoryCard({
@@ -220,30 +327,46 @@ class _CategoryCard extends StatelessWidget {
     required this.countLabel,
     required this.isSelected,
     required this.isPartial,
+    required this.isLocked,
+    required this.lockBadge,
+    required this.paidBadge,
+    required this.adBadge,
+    required this.unlockLabel,
     required this.reduceMotion,
     required this.onToggle,
+    required this.onUnlock,
     required this.onOpen,
   });
 
   @override
   Widget build(BuildContext context) {
     final game = Provider.of<GameProvider>(context, listen: false);
-    final Color accent = isSelected
+    final bool showUnlock =
+        isLocked && onUnlock != null && unlockLabel != null;
+    final Color accent = isLocked
+        ? Colors.white38
+        : isSelected
         ? Colors.amber
         : isPartial
         ? Colors.lightBlueAccent
         : Colors.white70;
-    final Color borderColor = isSelected
+    final Color borderColor = isLocked
+        ? Colors.white24
+        : isSelected
         ? Colors.amber
         : isPartial
         ? Colors.lightBlueAccent
         : Colors.white24;
-    final Color glowColor = isSelected
+    final Color glowColor = isLocked
+        ? Colors.transparent
+        : isSelected
         ? Colors.amber.withValues(alpha: 0.3)
         : isPartial
         ? Colors.lightBlueAccent.withValues(alpha: 0.3)
         : Colors.transparent;
-    final Color bgTop = isSelected
+    final Color bgTop = isLocked
+        ? Colors.white.withValues(alpha: 0.04)
+        : isSelected
         ? Colors.amber.withValues(alpha: 0.16)
         : isPartial
         ? Colors.lightBlueAccent.withValues(alpha: 0.12)
@@ -283,7 +406,7 @@ class _CategoryCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => onToggle(!isSelected),
+          onTap: () => showUnlock ? onUnlock!() : onToggle(!isSelected),
           borderRadius: BorderRadius.circular(18),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -295,6 +418,42 @@ class _CategoryCard extends StatelessWidget {
               final double bgIconSize = compact ? 84 : 104;
               final double actionIconSize = compact ? 16 : 18;
               final double actionFontSize = compact ? 10 : 11;
+              Widget buildBadge(String label, Color color) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: color.withValues(alpha: 0.4),
+                      width: 0.6,
+                    ),
+                  ),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.6,
+                      fontSize: statusSize,
+                    ),
+                  ),
+                );
+              }
+
+              final List<Widget> badges = [];
+              if (paidBadge != null) {
+                badges.add(buildBadge(paidBadge!, Colors.amber));
+              }
+              if (adBadge != null && isLocked) {
+                badges.add(buildBadge(adBadge!, Colors.lightBlueAccent));
+              }
+              if (lockBadge != null) {
+                badges.add(buildBadge(lockBadge!, Colors.white70));
+              }
               return Stack(
                 children: [
                   Align(
@@ -332,6 +491,22 @@ class _CategoryCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (badges.isNotEmpty)
+                    Positioned(
+                      top: compact ? 8 : 10,
+                      right: compact ? 10 : 12,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: badges
+                            .map(
+                              (badge) => Padding(
+                                padding: const EdgeInsets.only(bottom: 6),
+                                child: badge,
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
                   Center(
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
@@ -398,7 +573,7 @@ class _CategoryCard extends StatelessWidget {
                     right: 0,
                     child: Center(
                       child: InkWell(
-                        onTap: onOpen,
+                        onTap: showUnlock ? onUnlock : onOpen,
                         borderRadius: BorderRadius.circular(16),
                         child: Container(
                           padding: EdgeInsets.symmetric(
@@ -416,13 +591,13 @@ class _CategoryCard extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                Icons.menu_book,
+                                showUnlock ? Icons.lock_open : Icons.menu_book,
                                 color: Colors.white70,
                                 size: actionIconSize,
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                game.t("words_button"),
+                                showUnlock ? unlockLabel! : game.t("words_button"),
                                 style: TextStyle(
                                   color: Colors.white70,
                                   fontWeight: FontWeight.bold,

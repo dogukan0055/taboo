@@ -1826,6 +1826,1010 @@ final List<WordCard> initialDeckTr = [
     tabooWords: ["Yazı", "Taş", "Tarih", "Anıt", "Eski"],
     category: "Tarih",
   ),
+  // Futbol Paketi
+  WordCard(
+    word: "GOL",
+    tabooWords: ["Ağ", "File", "Skor", "Top", "Kaleci"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "PENALTI",
+    tabooWords: ["Ceza", "Nokta", "Hakem", "Atış", "Kaleci"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "OFSAYT",
+    tabooWords: ["Çizgi", "Savunma", "Bayrak", "Yan Hakem", "Pozisyon"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "TAÇ",
+    tabooWords: ["Kenar", "Çizgi", "Atış", "Oyun", "Top"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "KORNER",
+    tabooWords: ["Köşe", "Bayrak", "Top", "Atış", "Ceza Sahası"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "FORVET",
+    tabooWords: ["Golcü", "Hücum", "Santrafor", "İleri", "Attırmak"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "DEFANS",
+    tabooWords: ["Savunma", "Stoper", "Geri", "Kale", "Koruma"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "KALECİ",
+    tabooWords: ["Eldiven", "Kale", "Kurtarış", "File", "1 Numara"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "HAKEM",
+    tabooWords: ["Düdük", "Kart", "Yönetmek", "Faul", "Maç"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "VAR",
+    tabooWords: ["Video", "İnceleme", "Hakem", "Teknoloji", "Pozisyon"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "TRİBÜN",
+    tabooWords: ["Taraftar", "Stat", "Bağırmak", "Koltuk", "Maç"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "TARAFTAR",
+    tabooWords: ["Destek", "Takım", "Tribün", "Forma", "Coşku"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "DERBİ",
+    tabooWords: ["Rakip", "Şehir", "Büyük", "Maç", "Rekabet"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "TRANSFER",
+    tabooWords: ["Kulüp", "Oyuncu", "İmza", "Sözleşme", "Bedel"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "KAPTAN",
+    tabooWords: ["Kol Bandı", "Lider", "Takım", "Sahada", "Yönetmek"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "RÖVANŞ",
+    tabooWords: ["İkinci", "Maç", "Tur", "Ev Sahibi", "Deplasman"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "UZATMA",
+    tabooWords: ["Dakika", "Ek", "Hakem", "Süre", "Bitmemek"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "FUTBOL TOPU",
+    tabooWords: ["Yuvarlak", "Deri", "Şut", "Pas", "Top"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "FORMASYON",
+    tabooWords: ["Diziliş", "4-4-2", "Taktik", "Sistem", "Kadro"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "DRİBLİNG",
+    tabooWords: ["Adam Geçmek", "Top Sürmek", "Çalım", "Hız", "Bilek"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "PAS",
+    tabooWords: ["Atmak", "Top", "Kısa", "Uzun", "Takım"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "ŞUT",
+    tabooWords: ["Vurmak", "Kale", "Gol", "Sert", "Deneme"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "VOLE",
+    tabooWords: ["Havadan", "Vuruş", "Top", "Zıplamak", "Şut"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "FAUL",
+    tabooWords: ["Müdahale", "Hakem", "Düdük", "Kural", "Ceza"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "SARI KART",
+    tabooWords: ["Uyarı", "Hakem", "Ceza", "Kural", "Birinci"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "KIRMIZI KART",
+    tabooWords: ["Atılmak", "Hakem", "Ceza", "Oyun Dışı", "Faul"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "DÜDÜK",
+    tabooWords: ["Hakem", "Ses", "Başlamak", "Bitirmek", "Çalmak"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "CEZA SAHASI",
+    tabooWords: ["Kale", "18", "Penaltı", "Alan", "Kutu"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "KALE SAHASI",
+    tabooWords: ["6", "Kaleci", "Alan", "Kale", "Kutu"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "KONTRA ATAK",
+    tabooWords: ["Hızlı", "Hücum", "Savunma", "Ani", "Geçiş"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "DEPAR",
+    tabooWords: ["Sprint", "Hız", "Koşu", "Açılmak", "Kanat"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "STAT",
+    tabooWords: ["Stadyum", "Tribün", "Saha", "Maç", "Taraftar"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "ANTRENMAN",
+    tabooWords: ["İdman", "Çalışma", "Koşu", "Antrenör", "Kondisyon"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "TEKNİK DİREKTÖR",
+    tabooWords: ["Antrenör", "Taktik", "Hoca", "Kulübe", "Yönetim"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "YARDIMCI HAKEM",
+    tabooWords: ["Çizgi", "Bayrak", "Ofsayt", "Hakem", "Yan"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "ŞAMPİYONLUK",
+    tabooWords: ["Kupa", "Birincilik", "Sezon", "Kutlama", "Lider"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "KUPA",
+    tabooWords: ["Final", "Kaldırmak", "Şampiyon", "Ödül", "Turnuva"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "SEZON",
+    tabooWords: ["Fikstür", "Maç", "Puan", "Lig", "Yıl"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "PUAN DURUMU",
+    tabooWords: ["Sıralama", "Lig", "Puan", "Tablo", "Averaj"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "GOL KRALI",
+    tabooWords: ["En Çok", "Golcü", "Sezon", "Forvet", "Ödül"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "JÜBİLE",
+    tabooWords: ["Veda", "Emeklilik", "Futbolcu", "Maç", "Kariyer"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "FİKSTÜR",
+    tabooWords: ["Program", "Maçlar", "Takvim", "Lig", "Sıra"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "KALE DİREĞİ",
+    tabooWords: ["Direk", "Kale", "Top", "Vurmak", "Çerçeve"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "BARAJ",
+    tabooWords: ["Duvar", "Serbest Vuruş", "Oyuncu", "Şut", "Kale"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "FREKİK",
+    tabooWords: ["Serbest", "Faul", "Şut", "Baraj", "Kale"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "CAMIA",
+    tabooWords: ["Kulüp", "Taraftar", "Topluluk", "Renkler", "Birlik"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "AVERAJ",
+    tabooWords: ["Gol", "Fark", "Puan", "Lig", "Sıralama"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "HAT-TRICK",
+    tabooWords: ["Üç", "Gol", "Bir Maç", "Forvet", "Başarı"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "AUT",
+    tabooWords: ["Kale", "Çizgi", "Top", "Vuruş", "Oyun"],
+    category: "Futbol Paketi",
+  ),
+  WordCard(
+    word: "STOPER",
+    tabooWords: ["Defans", "Merkez", "Savunma", "Kapanmak", "Kale"],
+    category: "Futbol Paketi",
+  ),
+  // 90'lar Nostalji
+  WordCard(
+    word: "TAMAGOTCHI",
+    tabooWords: ["Sanal", "Evcil", "Bakmak", "Oyuncak", "Yumurta"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "WALKMAN",
+    tabooWords: ["Müzik", "Kulaklık", "Kemer", "Kaset", "Taşınabilir"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "KASET",
+    tabooWords: ["Müzik", "Bant", "Çalar", "Walkman", "Sarılı"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "VHS",
+    tabooWords: ["Video", "Kaset", "Film", "Oynatıcı", "Kutu"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "VCD",
+    tabooWords: ["Disk", "Film", "Oynatıcı", "CD", "Görüntü"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "DİSKET",
+    tabooWords: ["Bilgisayar", "Kaydetmek", "Dosya", "A: Sürücü", "Kare"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "ÇEVİRMELİ İNTERNET",
+    tabooWords: ["Modem", "Telefon Hattı", "Bağlanmak", "Ses", "İnternet"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "NOKIA 3310",
+    tabooWords: ["Telefon", "Snake", "Tuşlu", "Şarj", "Cep"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "GAME BOY",
+    tabooWords: ["Nintendo", "Oyun", "El", "Konsol", "Kartuş"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "ATARİ",
+    tabooWords: ["Oyun", "Konsol", "Joystick", "Kartuş", "8-bit"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "SEGA",
+    tabooWords: ["Oyun", "Konsol", "Sonic", "16-bit", "Joystick"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "TÜPLÜ TV",
+    tabooWords: ["Televizyon", "Kutu", "Anten", "Büyük", "Ekran"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "ANTEN",
+    tabooWords: ["Televizyon", "Çekmek", "Sinyal", "Çatı", "Yayın"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "MİSKET",
+    tabooWords: ["Bilye", "Oyun", "Cam", "Yuvarlak", "Çocuk"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "BEŞTAŞ",
+    tabooWords: ["Taş", "Oyun", "Atmak", "Çocuk", "Zemin"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "SEKSEK",
+    tabooWords: ["Çocuk", "Oyun", "Kare", "Atlama", "Tebeşir"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "İP ATLAMA",
+    tabooWords: ["Oyun", "Çocuk", "Zıplamak", "İp", "Spor"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "TAZO",
+    tabooWords: ["Cips", "Karton", "Koleksiyon", "Oyun", "Çıkarmak"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "CİPS",
+    tabooWords: ["Patates", "Paket", "Tuz", "Atıştırmalık", "Gazlı"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "ÇAĞRI CİHAZI",
+    tabooWords: ["Mesaj", "Kemer", "Bip", "Telefon", "Numara"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "TELEFON KULÜBESİ",
+    tabooWords: ["Jeton", "Arama", "Cam", "Sokak", "Telefon"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "JETON",
+    tabooWords: ["Para", "Telefon", "Metal", "Atmak", "Kulübe"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "POSTER",
+    tabooWords: ["Duvar", "Fotoğraf", "Asmak", "Oda", "Afiş"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "FOTOKOPİ",
+    tabooWords: ["Çoğaltmak", "Kağıt", "Makine", "Okul", "Kopya"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "DERSHANE",
+    tabooWords: ["Kurs", "Öğrenci", "Sınav", "Çalışmak", "Okul"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "ÇİZGİ FİLM",
+    tabooWords: ["Çocuk", "Televizyon", "Kanal", "Karakter", "İzlemek"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "POKEMON",
+    tabooWords: ["Pikachu", "Anime", "Kart", "Toplamak", "Çizgi Film"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "TETRIS",
+    tabooWords: ["Blok", "Oyun", "Düşmek", "Puzzle", "Atari"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "WINAMP",
+    tabooWords: ["Müzik", "Çalar", "MP3", "Bilgisayar", "Program"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "MSN",
+    tabooWords: ["Messenger", "Sohbet", "İnternet", "Yeşil", "İleti"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "WINDOWS 95",
+    tabooWords: ["Microsoft", "Bilgisayar", "Başlat", "Masaüstü", "Sistem"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "MS-DOS",
+    tabooWords: ["Komut", "Siyah Ekran", "Bilgisayar", "Dizin", "Yazmak"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "KASETÇALAR",
+    tabooWords: ["Kaset", "Müzik", "Oynatıcı", "Walkman", "Bant"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "CD ÇALAR",
+    tabooWords: ["Disk", "Müzik", "Oynatıcı", "Şarkı", "Taşınabilir"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "VİDEO KASET",
+    tabooWords: ["VHS", "Film", "Video", "Kutu", "Oynatıcı"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "VİDEO KULÜBÜ",
+    tabooWords: ["Kaset", "Kiralama", "Film", "Dükkan", "VHS"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "ÖNLÜK",
+    tabooWords: ["Okul", "Mavi", "Kıyafet", "Düğme", "Öğrenci"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "KOLLUK",
+    tabooWords: ["Önlük", "Kol", "Lastik", "Okul", "Koruma"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "FALIM SAKIZ",
+    tabooWords: ["Sakız", "Nane", "Paket", "Çiğnemek", "Marka"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "TURBO SAKIZ",
+    tabooWords: ["Sakız", "Tatlı", "Balon", "Çiğnemek", "Marka"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "JELİBON",
+    tabooWords: ["Şeker", "Yumuşak", "Renkli", "Paket", "Atıştırmalık"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "ARCADE SALONU",
+    tabooWords: ["Oyun", "Jeton", "Makine", "Salon", "Atari"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "KARTUŞ",
+    tabooWords: ["Oyun", "Konsol", "Takmak", "Atari", "Nintendo"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "TELEFON REHBERİ",
+    tabooWords: ["Numara", "Sayfa", "Kitap", "İsim", "Aramak"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "FAKS MAKİNESİ",
+    tabooWords: ["Belge", "Göndermek", "Telefon", "Kağıt", "Cihaz"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "CRT MONİTÖR",
+    tabooWords: ["Tüplü", "Bilgisayar", "Ekran", "Ağır", "Kalın"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "İNTERNET KAFE",
+    tabooWords: ["Bilgisayar", "Oyun", "Saat", "Mekan", "Bağlanmak"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "TEBEŞİR",
+    tabooWords: ["Tahta", "Toz", "Yazı", "Okul", "Beyaz"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "FOTOĞRAF FİLMİ",
+    tabooWords: ["Makine", "Poz", "Banyo", "Negatif", "Rulo"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "SÜPRİZ YUMURTA",
+    tabooWords: ["Oyuncak", "Çikolata", "Kutu", "Açmak", "Koleksiyon"],
+    category: "90'lar Nostalji",
+  ),
+  // Zor Seviye Paketi
+  WordCard(
+    word: "PARADOKS",
+    tabooWords: ["Çelişki", "Mantık", "Ters", "Görünmek", "Sonuç"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "METAFOR",
+    tabooWords: ["Benzetme", "Mecaz", "Anlam", "Söz", "Edebiyat"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "ENTROPİ",
+    tabooWords: ["Termodinamik", "Dağınıklık", "Isı", "Sistem", "Düzensizlik"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "KONSENSÜS",
+    tabooWords: ["Uzlaşma", "Görüş", "Ortak", "Karar", "Topluluk"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "SİNERJİ",
+    tabooWords: ["Birlik", "Etki", "Enerji", "Takım", "Toplam"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "HEGEMONYA",
+    tabooWords: ["Üstünlük", "Hakimiyet", "Güç", "Egemenlik", "Lider"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "PARADİGMA",
+    tabooWords: ["Model", "Örnek", "Bakış Açısı", "Çerçeve", "Değişim"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "EPİSTEMOLOJİ",
+    tabooWords: ["Bilgi", "Felsefe", "Teori", "İnanç", "Kaynak"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "ONTOLOJİ",
+    tabooWords: ["Varlık", "Felsefe", "Metafizik", "Gerçeklik", "Oluş"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "METAFİZİK",
+    tabooWords: ["Fizik Ötesi", "Felsefe", "Varlık", "Ruh", "Gerçeklik"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "KUANTUM",
+    tabooWords: ["Parçacık", "Fizik", "Atom", "Ölçek", "Enerji"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "KRİPTOGRAFİ",
+    tabooWords: ["Şifre", "Güvenlik", "Kod", "Gizlilik", "Anahtar"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "ALGORİTMA",
+    tabooWords: ["Adım", "Problem", "Çözüm", "Kod", "Sıra"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "DİYALEKTİK",
+    tabooWords: ["Tartışma", "Çelişki", "Tez", "Antitez", "Sentez"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "SÜBLİMİNAL",
+    tabooWords: ["Bilinçaltı", "Mesaj", "Gizli", "Fark Etmek", "Reklam"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "DEKONSTRÜKSİYON",
+    tabooWords: ["Yapıbozum", "Metin", "Eleştiri", "Çözmek", "Anlam"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "ANOMİ",
+    tabooWords: ["Toplum", "Kural", "Düzen", "Yabancılaşma", "Sosyoloji"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "AKSİYOM",
+    tabooWords: ["Matematik", "Doğru", "Kabul", "İspat", "Temel"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "KAUSALİTE",
+    tabooWords: ["Sebep", "Sonuç", "Nedensellik", "İlişki", "Bağ"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "SEMANTİK",
+    tabooWords: ["Anlam", "Dil", "Sözcük", "İçerik", "Mantık"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "SENTAKS",
+    tabooWords: ["Dil", "Cümle", "Kural", "Yapı", "Dizim"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "MORFOLOJİ",
+    tabooWords: ["Biçim", "Dil", "Yapı", "Kelime", "İnceleme"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "HOMEOSTAZ",
+    tabooWords: ["Denge", "Vücut", "Sistem", "Isı", "Koruma"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "IZOMER",
+    tabooWords: ["Kimya", "Aynı", "Formül", "Farklı", "Molekül"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "PALİNDROM",
+    tabooWords: ["Ters", "Kelime", "Aynı", "Okumak", "Harf"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "ANTAGONİST",
+    tabooWords: ["Karakter", "Kötü", "Karşıt", "Hikaye", "Düşman"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "PROTAGONİST",
+    tabooWords: ["Kahraman", "Ana", "Karakter", "Hikaye", "Başrol"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "HİYERARŞİ",
+    tabooWords: ["Sıralama", "Üst", "Alt", "Düzen", "Seviye"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "KONJONKTÜR",
+    tabooWords: ["Ekonomi", "Dönem", "Koşul", "Durum", "Piyasa"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "JEOPOLİTİK",
+    tabooWords: ["Coğrafya", "Siyaset", "Ülke", "Güç", "Strateji"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "ASTROFİZİK",
+    tabooWords: ["Uzay", "Yıldız", "Fizik", "Evren", "Galaksi"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "EPİDEMİYOLOJİ",
+    tabooWords: ["Hastalık", "Salgın", "Sağlık", "Araştırma", "Toplum"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "KATALİZÖR",
+    tabooWords: ["Kimya", "Reaksiyon", "Hız", "Enzim", "Etki"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "OSMOZ",
+    tabooWords: ["Sıvı", "Geçiş", "Hücre", "Zar", "Yoğunluk"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "İZOTOP",
+    tabooWords: ["Atom", "Nötron", "Element", "Çekirdek", "Radyoaktif"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "KÜBİZM",
+    tabooWords: ["Sanat", "Picasso", "Geometri", "Resim", "Akım"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "EMPİRİK",
+    tabooWords: ["Deney", "Gözlem", "Veri", "Bilim", "Kanıt"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "AMBİGÜİTE",
+    tabooWords: ["Belirsizlik", "Çift", "Anlam", "Muğlak", "Kararsız"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "İNFERANS",
+    tabooWords: ["Çıkarım", "Sonuç", "Mantık", "Veri", "Tahmin"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "PERSEPSİYON",
+    tabooWords: ["Algı", "Duyu", "Görme", "Beyin", "Yorum"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "KOGNİTİF",
+    tabooWords: ["Zihin", "Düşünme", "Bellek", "Biliş", "Psikoloji"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "ENTELEKTÜEL",
+    tabooWords: ["Aydın", "Düşünür", "Kültür", "Zeka", "Okumak"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "MÜPHEM",
+    tabooWords: ["Belirsiz", "Muğlak", "Net", "Anlam", "Açık"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "RETORİK",
+    tabooWords: ["Hitabet", "Söz", "İkna", "Dil", "Konuşma"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "NİHİLİZM",
+    tabooWords: ["Hiçlik", "Felsefe", "İnanç", "Anlam", "Yok"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "ABSÜRT",
+    tabooWords: ["Saçma", "Mantıksız", "Tuhaf", "Komik", "Dram"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "FRAGMAN",
+    tabooWords: ["Parça", "Film", "Tanıtım", "Kısa", "Kesit"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "REDÜKSİYON",
+    tabooWords: ["Azaltma", "Kimya", "Elektron", "İndirgeme", "Reaksiyon"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "PROJEKSİYON",
+    tabooWords: ["Yansıtma", "Harita", "Cihaz", "Görüntü", "Duvar"],
+    category: "Zor Seviye Paketi",
+  ),
+  WordCard(
+    word: "SİMÜLASYON",
+    tabooWords: ["Taklit", "Model", "Sanal", "Deney", "Senaryo"],
+    category: "Zor Seviye Paketi",
+  ),
+  // Gece Yarısı Paketi
+  WordCard(
+    word: "GECE YARISI",
+    tabooWords: ["Saat", "12", "Geç", "Karanlık", "Uyku"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "KARANLIK",
+    tabooWords: ["Işık", "Gece", "Koyu", "Gölge", "Siyah"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "AY",
+    tabooWords: ["Gece", "Gökyüzü", "Uydu", "Dolunay", "Parlak"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "YILDIZ",
+    tabooWords: ["Gökyüzü", "Parlak", "Gece", "Güneş", "Takımyıldız"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "AY IŞIĞI",
+    tabooWords: ["Dolunay", "Parıltı", "Gökyüzü", "Gece", "Aydınlık"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "DOLUNAY",
+    tabooWords: ["Ay", "Gece", "Tam", "Parlak", "Gökyüzü"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "UYKU",
+    tabooWords: ["Yatmak", "Rüya", "Gece", "Göz", "Dinlenmek"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "RÜYA",
+    tabooWords: ["Uyku", "Hayal", "Görmek", "Bilinç", "Gece"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "KABUS",
+    tabooWords: ["Korku", "Rüya", "Uyku", "Panik", "Çığlık"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "KARABASAN",
+    tabooWords: ["Kabus", "Gece", "Uyku", "Korku", "Baskı"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "UYKUSUZLUK",
+    tabooWords: ["Gece", "Uyku", "Yatmak", "Göz", "Yorgun"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "UYURGEZER",
+    tabooWords: ["Uyku", "Yürümek", "Gece", "Uyanık", "Bilinç"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "ŞAFAK",
+    tabooWords: ["Güneş", "Sabah", "Gün Doğumu", "Işık", "Kızıl"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "GECE NÖBETİ",
+    tabooWords: ["Vardiya", "Beklemek", "Saat", "Uyku", "Güvenlik"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "VARDİYA",
+    tabooWords: ["Çalışma", "Saat", "Nöbet", "Gece", "Mesai"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "SOKAK LAMBASI",
+    tabooWords: ["Işık", "Direk", "Yol", "Gece", "Aydınlatma"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "EL FENERİ",
+    tabooWords: ["Işık", "Pil", "Karanlık", "Tutmak", "Aydınlatma"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "GÖLGE",
+    tabooWords: ["Işık", "Siluet", "Karanlık", "Duvar", "Şekil"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "SESSİZLİK",
+    tabooWords: ["Ses", "Gürültü", "Sakin", "Huzur", "Susmak"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "ISLIK",
+    tabooWords: ["Ses", "Ağız", "Çalmak", "Melodi", "Düdük"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "AYAK SESİ",
+    tabooWords: ["Yürüme", "Zemin", "Adım", "Gece", "Duyulmak"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "HAYALET",
+    tabooWords: ["Ruh", "Korku", "Görünmez", "Gece", "Mezarlık"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "KORKU FİLMİ",
+    tabooWords: ["Sinema", "Gerilim", "Kabus", "Kan", "İzlemek"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "MEZARLIK",
+    tabooWords: ["Mezar", "Ölü", "Taş", "Sessiz", "Gece"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "KURT ULUMASI",
+    tabooWords: ["Kurt", "Ses", "Ay", "Dağ", "Gece"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "RÜZGAR",
+    tabooWords: ["Esmek", "Hava", "Soğuk", "Yaprak", "Fırtına"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "CAM TIKIRTISI",
+    tabooWords: ["Cam", "Ses", "Gece", "Pencere", "Korku"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "PERDE",
+    tabooWords: ["Pencere", "Kapatmak", "Tül", "Işık", "Oda"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "GECE YOLCULUĞU",
+    tabooWords: ["Yol", "Araba", "Geç Saat", "Seyahat", "Otobüs"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "TAKSİ",
+    tabooWords: ["Sarı", "Şoför", "Taksi Durağı", "Ücret", "Yolculuk"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "GECE KULÜBÜ",
+    tabooWords: ["Müzik", "Dans", "Bar", "Işık", "Eğlence"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "BAR",
+    tabooWords: ["İçki", "Barmen", "Gece", "Mekan", "Müzik"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "DJ",
+    tabooWords: ["Müzik", "Kulüp", "Set", "Karıştırmak", "Plak"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "KOKTEYL",
+    tabooWords: ["İçki", "Karışım", "Bardak", "Bar", "Alkol"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "SON METRO",
+    tabooWords: ["Tren", "Saat", "İstasyon", "Hat", "Ulaşım"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "NEON IŞIK",
+    tabooWords: ["Renkli", "Tabela", "Parlak", "Sokak", "Gece"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "ŞEHİR IŞIKLARI",
+    tabooWords: ["Binalar", "Gece", "Parıltı", "Yüksek", "Manzara"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "YILDIZ KAYMASI",
+    tabooWords: ["Gökyüzü", "Dilek", "Meteor", "Gece", "Parlamak"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "TELESKOP",
+    tabooWords: ["Gökyüzü", "Yıldız", "Büyütmek", "Lens", "Astronomi"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "GÖKYÜZÜ",
+    tabooWords: ["Bulut", "Mavi", "Yıldız", "Uçak", "Uzay"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "AY TUTULMASI",
+    tabooWords: ["Ay", "Dünya", "Gölge", "Güneş", "Astronomi"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "SİREN",
+    tabooWords: ["Polis", "Ambulans", "Ses", "Uyarı", "Araç"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "POLİS IŞIĞI",
+    tabooWords: ["Mavi", "Kırmızı", "Siren", "Araç", "Gece"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "GÜVENLİK KULÜBESİ",
+    tabooWords: ["Bekçi", "Nöbet", "Kapı", "Giriş", "Koruma"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "MOTEL",
+    tabooWords: ["Oda", "Yol", "Gece", "Konaklama", "Otel"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "OTEL LOBİSİ",
+    tabooWords: ["Resepsiyon", "Giriş", "Koltuk", "Otel", "Beklemek"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "GECE GÖRÜŞÜ",
+    tabooWords: ["Karanlık", "Gözlük", "Asker", "Kamera", "Teknoloji"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "UYKU MASKESİ",
+    tabooWords: ["Göz", "Kapatmak", "Işık", "Yatmak", "Dinlenmek"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "GECE PAZARI",
+    tabooWords: ["Tezgah", "Satıcı", "Gece", "Sokak", "Işık"],
+    category: "Gece Yarısı Paketi",
+  ),
+  WordCard(
+    word: "GECELİK",
+    tabooWords: ["Pijama", "Uyku", "Kıyafet", "Yatmak", "Giysi"],
+    category: "Gece Yarısı Paketi",
+  ),
 ];
 
 final List<WordCard> initialDeckEn = [

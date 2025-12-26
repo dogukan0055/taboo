@@ -9,6 +9,57 @@ class RoundReportScreen extends StatelessWidget {
     var game = Provider.of<GameProvider>(context);
     final reduceMotion = game.reducedMotion;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    Future<void> showSkippableAd() async {
+      final secondsLeft = ValueNotifier<int>(5);
+      final timer = Timer.periodic(const Duration(seconds: 1), (t) {
+        final next = secondsLeft.value - 1;
+        if (next <= 0) {
+          secondsLeft.value = 0;
+          t.cancel();
+        } else {
+          secondsLeft.value = next;
+        }
+      });
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(game.t("ad_break_title")),
+          content: ValueListenableBuilder<int>(
+            valueListenable: secondsLeft,
+            builder: (context, value, _) => Text(
+              "${game.t("ad_break_body")} (${value}s)",
+            ),
+          ),
+          actions: [
+            ValueListenableBuilder<int>(
+              valueListenable: secondsLeft,
+              builder: (context, value, _) => TextButton(
+                onPressed: value == 0
+                    ? () {
+                        Navigator.pop(dialogContext);
+                      }
+                    : null,
+                child: Text(game.t("ads_skip")),
+              ),
+            ),
+          ],
+        ),
+      );
+      timer.cancel();
+      secondsLeft.dispose();
+    }
+
+    Future<void> maybeShowInterstitial() async {
+      final summary = game.lastRoundSummary;
+      if (summary == null) return;
+      if (game.isGameEnded) return;
+      if (!game.shouldShowInterstitialAfter(summary)) return;
+      final shown = await game.showInterstitialAd();
+      if (!shown && context.mounted) {
+        await showSkippableAd();
+      }
+    }
     final Color scaffoldColor = isDark
         ? const Color(0xFF141414)
         : Colors.grey[200]!;
@@ -192,6 +243,8 @@ class RoundReportScreen extends StatelessWidget {
                                       context,
                                       listen: false,
                                     ).playClick();
+                                    if (!context.mounted) return;
+                                    await maybeShowInterstitial();
                                     if (!context.mounted) return;
                                     game.finishTurn();
                                     Navigator.pushReplacement(
