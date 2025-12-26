@@ -109,10 +109,9 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                 await game.buyCategoryPack(category);
               },
               child: Text(
-                [
-                  game.t("buy"),
-                  if (price != null) "($price)",
-                ].join(" "),
+                price != null
+                    ? "${game.t("buy_unlock_forever")} • $price"
+                    : game.t("buy_unlock_forever"),
               ),
             ),
         ],
@@ -168,14 +167,15 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                     final bool isUnlocked = game.isCategoryUnlocked(cat);
                     final bool isLocked =
                         access != CategoryAccess.free && !isUnlocked;
-                    bool isCatSelected = _selectedCategories.contains(cat);
+                    final bool categoryActive =
+                        _selectedCategories.contains(cat);
                     final int activeCount = words
                         .where((w) => !_disabledIds.contains(w.id))
                         .length;
                     final bool isPartial =
-                        !isCatSelected &&
-                        activeCount > 0 &&
-                        activeCount < words.length;
+                        activeCount > 0 && activeCount < words.length;
+                    final bool isCatSelected =
+                        categoryActive && !isPartial && activeCount == words.length;
 
                     final Color titleColor = isLocked
                         ? Colors.white38
@@ -199,17 +199,13 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                       isSelected: isCatSelected,
                       isPartial: isPartial,
                       isLocked: isLocked,
-                      lockBadge: isLocked ? game.t("badge_locked") : null,
-                      paidBadge: access == CategoryAccess.premium
-                          ? game.t("badge_paid")
-                          : null,
-                      adBadge: access == CategoryAccess.adUnlock
-                          ? game.t("badge_ad")
-                          : null,
+                      lockBadge: game.t("badge_locked"),
+                      paidBadge: null,
+                      adBadge: null,
                       unlockLabel: isLocked
                           ? access == CategoryAccess.adUnlock
-                              ? game.t("watch_ad_unlock")
-                              : game.t("unlock_button")
+                              ? game.t("watch_ad_unlock_short")
+                              : game.t("buy_unlock_short")
                           : null,
                       reduceMotion: reduceMotion,
                       onToggle: (val) async {
@@ -406,7 +402,17 @@ class _CategoryCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => showUnlock ? onUnlock!() : onToggle(!isSelected),
+          onTap: () {
+            if (showUnlock) {
+              onUnlock!();
+              return;
+            }
+            if (isPartial) {
+              onToggle(false);
+              return;
+            }
+            onToggle(!isSelected);
+          },
           borderRadius: BorderRadius.circular(18),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -444,16 +450,6 @@ class _CategoryCard extends StatelessWidget {
                 );
               }
 
-              final List<Widget> badges = [];
-              if (paidBadge != null) {
-                badges.add(buildBadge(paidBadge!, Colors.amber));
-              }
-              if (adBadge != null && isLocked) {
-                badges.add(buildBadge(adBadge!, Colors.lightBlueAccent));
-              }
-              if (lockBadge != null) {
-                badges.add(buildBadge(lockBadge!, Colors.white70));
-              }
               return Stack(
                 children: [
                   Align(
@@ -491,20 +487,14 @@ class _CategoryCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  if (badges.isNotEmpty)
+                  if (isLocked)
                     Positioned(
                       top: compact ? 8 : 10,
                       right: compact ? 10 : 12,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: badges
-                            .map(
-                              (badge) => Padding(
-                                padding: const EdgeInsets.only(bottom: 6),
-                                child: badge,
-                              ),
-                            )
-                            .toList(),
+                      child: Icon(
+                        Icons.lock,
+                        size: actionIconSize + 4,
+                        color: Colors.white70,
                       ),
                     ),
                   Center(
@@ -591,7 +581,7 @@ class _CategoryCard extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                showUnlock ? Icons.lock_open : Icons.menu_book,
+                                showUnlock ? Icons.lock : Icons.menu_book,
                                 color: Colors.white70,
                                 size: actionIconSize,
                               ),

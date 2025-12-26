@@ -43,14 +43,22 @@ class GameProvider extends ChangeNotifier {
   };
   // Replace these IDs with your App Store / Play Console achievement IDs.
   static const Map<_AchievementKey, _AchievementIds> _achievementIds = {
-    _AchievementKey.fullHouse:
-        _AchievementIds(ios: "full_house", android: "full_house"),
-    _AchievementKey.everyoneNarrates:
-        _AchievementIds(ios: "everyone_narrates", android: "everyone_narrates"),
-    _AchievementKey.balancedBattle:
-        _AchievementIds(ios: "balanced_battle", android: "balanced_battle"),
-    _AchievementKey.marathonNight:
-        _AchievementIds(ios: "marathon_night", android: "marathon_night"),
+    _AchievementKey.fullHouse: _AchievementIds(
+      ios: "full_house",
+      android: "full_house",
+    ),
+    _AchievementKey.everyoneNarrates: _AchievementIds(
+      ios: "everyone_narrates",
+      android: "everyone_narrates",
+    ),
+    _AchievementKey.balancedBattle: _AchievementIds(
+      ios: "balanced_battle",
+      android: "balanced_battle",
+    ),
+    _AchievementKey.marathonNight: _AchievementIds(
+      ios: "marathon_night",
+      android: "marathon_night",
+    ),
   };
   static const Set<String> _freeCategories = {
     "Genel",
@@ -764,8 +772,7 @@ class GameProvider extends ChangeNotifier {
       await _unlockAchievement(_AchievementKey.marathonNight);
     }
     if (hasMinimumTeams) {
-      final narrators =
-          roundSummaries.map((round) => round.narrator).toSet();
+      final narrators = roundSummaries.map((round) => round.narrator).toSet();
       final everyonePlayed =
           teamA.every(narrators.contains) && teamB.every(narrators.contains);
       if (everyonePlayed) {
@@ -986,7 +993,7 @@ class GameProvider extends ChangeNotifier {
         "custom_empty_warning": "Özel kategorisi boş. Önce kelime ekleyin.",
         "categories_updated": "Kategoriler güncellendi",
         "status_on": "AÇIK",
-        "status_partial": "KISMİ",
+        "status_partial": "KISMİ AÇIK",
         "status_off": "KAPALI",
         "words_button": "KELİMELER",
         "no_cards": "Kart Yok",
@@ -1162,15 +1169,19 @@ class GameProvider extends ChangeNotifier {
         "remove_ads_desc": "Reklamlar kapanır, Spor/Bilim/Yemek açılır",
         "remove_ads_owned": "Reklamlar kaldırıldı",
         "restore_purchases": "Satın Alımları Geri Yükle",
-        "watch_ad_unlock": "Reklam İzle",
-        "watch_ad_1h": "30 sn reklam izle, 1 saat aç",
-        "unlock_category_title": "Kategori Kilidi",
-        "unlock_category_body_ad": "{category} için reklam izle",
+        "watch_ad_unlock": "Reklam izle",
+        "watch_ad_1h": "Reklam izle ve 1 saatliğine aç",
+        "buy_unlock_forever": "Satın al, kalıcı aç",
+        "watch_ad_unlock_short": "REKLAM İZLE VE AÇ",
+        "buy_unlock_short": "SATIN AL VE AÇ",
+        "unlock_category_title": "Kategori Kilitli",
+        "unlock_category_body_ad":
+            "{category} kategorisini açmak için reklam izle",
         "unlock_category_body_premium":
-            "{category} için reklam izle (1 saat) veya satın al",
+            "{category} kategorisini 1 saatliğine açmak için reklam izle veya satın al",
         "unlock_success": "{category} açıldı",
         "unlock_failed": "Reklam şu an hazır değil",
-        "badge_locked": "KAPALI",
+        "badge_locked": "KİLİTLİ",
         "badge_paid": "PARALI",
         "badge_ad": "REKLAMLA",
         "buy": "Satın Al",
@@ -1242,7 +1253,7 @@ class GameProvider extends ChangeNotifier {
         "custom_empty_warning": "Custom category is empty. Add words first.",
         "categories_updated": "Categories updated",
         "status_on": "ON",
-        "status_partial": "PARTIAL",
+        "status_partial": "PARTIAL ON",
         "status_off": "OFF",
         "words_button": "WORDS",
         "no_cards": "No Cards",
@@ -1414,12 +1425,16 @@ class GameProvider extends ChangeNotifier {
         "remove_ads_desc": "Ads off, Sports/Science/Food unlocked",
         "remove_ads_owned": "Ads removed",
         "restore_purchases": "Restore Purchases",
-        "watch_ad_unlock": "Watch Ad",
-        "watch_ad_1h": "Watch a 30s ad, unlock for 1 hour",
-        "unlock_category_title": "Category Lock",
-        "unlock_category_body_ad": "Watch an ad to unlock {category}",
+        "watch_ad_unlock": "Watch ad",
+        "watch_ad_1h": "Watch ad & unlock for 1H",
+        "buy_unlock_forever": "Buy and Unlock For Good",
+        "watch_ad_unlock_short": "WATCH AD & UNLOCK",
+        "buy_unlock_short": "BUY & UNLOCK",
+        "unlock_category_title": "Category Locked",
+        "unlock_category_body_ad":
+            "Watch an ad to unlock the {category} category",
         "unlock_category_body_premium":
-            "Watch an ad (1 hour) or buy {category}",
+            "Watch an ad to unlock for 1 hour or buy the {category} category",
         "unlock_success": "{category} unlocked",
         "unlock_failed": "Ad is not ready",
         "badge_locked": "LOCKED",
