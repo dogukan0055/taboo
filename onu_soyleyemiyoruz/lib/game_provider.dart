@@ -739,17 +739,17 @@ class GameProvider extends ChangeNotifier {
   String get _interstitialAdUnitId {
     if (!_adsSupported) return "";
     if (Platform.isAndroid) {
-      return "ca-app-pub-3940256099942544/1033173712";
+      return "ca-app-pub-8990814046267193/3625330834";
     }
-    return "ca-app-pub-3940256099942544/4411468910";
+    return "ca-app-pub-8990814046267193/5955803099";
   }
 
   String get _rewardedAdUnitId {
     if (!_adsSupported) return "";
     if (Platform.isAndroid) {
-      return "ca-app-pub-3940256099942544/5224354917";
+      return "ca-app-pub-8990814046267193/5875912046";
     }
-    return "ca-app-pub-3940256099942544/1712485313";
+    return "ca-app-pub-8990814046267193/8582784670";
   }
 
   GameProvider() {
