@@ -4873,4 +4873,620 @@ final List<WordCard> initialDeckEn = [
     tabooWords: ["Mouth", "Lips", "Slow", "Pleasure", "Oral"],
     category: "Gece Yarısı",
   ),
+
+  // Football (EN)
+  WordCard(
+    word: "GOAL",
+    tabooWords: ["Net", "Score", "Ball", "Keeper", "Celebrate"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "PENALTY",
+    tabooWords: ["Spot", "Referee", "Foul", "Kick", "Keeper"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "OFFSIDE",
+    tabooWords: ["Line", "Flag", "Assistant", "Defense", "Position"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "THROW-IN",
+    tabooWords: ["Sideline", "Hands", "Restart", "Out", "Ball"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "CORNER",
+    tabooWords: ["Flag", "Box", "Cross", "Header", "Kick"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "STRIKER",
+    tabooWords: ["Forward", "Goal", "Number 9", "Score", "Attack"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "DEFENDER",
+    tabooWords: ["Back", "Stop", "Tackle", "Block", "Backline"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "GOALKEEPER",
+    tabooWords: ["Gloves", "Save", "Net", "Diving", "Keeper"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "REFEREE",
+    tabooWords: ["Whistle", "Cards", "Foul", "Control", "Match"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "VAR",
+    tabooWords: ["Video", "Review", "Referee", "Offside", "Replay"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "STANDS",
+    tabooWords: ["Fans", "Seats", "Stadium", "Chant", "Crowd"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "FAN",
+    tabooWords: ["Supporter", "Scarf", "Team", "Chant", "Tribune"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "DERBY",
+    tabooWords: ["Rival", "City", "Big Match", "Tension", "Hate"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "TRANSFER",
+    tabooWords: ["Club", "Contract", "Fee", "Sign", "Window"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "CAPTAIN",
+    tabooWords: ["Armband", "Leader", "Team", "Toss", "Voice"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "REMATCH",
+    tabooWords: ["Second Leg", "Revenge", "Aggregate", "Home", "Away"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "EXTRA TIME",
+    tabooWords: ["Added", "Minutes", "Referee", "Tie", "Continue"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "FORMATION",
+    tabooWords: ["4-4-2", "Tactics", "Shape", "Lineup", "System"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "DRIBBLE",
+    tabooWords: ["Skills", "Beat", "Ball", "Feet", "Control"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "PASS",
+    tabooWords: ["Assist", "Ball", "Short", "Long", "Teammate"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "SHOT",
+    tabooWords: ["Kick", "Goal", "Power", "Target", "Strike"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "VOLLEY",
+    tabooWords: ["Air", "Kick", "Jump", "Ball", "Shot"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "FOUL",
+    tabooWords: ["Whistle", "Contact", "Rule", "Free Kick", "Referee"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "YELLOW CARD",
+    tabooWords: ["Warning", "Referee", "Foul", "First", "Caution"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "RED CARD",
+    tabooWords: ["Sent Off", "Referee", "Second", "Foul", "Ban"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "WHISTLE",
+    tabooWords: ["Referee", "Sound", "Start", "Stop", "Blow"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "PENALTY BOX",
+    tabooWords: ["Area", "18", "Goal", "Foul", "Inside"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "GOAL AREA",
+    tabooWords: ["Six-yard", "Keeper", "Small Box", "Goal", "Line"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "COUNTER ATTACK",
+    tabooWords: ["Fast", "Break", "Defense", "Transition", "Run"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "SPRINT",
+    tabooWords: ["Speed", "Run", "Burst", "Wing", "Dash"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "STADIUM",
+    tabooWords: ["Arena", "Seats", "Fans", "Lights", "Pitch"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "TRAINING",
+    tabooWords: ["Practice", "Session", "Coach", "Fitness", "Drill"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "COACH",
+    tabooWords: ["Manager", "Tactics", "Bench", "Instructions", "Plan"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "ASSISTANT REF",
+    tabooWords: ["Line", "Flag", "Offside", "Referee", "Side"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "CHAMPIONSHIP",
+    tabooWords: ["Cup", "Title", "Winner", "Season", "Celebrate"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "TROPHY",
+    tabooWords: ["Final", "Lift", "Champion", "Prize", "Tournament"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "SEASON",
+    tabooWords: ["Fixtures", "Matches", "Table", "League", "Year"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "LEAGUE TABLE",
+    tabooWords: ["Ranking", "Points", "Table", "Average", "Top"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "GOLDEN BOOT",
+    tabooWords: ["Top Scorer", "Goals", "Award", "Season", "Striker"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "FIXTURE",
+    tabooWords: ["Schedule", "Matches", "Calendar", "Order", "List"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "GOALPOST",
+    tabooWords: ["Bar", "Frame", "Woodwork", "Crossbar", "Shot"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "WALL",
+    tabooWords: ["Free Kick", "Players", "Block", "Stand", "Barrier"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "FREE KICK",
+    tabooWords: ["Foul", "Referee", "Shot", "Wall", "Direct"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "CLUB",
+    tabooWords: ["Colors", "Community", "Fans", "Team", "History"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "GOAL KICK",
+    tabooWords: ["Keeper", "Six-yard", "Restart", "Out", "Kick"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "CENTER BACK",
+    tabooWords: ["Defender", "Middle", "Back Line", "Stopper", "Tackle"],
+    category: "Futbol",
+  ),
+
+  // 90s Nostalgia (EN)
+  WordCard(
+    word: "TAMAGOTCHI",
+    tabooWords: ["Virtual", "Pet", "Egg", "Feed", "Toy"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "WALKMAN",
+    tabooWords: ["Music", "Headphones", "Cassette", "Belt", "Portable"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "CASSETTE",
+    tabooWords: ["Tape", "Music", "Player", "Wind", "Plastic"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "VHS TAPE",
+    tabooWords: ["Video", "Player", "Rewind", "Movie", "Box"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "VCD",
+    tabooWords: ["Disc", "Video", "Player", "CD", "Image"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "FLOPPY DISK",
+    tabooWords: ["Save", "A: Drive", "Computer", "Square", "Files"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "DIAL-UP",
+    tabooWords: ["Modem", "Phone Line", "Sound", "Connect", "Internet"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "NOKIA 3310",
+    tabooWords: ["Phone", "Snake", "Buttons", "Battery", "Brick"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "GAME BOY",
+    tabooWords: ["Nintendo", "Handheld", "Cartridge", "Pokemon", "Screen"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "ATARI",
+    tabooWords: ["Console", "Joystick", "Cartridge", "8-bit", "Games"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "SEGA",
+    tabooWords: ["Genesis", "Console", "Sonic", "16-bit", "Joystick"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "CRT TV",
+    tabooWords: ["Box", "Antenna", "Heavy", "Tube", "Static"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "ANTENNA",
+    tabooWords: ["Roof", "Signal", "TV", "Adjust", "Channel"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "MARBLE",
+    tabooWords: ["Glass", "Game", "Round", "Child", "Shoot"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "JACKS",
+    tabooWords: ["Stones", "Throw", "Catch", "Game", "Floor"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "POGS",
+    tabooWords: ["Disks", "Stack", "Collect", "Slammer", "Game"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "POKEMON CARDS",
+    tabooWords: ["Collect", "Trade", "Holographic", "Deck", "Battle"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "SPICE GIRLS",
+    tabooWords: ["Girl Band", "Wannabe", "Britpop", "90s", "Pop"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "BACKSTREET BOYS",
+    tabooWords: ["Boyband", "I Want It That Way", "Pop", "90s", "Group"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "NIRVANA",
+    tabooWords: ["Grunge", "Kurt Cobain", "Smells Like Teen Spirit", "Band", "90s"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "FRIENDS",
+    tabooWords: ["Sitcom", "Ross", "Rachel", "Central Perk", "90s"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "TITANIC",
+    tabooWords: ["Ship", "Jack", "Rose", "Movie", "Iceberg"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "JURASSIC PARK",
+    tabooWords: ["Dinosaurs", "Movie", "Island", "T-Rex", "Spielberg"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "THE MATRIX",
+    tabooWords: ["Neo", "Red Pill", "Sci-Fi", "1999", "Bullet Time"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "HOME ALONE",
+    tabooWords: ["Kevin", "Thieves", "Christmas", "Trap", "Movie"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "MACARENA",
+    tabooWords: ["Dance", "Song", "Hands", "Chorus", "90s"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "MSN MESSENGER",
+    tabooWords: ["Chat", "Nudge", "Status", "Email", "Online"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "ICQ",
+    tabooWords: ["Uh-oh", "Chat", "Number", "Messenger", "90s"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "CHAT ROOM",
+    tabooWords: ["Internet", "Anonymous", "Talk", "Nickname", "Typing"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "INTERNET CAFE",
+    tabooWords: ["Computer", "Pay", "Game", "Chat", "LAN"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "PAGER",
+    tabooWords: ["Beep", "Number", "Message", "Pocket", "90s"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "ROLLERBLADES",
+    tabooWords: ["Skates", "Wheels", "Inline", "Park", "Helmet"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "POLAROID",
+    tabooWords: ["Instant", "Photo", "Camera", "Print", "Shake"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "DISCMAN",
+    tabooWords: ["CD", "Portable", "Skip", "Music", "Headphones"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "MINIDISC",
+    tabooWords: ["Sony", "Disc", "Player", "Audio", "Small"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "NAPSTER",
+    tabooWords: ["MP3", "Download", "Illegal", "Sharing", "Lawsuit"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "BURNED CD",
+    tabooWords: ["Copy", "Computer", "Music", "Blank", "Record"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "WINDOWS 98",
+    tabooWords: ["Start", "PC", "Desktop", "Microsoft", "Update"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "Y2K",
+    tabooWords: ["Bug", "2000", "Computers", "Fear", "Millennium"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "BEANIE BABY",
+    tabooWords: ["Collectible", "Toy", "Stuffed", "Tag", "Hype"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "FANNY PACK",
+    tabooWords: ["Belt", "Bag", "Waist", "Travel", "Zip"],
+    category: "90'lar Nostalji",
+  ),
+  WordCard(
+    word: "WALKIE-TALKIE",
+    tabooWords: ["Two-way", "Radio", "Button", "Static", "Kids"],
+    category: "90'lar Nostalji",
+  ),
+
+  // Hard Mode (EN)
+  WordCard(
+    word: "PHOTOSYNTHESIS",
+    tabooWords: ["Plants", "Sunlight", "Chlorophyll", "Energy", "Oxygen"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "ENTROPY",
+    tabooWords: ["Chaos", "Thermodynamics", "Energy", "Disorder", "Heat"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "PARADOX",
+    tabooWords: ["Contradiction", "Logic", "Impossible", "Loop", "Think"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "LABYRINTH",
+    tabooWords: ["Maze", "Paths", "Lost", "Complex", "Turns"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "OXYMORON",
+    tabooWords: ["Opposite", "Words", "Jumbo Shrimp", "Phrase", "Irony"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "METAMORPHOSIS",
+    tabooWords: ["Change", "Butterfly", "Caterpillar", "Transform", "Stage"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "ANTIMATTER",
+    tabooWords: ["Opposite", "Particle", "Physics", "Matter", "Collider"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "BIOSPHERE",
+    tabooWords: ["Earth", "Life", "Ecosystem", "Environment", "Planet"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "CAMOUFLAGE",
+    tabooWords: ["Blend", "Hide", "Pattern", "Military", "Color"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "CHRONOLOGY",
+    tabooWords: ["Timeline", "Order", "Dates", "History", "Sequence"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "HYPOTHESIS",
+    tabooWords: ["Science", "Test", "Idea", "Assumption", "Experiment"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "INFRARED",
+    tabooWords: ["Light", "Heat", "Thermal", "Camera", "Wave"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "COGNITIVE",
+    tabooWords: ["Brain", "Mental", "Thinking", "Process", "Mind"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "SYMMETRY",
+    tabooWords: ["Mirror", "Equal", "Shape", "Balance", "Sides"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "KALEIDOSCOPE",
+    tabooWords: ["Colors", "Pattern", "Tube", "Mirror", "Shapes"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "DICHOTOMY",
+    tabooWords: ["Two", "Divide", "Opposite", "Split", "Contrast"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "POLYMORPHISM",
+    tabooWords: ["OOP", "Change", "Forms", "Programming", "Shape"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "ANTHROPOLOGY",
+    tabooWords: ["Humans", "Culture", "Study", "Society", "Science"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "ARCHETYPE",
+    tabooWords: ["Model", "Pattern", "Original", "Symbol", "Story"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "SYNCHRONIZE",
+    tabooWords: ["Same Time", "Align", "Together", "Clock", "Match"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "ALGORITHM",
+    tabooWords: ["Steps", "Code", "Solve", "Computer", "Logic"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "ANESTHESIA",
+    tabooWords: ["Surgery", "Sleep", "Doctor", "Numb", "Injection"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "CATACLYSM",
+    tabooWords: ["Disaster", "Massive", "Event", "Change", "Destruction"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "AMBIDEXTROUS",
+    tabooWords: ["Both Hands", "Write", "Skill", "Left", "Right"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "EPIPHANY",
+    tabooWords: ["Realization", "Sudden", "Insight", "Idea", "Moment"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "AURORA",
+    tabooWords: ["Northern Lights", "Sky", "Color", "Pole", "Night"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "TECTONIC PLATE",
+    tabooWords: ["Earth", "Move", "Earthquake", "Crust", "Shift"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "HEMISPHERE",
+    tabooWords: ["North", "South", "Globe", "Half", "Earth"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "OSMOSIS",
+    tabooWords: ["Water", "Membrane", "Balance", "Cells", "Science"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "NANOTECHNOLOGY",
+    tabooWords: ["Tiny", "Science", "Material", "Small", "Future"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "BLOCKCHAIN",
+    tabooWords: ["Crypto", "Chain", "Ledger", "Bitcoin", "Data"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "RENAISSANCE",
+    tabooWords: ["Art", "Europe", "Rebirth", "Da Vinci", "Period"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "HYPERSPACE",
+    tabooWords: ["Sci-Fi", "Faster", "Light", "Travel", "Space"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
+    word: "DARK MATTER",
+    tabooWords: ["Space", "Invisible", "Gravity", "Universe", "Mystery"],
+    category: "Zor Seviye",
+  ),
 ];

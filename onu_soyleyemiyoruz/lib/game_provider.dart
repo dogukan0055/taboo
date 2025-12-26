@@ -34,12 +34,13 @@ class GameProvider extends ChangeNotifier {
   static const String _teamBDefaultTr = "TAKIM B";
   static const String _teamADefaultEn = "TEAM A";
   static const String _teamBDefaultEn = "TEAM B";
-  static const String _removeAdsProductId = "remove_ads";
+  static const String _removeAdsProductId = "ads_remove";
+  static const String _premiumBundleProductId = "premium_bundle";
   static const Map<String, String> _premiumCategoryProductIds = {
-    "Futbol": "pack_football",
-    "90'lar Nostalji": "pack_90s",
-    "Zor Seviye": "pack_hard",
-    "Gece Yarısı": "pack_midnight",
+    "Futbol": _premiumBundleProductId,
+    "90'lar Nostalji": _premiumBundleProductId,
+    "Zor Seviye": _premiumBundleProductId,
+    "Gece Yarısı": _premiumBundleProductId,
   };
   // Replace these IDs with your App Store / Play Console achievement IDs.
   static const Map<_AchievementKey, _AchievementIds> _achievementIds = {
@@ -178,6 +179,8 @@ class GameProvider extends ChangeNotifier {
   final Set<String> _adUnlockedCategories = {};
   final Set<String> _purchasedCategoryIds = {};
   final Map<String, DateTime> _rewardedCategoryUnlocks = {};
+  String? _recentUnlockedCategory;
+  bool _recentUnlockedPermanent = false;
   final List<ProductDetails> _products = [];
   StreamSubscription<List<PurchaseDetails>>? _purchaseSub;
   InterstitialAd? _interstitialAd;
@@ -431,11 +434,24 @@ class GameProvider extends ChangeNotifier {
         _setCategoryEnabled(cat, true);
       }
       _adsRemovalJustGranted = true;
+    } else if (productId == _premiumBundleProductId) {
+      adsRemoved = true;
+      _adUnlockedCategories.addAll(_adUnlockCategories);
+      for (final cat in _adUnlockCategories) {
+        _setCategoryEnabled(cat, true);
+      }
+      _adsRemovalJustGranted = true;
+      for (final cat in _premiumCategories) {
+        _purchasedCategoryIds.add(cat);
+        _setCategoryEnabled(cat, true);
+      }
+      _notifyCategoryUnlock("Premium Bundle", permanent: true);
     } else {
       final cat = _categoryForProduct(productId);
       if (cat != null) {
         _purchasedCategoryIds.add(cat);
         _setCategoryEnabled(cat, true);
+        _notifyCategoryUnlock(cat, permanent: true);
       }
     }
     _persist();
@@ -611,6 +627,7 @@ class GameProvider extends ChangeNotifier {
   }
 
   bool isCategoryUnlocked(String category) {
+    _expireRewardIfNeeded(category);
     final access = categoryAccess(category);
     if (access == CategoryAccess.free) return true;
     if (access == CategoryAccess.adUnlock) {
@@ -622,11 +639,27 @@ class GameProvider extends ChangeNotifier {
   }
 
   Duration? rewardRemaining(String category) {
+    _expireRewardIfNeeded(category);
     final until = _rewardedCategoryUnlocks[category];
     if (until == null) return null;
     final remaining = until.difference(DateTime.now());
     if (remaining.isNegative) return null;
     return remaining;
+  }
+
+  void _notifyCategoryUnlock(String category, {required bool permanent}) {
+    _recentUnlockedCategory = category;
+    _recentUnlockedPermanent = permanent;
+  }
+
+  void _expireRewardIfNeeded(String category) {
+    final until = _rewardedCategoryUnlocks[category];
+    if (until == null) return;
+    if (until.isAfter(DateTime.now())) return;
+    _rewardedCategoryUnlocks.remove(category);
+    _setCategoryEnabled(category, false);
+    _persist();
+    notifyListeners();
   }
 
   Future<bool> unlockCategoryWithReward(String category) async {
@@ -635,6 +668,7 @@ class GameProvider extends ChangeNotifier {
     if (access == CategoryAccess.adUnlock && adsRemoved) {
       _adUnlockedCategories.add(category);
       _setCategoryEnabled(category, true);
+      _notifyCategoryUnlock(category, permanent: true);
       _persist();
       notifyListeners();
       return true;
@@ -647,10 +681,12 @@ class GameProvider extends ChangeNotifier {
     if (!rewarded) return false;
     if (access == CategoryAccess.adUnlock) {
       _adUnlockedCategories.add(category);
+      _notifyCategoryUnlock(category, permanent: true);
     } else if (access == CategoryAccess.premium) {
       _rewardedCategoryUnlocks[category] = DateTime.now().add(
         const Duration(hours: 1),
       );
+      _notifyCategoryUnlock(category, permanent: false);
     }
     _setCategoryEnabled(category, true);
     _persist();
@@ -704,6 +740,8 @@ class GameProvider extends ChangeNotifier {
   bool get isGameEnded => endedByCards || hasReachedTargetScore;
   RoundSummary? get lastRoundSummary =>
       roundSummaries.isNotEmpty ? roundSummaries.last : null;
+  String? get recentUnlockedCategory => _recentUnlockedCategory;
+  bool get recentUnlockedPermanent => _recentUnlockedPermanent;
 
   bool shouldShowInterstitialAfter(RoundSummary summary) {
     if (adsRemoved) return false;
@@ -888,6 +926,12 @@ class GameProvider extends ChangeNotifier {
   void toggleReducedMotion(bool val) {
     reducedMotion = val;
     _persist();
+    notifyListeners();
+  }
+
+  void clearRecentUnlockedCategory() {
+    _recentUnlockedCategory = null;
+    _recentUnlockedPermanent = false;
     notifyListeners();
   }
 
@@ -1145,8 +1189,8 @@ class GameProvider extends ChangeNotifier {
         "error_word_exists": "Bu kelime zaten var",
         "error_name_empty": "İsim boş olamaz",
         "error_name_profanity": "Uygunsuz isim tespit edildi",
-        "error_team_name_max": "İsim en fazla 20 karakter olabilir",
-        "error_player_name_max": "İsim en fazla 16 karakter olabilir",
+        "error_team_name_max": "Takım adı en fazla 20 karakter olabilir",
+        "error_player_name_max": "Oyuncu adı en fazla 16 karakter olabilir",
         "error_name_invalid": "İsim geçersiz",
         "error_team_name_same": "Diğer takımla aynı isim olamaz",
         "error_player_exists": "Bu oyuncu zaten ekli",
@@ -1170,9 +1214,9 @@ class GameProvider extends ChangeNotifier {
         "remove_ads_owned": "Reklamlar kaldırıldı",
         "restore_purchases": "Satın Alımları Geri Yükle",
         "watch_ad_unlock": "Reklam izle",
-        "watch_ad_1h": "Reklam izle ve 1 saatliğine aç",
+        "watch_ad_1h": "İzle ve 1 saatliğine aç",
         "buy_unlock_forever": "Satın al, kalıcı aç",
-        "watch_ad_unlock_short": "REKLAM İZLE VE AÇ",
+        "watch_ad_unlock_short": "İZLE VE AÇ",
         "buy_unlock_short": "SATIN AL VE AÇ",
         "unlock_category_title": "Kategori Kilitli",
         "unlock_category_body_ad":
@@ -1181,6 +1225,8 @@ class GameProvider extends ChangeNotifier {
             "{category} kategorisini 1 saatliğine açmak için reklam izle veya satın al",
         "unlock_success": "{category} açıldı",
         "unlock_failed": "Reklam şu an hazır değil",
+        "unlock_redeemed_forever": "{category} kalıcı açıldı",
+        "unlock_redeemed_1h": "{category} 1 saatliğine açıldı",
         "badge_locked": "KİLİTLİ",
         "badge_paid": "PARALI",
         "badge_ad": "REKLAMLA",
@@ -1401,8 +1447,8 @@ class GameProvider extends ChangeNotifier {
         "error_word_exists": "This word already exists",
         "error_name_empty": "Name cannot be empty",
         "error_name_profanity": "Inappropriate name detected",
-        "error_team_name_max": "Name can be at most 20 characters",
-        "error_player_name_max": "Name can be at most 16 characters",
+        "error_team_name_max": "Team name can be at most 20 characters",
+        "error_player_name_max": "Player name can be at most 16 characters",
         "error_name_invalid": "Invalid name",
         "error_team_name_same": "Cannot match the other team name",
         "error_player_exists": "Player already added",
@@ -1426,9 +1472,9 @@ class GameProvider extends ChangeNotifier {
         "remove_ads_owned": "Ads removed",
         "restore_purchases": "Restore Purchases",
         "watch_ad_unlock": "Watch ad",
-        "watch_ad_1h": "Watch ad & unlock for 1H",
+        "watch_ad_1h": "Watch & unlock for 1H",
         "buy_unlock_forever": "Buy and Unlock For Good",
-        "watch_ad_unlock_short": "WATCH AD & UNLOCK",
+        "watch_ad_unlock_short": "WATCH & UNLOCK",
         "buy_unlock_short": "BUY & UNLOCK",
         "unlock_category_title": "Category Locked",
         "unlock_category_body_ad":
@@ -1437,6 +1483,8 @@ class GameProvider extends ChangeNotifier {
             "Watch an ad to unlock for 1 hour or buy the {category} category",
         "unlock_success": "{category} unlocked",
         "unlock_failed": "Ad is not ready",
+        "unlock_redeemed_forever": "{category} unlocked forever",
+        "unlock_redeemed_1h": "{category} unlocked for 1 hour",
         "badge_locked": "LOCKED",
         "badge_paid": "PAID",
         "badge_ad": "AD",

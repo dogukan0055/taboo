@@ -78,11 +78,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
               final unlocked = await game.unlockCategoryWithReward(category);
               if (!mounted) return;
               if (!unlocked) {
-                _showSnack(
-                  messenger,
-                  game.t("unlock_failed"),
-                  isError: true,
-                );
+                _showSnack(messenger, game.t("unlock_failed"), isError: true);
                 return;
               }
               setState(() {
@@ -124,6 +120,17 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
     var game = Provider.of<GameProvider>(context);
     final messenger = ScaffoldMessenger.of(context);
     var wordsMap = game.wordsByCategory;
+    if (game.recentUnlockedCategory != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final catLabel = game.categoryLabel(game.recentUnlockedCategory!);
+        final msg = game.recentUnlockedPermanent
+            ? game.t("unlock_redeemed_forever", params: {"category": catLabel})
+            : game.t("unlock_redeemed_1h", params: {"category": catLabel});
+        _showSnack(messenger, msg, isSuccess: true);
+        game.clearRecentUnlockedCategory();
+      });
+    }
     final reduceMotion = game.reducedMotion;
 
     return Scaffold(
@@ -167,15 +174,19 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                     final bool isUnlocked = game.isCategoryUnlocked(cat);
                     final bool isLocked =
                         access != CategoryAccess.free && !isUnlocked;
-                    final bool categoryActive =
-                        _selectedCategories.contains(cat);
+                    final bool categoryActive = _selectedCategories.contains(
+                      cat,
+                    );
                     final int activeCount = words
                         .where((w) => !_disabledIds.contains(w.id))
                         .length;
                     final bool isPartial =
                         activeCount > 0 && activeCount < words.length;
                     final bool isCatSelected =
-                        categoryActive && !isPartial && activeCount == words.length;
+                        categoryActive &&
+                        !isPartial &&
+                        activeCount == words.length;
+                    final Duration? rewardRemaining = game.rewardRemaining(cat);
 
                     final Color titleColor = isLocked
                         ? Colors.white38
@@ -199,13 +210,18 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                       isSelected: isCatSelected,
                       isPartial: isPartial,
                       isLocked: isLocked,
+                      access: access,
+                      rewardRemaining: rewardRemaining,
                       lockBadge: game.t("badge_locked"),
                       paidBadge: null,
                       adBadge: null,
                       unlockLabel: isLocked
                           ? access == CategoryAccess.adUnlock
-                              ? game.t("watch_ad_unlock_short")
-                              : game.t("buy_unlock_short")
+                                ? game.t("watch_ad_unlock_short")
+                                : game.t("watch_ad_1h")
+                          : null,
+                      buyLabel: isLocked && access == CategoryAccess.premium
+                          ? game.t("buy_unlock_short")
                           : null,
                       reduceMotion: reduceMotion,
                       onToggle: (val) async {
@@ -234,6 +250,12 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                       },
                       onUnlock: isLocked
                           ? () => _promptUnlockCategory(context, game, cat)
+                          : null,
+                      onBuy: isLocked && access == CategoryAccess.premium
+                          ? () async {
+                              await game.playClick();
+                              await game.buyCategoryPack(cat);
+                            }
                           : null,
                       onOpen: () async {
                         await game.playClick();
@@ -297,6 +319,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
       ),
     );
   }
+
 }
 
 class _CategoryCard extends StatelessWidget {
@@ -307,13 +330,17 @@ class _CategoryCard extends StatelessWidget {
   final bool isSelected;
   final bool isPartial;
   final bool isLocked;
+  final CategoryAccess access;
+  final Duration? rewardRemaining;
   final String? lockBadge;
   final String? paidBadge;
   final String? adBadge;
   final String? unlockLabel;
+  final String? buyLabel;
   final bool reduceMotion;
   final ValueChanged<bool> onToggle;
   final VoidCallback? onUnlock;
+  final VoidCallback? onBuy;
   final VoidCallback onOpen;
 
   const _CategoryCard({
@@ -324,21 +351,24 @@ class _CategoryCard extends StatelessWidget {
     required this.isSelected,
     required this.isPartial,
     required this.isLocked,
+    required this.access,
+    required this.rewardRemaining,
     required this.lockBadge,
     required this.paidBadge,
     required this.adBadge,
     required this.unlockLabel,
+    required this.buyLabel,
     required this.reduceMotion,
     required this.onToggle,
     required this.onUnlock,
+    required this.onBuy,
     required this.onOpen,
   });
 
   @override
   Widget build(BuildContext context) {
     final game = Provider.of<GameProvider>(context, listen: false);
-    final bool showUnlock =
-        isLocked && onUnlock != null && unlockLabel != null;
+    final bool showUnlock = isLocked && onUnlock != null && unlockLabel != null;
     final Color accent = isLocked
         ? Colors.white38
         : isSelected
@@ -368,13 +398,17 @@ class _CategoryCard extends StatelessWidget {
         ? Colors.lightBlueAccent.withValues(alpha: 0.12)
         : Colors.white.withValues(alpha: 0.06);
     final Color bgBottom = Colors.black.withValues(alpha: 0.45);
-    final Duration animDuration =
-        reduceMotion ? Duration.zero : const Duration(milliseconds: 220);
+    final Duration animDuration = reduceMotion
+        ? Duration.zero
+        : const Duration(milliseconds: 220);
     final String statusLabel = isSelected
         ? game.t("status_on")
         : isPartial
         ? game.t("status_partial")
         : game.t("status_off");
+    final bool isPremiumLocked =
+        isLocked && access == CategoryAccess.premium && onUnlock != null;
+    final bool hasTimedUnlock = rewardRemaining != null;
     return AnimatedContainer(
       duration: animDuration,
       decoration: BoxDecoration(
@@ -424,27 +458,49 @@ class _CategoryCard extends StatelessWidget {
               final double bgIconSize = compact ? 84 : 104;
               final double actionIconSize = compact ? 16 : 18;
               final double actionFontSize = compact ? 10 : 11;
-              Widget buildBadge(String label, Color color) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: color.withValues(alpha: 0.4),
-                      width: 0.6,
+              Widget buildActionButton(
+                String label,
+                IconData icon,
+                VoidCallback? onTap,
+              ) {
+                return InkWell(
+                  onTap: onTap,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
                     ),
-                  ),
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      color: color,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.6,
-                      fontSize: statusSize,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.35),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(icon, color: Colors.white70, size: actionIconSize),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              label,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.6,
+                                fontSize: actionFontSize,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -497,6 +553,43 @@ class _CategoryCard extends StatelessWidget {
                         color: Colors.white70,
                       ),
                     ),
+                  if (!isLocked && hasTimedUnlock && rewardRemaining != null)
+                    Positioned(
+                      top: compact ? 8 : 10,
+                      right: compact ? 10 : 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.35),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.lock_open,
+                              size: actionIconSize,
+                              color: Colors.white70,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              _formatDuration(rewardRemaining!),
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontWeight: FontWeight.bold,
+                                fontSize: statusSize,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   Center(
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
@@ -529,14 +622,10 @@ class _CategoryCard extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withValues(
-                                    alpha: 0.35,
-                                  ),
+                                  color: Colors.black.withValues(alpha: 0.35),
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
-                                    color: Colors.white.withValues(
-                                      alpha: 0.1,
-                                    ),
+                                    color: Colors.white.withValues(alpha: 0.1),
                                     width: 0.6,
                                   ),
                                 ),
@@ -562,43 +651,33 @@ class _CategoryCard extends StatelessWidget {
                     left: 0,
                     right: 0,
                     child: Center(
-                      child: InkWell(
-                        onTap: showUnlock ? onUnlock : onOpen,
-                        borderRadius: BorderRadius.circular(16),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: compact ? 10 : 12,
-                            vertical: compact ? 6 : 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.35),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.2),
+                      child: isPremiumLocked
+                          ? Wrap(
+                              alignment: WrapAlignment.center,
+                              spacing: 8,
+                              runSpacing: 6,
+                              children: [
+                                if (unlockLabel != null)
+                                  buildActionButton(
+                                    unlockLabel!,
+                                    Icons.ondemand_video,
+                                    onUnlock,
+                                  ),
+                                if (buyLabel != null)
+                                  buildActionButton(
+                                    buyLabel!,
+                                    Icons.shopping_bag_outlined,
+                                    onBuy,
+                                  ),
+                              ],
+                            )
+                          : buildActionButton(
+                              showUnlock
+                                  ? unlockLabel ?? game.t("badge_locked")
+                                  : game.t("words_button"),
+                              showUnlock ? Icons.lock : Icons.menu_book,
+                              showUnlock ? onUnlock : onOpen,
                             ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                showUnlock ? Icons.lock : Icons.menu_book,
-                                color: Colors.white70,
-                                size: actionIconSize,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                showUnlock ? unlockLabel! : game.t("words_button"),
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.6,
-                                  fontSize: actionFontSize,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                     ),
                   ),
                 ],
@@ -608,6 +687,13 @@ class _CategoryCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatDuration(Duration duration) {
+    final totalSeconds = duration.inSeconds;
+    final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
+    final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
+    return "$minutes:$seconds";
   }
 }
 
@@ -654,9 +740,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
     } else {
       widget.disabledIds.add(word.id);
     }
-    final allEnabled = words.every(
-      (cw) => !widget.disabledIds.contains(cw.id),
-    );
+    final allEnabled = words.every((cw) => !widget.disabledIds.contains(cw.id));
     if (allEnabled) {
       widget.selectedCategories.add(widget.category);
     } else {
@@ -761,8 +845,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
     final messenger = ScaffoldMessenger.of(context);
     final reduceMotion = game.reducedMotion;
     final words = game.wordsByCategory[widget.category] ?? widget.words;
-    final bool isCustomEmpty =
-        widget.category == "Özel" && words.isEmpty;
+    final bool isCustomEmpty = widget.category == "Özel" && words.isEmpty;
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -790,20 +873,23 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                 if (!context.mounted) return;
                 final added = await Navigator.push<String>(
                   context,
-                  MaterialPageRoute(builder: (_) => const AddCustomCardScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const AddCustomCardScreen(),
+                  ),
                 );
                 if (!context.mounted) return;
                 if (added != null) {
                   _showSnack(
                     messenger,
                     game.t(
-                        "custom_added",
-                        params: {
-                          "word": added,
-                          "category":
-                              game.languageUpper(game.categoryLabel("Özel")),
-                        },
-                      ),
+                      "custom_added",
+                      params: {
+                        "word": added,
+                        "category": game.languageUpper(
+                          game.categoryLabel("Özel"),
+                        ),
+                      },
+                    ),
                     isSuccess: true,
                   );
                   setState(() {});
@@ -834,10 +920,12 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                     final isDisabled = widget.disabledIds.contains(word.id);
                     final isCustom = word.isCustom;
                     final bool isEnabled = !isDisabled;
-                    final Color accent =
-                        isEnabled ? Colors.amber : Colors.white38;
-                    final Color borderColor =
-                        isEnabled ? Colors.amber : Colors.white24;
+                    final Color accent = isEnabled
+                        ? Colors.amber
+                        : Colors.white38;
+                    final Color borderColor = isEnabled
+                        ? Colors.amber
+                        : Colors.white24;
                     final Color bgTop = isEnabled
                         ? Colors.white.withValues(alpha: 0.12)
                         : Colors.white.withValues(alpha: 0.05);
@@ -868,14 +956,17 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                         child: InkWell(
                           onTap: () async {
                             await game.playClick();
-                            setState(() => _toggleWord(words, word, !isEnabled));
+                            setState(
+                              () => _toggleWord(words, word, !isEnabled),
+                            );
                           },
                           borderRadius: BorderRadius.circular(18),
                           child: Padding(
                             padding: const EdgeInsets.all(12),
                             child: LayoutBuilder(
                               builder: (context, constraints) {
-                                final bool compact = constraints.maxHeight < 140;
+                                final bool compact =
+                                    constraints.maxHeight < 140;
                                 final bool ultraCompact =
                                     constraints.maxHeight < 120;
                                 final double wordSize = compact ? 13 : 15;
@@ -912,8 +1003,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                                             if (isCustom && !compact)
                                               _buildWordChip(
                                                 label: game.t("custom_label"),
-                                                color:
-                                                    Colors.deepPurpleAccent,
+                                                color: Colors.deepPurpleAccent,
                                                 compact: compact,
                                               ),
                                           ],
@@ -961,31 +1051,34 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                                                   await game.playClick();
                                                   if (!context.mounted) return;
                                                   final updated =
-                                                      await Navigator.push<String>(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          AddCustomCardScreen(
-                                                            existingCard: word,
-                                                          ),
-                                                    ),
-                                                  );
-                                                  if (!context.mounted) return;
-                                                    if (updated != null) {
-                                                      setState(() {});
-                                                      widget.onChanged();
-                                                      _showSnack(
-                                                        messenger,
-                                                        game.t(
-                                                          "custom_updated",
-                                                          params: {
-                                                            "word": updated,
-                                                          },
+                                                      await Navigator.push<
+                                                        String
+                                                      >(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              AddCustomCardScreen(
+                                                                existingCard:
+                                                                    word,
+                                                              ),
                                                         ),
-                                                        isSuccess: true,
                                                       );
-                                                    }
-                                                  },
+                                                  if (!context.mounted) return;
+                                                  if (updated != null) {
+                                                    setState(() {});
+                                                    widget.onChanged();
+                                                    _showSnack(
+                                                      messenger,
+                                                      game.t(
+                                                        "custom_updated",
+                                                        params: {
+                                                          "word": updated,
+                                                        },
+                                                      ),
+                                                      isSuccess: true,
+                                                    );
+                                                  }
+                                                },
                                               ),
                                               const SizedBox(width: 8),
                                               _buildActionButton(
@@ -998,21 +1091,24 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                                                   final bool wasSelected =
                                                       widget.selectedCategories
                                                           .contains(
-                                                    widget.category,
+                                                            widget.category,
+                                                          );
+                                                  final wasDisabled = widget
+                                                      .disabledIds
+                                                      .contains(word.id);
+                                                  game.removeCustomCard(
+                                                    word.id,
                                                   );
-                                                  final wasDisabled =
-                                                      widget.disabledIds
-                                                          .contains(word.id);
-                                                  game.removeCustomCard(word.id);
                                                   setState(() {
-                                                    widget.disabledIds
-                                                        .remove(word.id);
+                                                    widget.disabledIds.remove(
+                                                      word.id,
+                                                    );
                                                   });
-                                                  if (widget.category == "Özel") {
+                                                  if (widget.category ==
+                                                      "Özel") {
                                                     final remaining =
-                                                        game.wordsByCategory[
-                                                                "Özel"] ??
-                                                            [];
+                                                        game.wordsByCategory["Özel"] ??
+                                                        [];
                                                     if (remaining.isEmpty) {
                                                       widget.selectedCategories
                                                           .remove("Özel");
@@ -1038,7 +1134,8 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                                                       if (widget.category ==
                                                               "Özel" &&
                                                           wasSelected) {
-                                                        widget.selectedCategories
+                                                        widget
+                                                            .selectedCategories
                                                             .add("Özel");
                                                       }
                                                       if (wasDisabled) {

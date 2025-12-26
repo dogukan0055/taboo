@@ -43,13 +43,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final Color panelColor = isDark ? const Color(0xFF1D1A22) : Colors.white;
     final Color textColor = isDark ? Colors.white : Colors.black;
     final Color iconColor = isDark ? Colors.white70 : Colors.black54;
-    final Color adsCardColor =
-        isDark ? const Color(0xFF241B33) : const Color(0xFFF6F1FF);
+    final Color adsCardColor = isDark
+        ? const Color(0xFF241B33)
+        : const Color(0xFFF6F1FF);
     final Color adsAccent = Colors.deepPurple;
-    final Color adsAccentSoft =
-        adsAccent.withValues(alpha: isDark ? 0.22 : 0.12);
-    final Color adsAccentGlow =
-        adsAccent.withValues(alpha: isDark ? 0.2 : 0.14);
+    final Color adsAccentSoft = adsAccent.withValues(
+      alpha: isDark ? 0.22 : 0.12,
+    );
+    final Color adsAccentGlow = adsAccent.withValues(
+      alpha: isDark ? 0.2 : 0.14,
+    );
     final Color adsBorder = isDark ? Colors.white24 : Colors.black12;
     final BorderRadius adsCardRadius = BorderRadius.circular(20);
     return Scaffold(
@@ -77,8 +80,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           color: panelColor,
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final horizontalPadding =
-                  constraints.maxWidth < 380 ? 16.0 : 24.0;
+              final horizontalPadding = constraints.maxWidth < 380
+                  ? 16.0
+                  : 24.0;
               return Scrollbar(
                 controller: _scrollController,
                 thumbVisibility: true,
@@ -184,8 +188,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ? null
                                   : () async {
                                       await game.playClick();
-                                      final ok =
-                                          await game.connectGameCenter();
+                                      final ok = await game.connectGameCenter();
                                       if (!context.mounted) return;
                                       if (!ok) {
                                         _showSnack(
@@ -215,8 +218,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             TextButton(
                               onPressed: () async {
                                 await game.playClick();
-                                final ok =
-                                    await game.openGameCenterAchievements();
+                                final ok = await game
+                                    .openGameCenterAchievements();
                                 if (!context.mounted) return;
                                 if (!ok) {
                                   _showSnack(
@@ -281,10 +284,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   gradient: RadialGradient(
-                                    colors: [
-                                      adsAccentGlow,
-                                      Colors.transparent,
-                                    ],
+                                    colors: [adsAccentGlow, Colors.transparent],
                                   ),
                                 ),
                               ),
@@ -302,8 +302,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
                                           color: adsAccentSoft,
-                                          borderRadius:
-                                              BorderRadius.circular(14),
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
                                           border: Border.all(
                                             color: adsAccent.withValues(
                                               alpha: isDark ? 0.4 : 0.2,
@@ -347,8 +348,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                                       : "Tek sefer. Yenileme yok.",
                                                   style: TextStyle(
                                                     color: iconColor,
-                                                    fontWeight:
-                                                        FontWeight.w700,
+                                                    fontWeight: FontWeight.w700,
                                                   ),
                                                 ),
                                               ],
@@ -388,8 +388,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                                 Expanded(
                                                   child: Text(
                                                     game.isEnglish
-                                                        ? "Sports, Science, Food unlock immediately."
-                                                        : "Spor, Bilim, Yemek hemen açılır.",
+                                                        ? "Sports, Science, Food categories unlocks immediately."
+                                                        : "Spor, Bilim, Yemek kategorileri hemen açılır.",
                                                     style: TextStyle(
                                                       color: iconColor,
                                                       fontWeight:
@@ -411,19 +411,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           ),
                                           decoration: BoxDecoration(
                                             color: game.adsRemoved
-                                                ? const Color(0xFF2E7D32)
-                                                    .withValues(
+                                                ? const Color(
+                                                    0xFF2E7D32,
+                                                  ).withValues(
                                                     alpha: isDark ? 0.18 : 0.12,
                                                   )
                                                 : adsAccentSoft,
-                                            borderRadius:
-                                                BorderRadius.circular(14),
+                                            borderRadius: BorderRadius.circular(
+                                              14,
+                                            ),
                                             border: Border.all(
                                               color: game.adsRemoved
-                                                  ? const Color(0xFF2E7D32)
-                                                      .withValues(
-                                                      alpha: 0.45,
-                                                    )
+                                                  ? const Color(
+                                                      0xFF2E7D32,
+                                                    ).withValues(alpha: 0.45)
                                                   : adsAccent.withValues(
                                                       alpha: 0.35,
                                                     ),
@@ -444,15 +445,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                               const SizedBox(width: 6),
                                               Text(
                                                 game.adsRemoved
-                                                    ? game.t(
-                                                        "remove_ads_owned",
-                                                      )
+                                                    ? game.t("remove_ads_owned")
                                                     : game.removeAdsPrice!,
                                                 style: TextStyle(
                                                   color: game.adsRemoved
-                                                      ? const Color(
-                                                          0xFF2E7D32,
-                                                        )
+                                                      ? const Color(0xFF2E7D32)
                                                       : adsAccent,
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -467,7 +464,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     children: [
                                       Expanded(
                                         child: ElevatedButton.icon(
-                                          onPressed: game.adsRemoved ||
+                                          onPressed:
+                                              game.adsRemoved ||
                                                   !game.iapAvailable
                                               ? null
                                               : () async {
@@ -495,8 +493,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                             game.adsRemoved
                                                 ? game.t("remove_ads_owned")
                                                 : game.removeAdsPrice != null
-                                                    ? "${game.t("remove_ads")} • ${game.removeAdsPrice!}"
-                                                    : game.t("remove_ads"),
+                                                ? "${game.t("remove_ads")} • ${game.removeAdsPrice!}"
+                                                : game.t("remove_ads"),
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
@@ -523,8 +521,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                             vertical: 14,
                                           ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
+                                            borderRadius: BorderRadius.circular(
+                                              14,
+                                            ),
                                           ),
                                           foregroundColor: iconColor,
                                         ),
@@ -564,9 +563,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           ),
                                           icon: const Icon(Icons.play_arrow),
                                           label: Text(
-                                            game.isEnglish
-                                                ? "Demo"
-                                                : "Demo",
+                                            game.isEnglish ? "Demo" : "Demo",
                                           ),
                                         ),
                                       ],
