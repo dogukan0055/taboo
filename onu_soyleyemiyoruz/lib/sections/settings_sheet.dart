@@ -27,13 +27,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
     var game = Provider.of<GameProvider>(context);
     final messenger = ScaffoldMessenger.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    if (game.adsRemovalJustGranted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _showSnack(
+          messenger,
+          game.isEnglish
+              ? "Ads removed forever. Sports, Science, Food unlocked!"
+              : "Reklamlar kalıcı kapandı. Spor, Bilim, Yemek açıldı!",
+          isSuccess: true,
+        );
+        game.markAdsRemovalNotified();
+      });
+    }
     final Color panelColor = isDark ? const Color(0xFF1D1A22) : Colors.white;
     final Color textColor = isDark ? Colors.white : Colors.black;
     final Color iconColor = isDark ? Colors.white70 : Colors.black54;
     final Color adsCardColor =
         isDark ? const Color(0xFF241B33) : const Color(0xFFF6F1FF);
     final Color adsAccent = Colors.deepPurple;
+    final Color adsAccentSoft =
+        adsAccent.withValues(alpha: isDark ? 0.22 : 0.12);
+    final Color adsAccentGlow =
+        adsAccent.withValues(alpha: isDark ? 0.2 : 0.14);
     final Color adsBorder = isDark ? Colors.white24 : Colors.black12;
+    final BorderRadius adsCardRadius = BorderRadius.circular(20);
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -227,10 +245,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     const SizedBox(height: 6),
                     Container(
-                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: adsCardColor,
-                        borderRadius: BorderRadius.circular(18),
+                        gradient: LinearGradient(
+                          colors: [
+                            adsCardColor,
+                            adsCardColor.withValues(
+                              alpha: isDark ? 0.92 : 0.98,
+                            ),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: adsCardRadius,
                         border: Border.all(color: adsBorder),
                         boxShadow: [
                           BoxShadow(
@@ -242,131 +268,315 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ],
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
+                      child: ClipRRect(
+                        borderRadius: adsCardRadius,
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              right: -30,
+                              top: -40,
+                              child: Container(
+                                width: 140,
+                                height: 140,
                                 decoration: BoxDecoration(
-                                  color: adsAccent.withValues(
-                                    alpha: isDark ? 0.28 : 0.14,
+                                  shape: BoxShape.circle,
+                                  gradient: RadialGradient(
+                                    colors: [
+                                      adsAccentGlow,
+                                      Colors.transparent,
+                                    ],
                                   ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Icon(
-                                  game.adsRemoved
-                                      ? Icons.check_circle
-                                      : Icons.block,
-                                  color: adsAccent,
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      game.t("remove_ads"),
-                                      style: TextStyle(
-                                        color: textColor,
-                                        fontWeight: FontWeight.bold,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: adsAccentSoft,
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                          border: Border.all(
+                                            color: adsAccent.withValues(
+                                              alpha: isDark ? 0.4 : 0.2,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          game.adsRemoved
+                                              ? Icons.verified
+                                              : Icons.no_adult_content,
+                                          color: adsAccent,
+                                          size: 26,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      game.t("remove_ads_desc"),
-                                      style: TextStyle(color: iconColor),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (game.removeAdsPrice != null &&
-                                  !game.adsRemoved)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 6,
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              game.t("remove_ads"),
+                                              style: TextStyle(
+                                                color: textColor,
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.lock_clock,
+                                                  size: 14,
+                                                  color: adsAccent,
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Text(
+                                                  game.isEnglish
+                                                      ? "One-time. No renewal."
+                                                      : "Tek sefer. Yenileme yok.",
+                                                  style: TextStyle(
+                                                    color: iconColor,
+                                                    fontWeight:
+                                                        FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.remove_circle_outline,
+                                                  size: 14,
+                                                  color: adsAccent,
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Expanded(
+                                                  child: Text(
+                                                    game.isEnglish
+                                                        ? "Ads removed forever."
+                                                        : "Reklamlar kalıcı kapanır.",
+                                                    style: TextStyle(
+                                                      color: iconColor,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.category_outlined,
+                                                  size: 14,
+                                                  color: adsAccent,
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Expanded(
+                                                  child: Text(
+                                                    game.isEnglish
+                                                        ? "Sports, Science, Food unlock immediately."
+                                                        : "Spor, Bilim, Yemek hemen açılır.",
+                                                    style: TextStyle(
+                                                      color: iconColor,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      if (game.adsRemoved ||
+                                          game.removeAdsPrice != null)
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 8,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: game.adsRemoved
+                                                ? const Color(0xFF2E7D32)
+                                                    .withValues(
+                                                    alpha: isDark ? 0.18 : 0.12,
+                                                  )
+                                                : adsAccentSoft,
+                                            borderRadius:
+                                                BorderRadius.circular(14),
+                                            border: Border.all(
+                                              color: game.adsRemoved
+                                                  ? const Color(0xFF2E7D32)
+                                                      .withValues(
+                                                      alpha: 0.45,
+                                                    )
+                                                  : adsAccent.withValues(
+                                                      alpha: 0.35,
+                                                    ),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                game.adsRemoved
+                                                    ? Icons.check_circle
+                                                    : Icons.local_offer,
+                                                size: 16,
+                                                color: game.adsRemoved
+                                                    ? const Color(0xFF2E7D32)
+                                                    : adsAccent,
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                game.adsRemoved
+                                                    ? game.t(
+                                                        "remove_ads_owned",
+                                                      )
+                                                    : game.removeAdsPrice!,
+                                                style: TextStyle(
+                                                  color: game.adsRemoved
+                                                      ? const Color(
+                                                          0xFF2E7D32,
+                                                        )
+                                                      : adsAccent,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: adsAccent.withValues(
-                                      alpha: isDark ? 0.2 : 0.12,
-                                    ),
-                                    borderRadius: BorderRadius.circular(999),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton.icon(
+                                          onPressed: game.adsRemoved ||
+                                                  !game.iapAvailable
+                                              ? null
+                                              : () async {
+                                                  await game.playClick();
+                                                  await game.buyRemoveAds();
+                                                },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: game.adsRemoved
+                                                ? Colors.grey
+                                                : adsAccent,
+                                            padding: const EdgeInsets.all(14),
+                                            elevation: 0,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                            ),
+                                          ),
+                                          icon: Icon(
+                                            game.adsRemoved
+                                                ? Icons.check
+                                                : Icons.shopping_bag_outlined,
+                                            color: Colors.white,
+                                          ),
+                                          label: Text(
+                                            game.adsRemoved
+                                                ? game.t("remove_ads_owned")
+                                                : game.removeAdsPrice != null
+                                                    ? "${game.t("remove_ads")} • ${game.removeAdsPrice!}"
+                                                    : game.t("remove_ads"),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      OutlinedButton.icon(
+                                        onPressed: game.iapAvailable
+                                            ? () async {
+                                                await game.playClick();
+                                                await game.restorePurchases();
+                                              }
+                                            : null,
+                                        style: OutlinedButton.styleFrom(
+                                          side: BorderSide(
+                                            color: iconColor.withValues(
+                                              alpha: 0.6,
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 14,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(14),
+                                          ),
+                                          foregroundColor: iconColor,
+                                        ),
+                                        icon: Icon(
+                                          Icons.restore,
+                                          color: iconColor,
+                                        ),
+                                        label: Text(
+                                          game.t("restore_purchases"),
+                                          style: TextStyle(color: iconColor),
+                                        ),
+                                      ),
+                                      if (kDebugMode) ...[
+                                        const SizedBox(width: 10),
+                                        OutlinedButton.icon(
+                                          onPressed: () async {
+                                            await game.playClick();
+                                            await game
+                                                .simulateRemoveAdsPurchase();
+                                            if (!context.mounted) return;
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                            side: BorderSide(
+                                              color: adsAccent.withValues(
+                                                alpha: 0.6,
+                                              ),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 14,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                            ),
+                                            foregroundColor: adsAccent,
+                                          ),
+                                          icon: const Icon(Icons.play_arrow),
+                                          label: Text(
+                                            game.isEnglish
+                                                ? "Demo"
+                                                : "Demo",
+                                          ),
+                                        ),
+                                      ],
+                                    ],
                                   ),
-                                  child: Text(
-                                    game.removeAdsPrice!,
-                                    style: TextStyle(
-                                      color: adsAccent,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 14),
-                          Text(
-                            game.adsRemoved
-                                ? game.t("remove_ads_owned")
-                                : game.t("remove_ads_desc"),
-                            style: TextStyle(
-                              color: iconColor,
-                              height: 1.3,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: game.adsRemoved || !game.iapAvailable
-                                  ? null
-                                  : () async {
-                                      await game.playClick();
-                                      await game.buyRemoveAds();
-                                    },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: game.adsRemoved
-                                    ? Colors.grey
-                                    : adsAccent,
-                                padding: const EdgeInsets.all(14),
-                              ),
-                              icon: Icon(
-                                game.adsRemoved
-                                    ? Icons.check
-                                    : Icons.shopping_cart_outlined,
-                                color: Colors.white,
-                              ),
-                              label: Text(
-                                game.adsRemoved
-                                    ? game.t("remove_ads_owned")
-                                    : game.t("remove_ads"),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                ],
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          TextButton.icon(
-                            onPressed: game.iapAvailable
-                                ? () async {
-                                    await game.playClick();
-                                    await game.restorePurchases();
-                                  }
-                                : null,
-                            icon: Icon(
-                              Icons.restore,
-                              color: iconColor,
-                            ),
-                            label: Text(
-                              game.t("restore_purchases"),
-                              style: TextStyle(color: iconColor),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 12),

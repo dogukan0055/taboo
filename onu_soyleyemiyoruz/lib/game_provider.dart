@@ -165,6 +165,7 @@ class GameProvider extends ChangeNotifier {
 
   // --- Monetization ---
   bool adsRemoved = false;
+  bool _adsRemovalJustGranted = false;
   bool iapAvailable = false;
   final Set<String> _adUnlockedCategories = {};
   final Set<String> _purchasedCategoryIds = {};
@@ -372,6 +373,7 @@ class GameProvider extends ChangeNotifier {
 
   bool get _adsSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
   bool get _iapSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+  bool get adsRemovalJustGranted => _adsRemovalJustGranted;
 
   Future<void> _initMonetization() async {
     if (_iapSupported && _purchaseSub == null) {
@@ -420,6 +422,7 @@ class GameProvider extends ChangeNotifier {
       for (final cat in _adUnlockCategories) {
         _setCategoryEnabled(cat, true);
       }
+      _adsRemovalJustGranted = true;
     } else {
       final cat = _categoryForProduct(productId);
       if (cat != null) {
@@ -429,6 +432,15 @@ class GameProvider extends ChangeNotifier {
     }
     _persist();
     notifyListeners();
+  }
+
+  void markAdsRemovalNotified() {
+    _adsRemovalJustGranted = false;
+  }
+
+  Future<void> simulateRemoveAdsPurchase() async {
+    if (!kDebugMode) return;
+    _grantPurchase(_removeAdsProductId);
   }
 
   String? _categoryForProduct(String productId) {
