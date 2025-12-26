@@ -490,10 +490,19 @@ class GameProvider extends ChangeNotifier {
   }
 
   String? get removeAdsPrice => priceForProduct(_removeAdsProductId);
+  String? get premiumBundlePrice => priceForProduct(_premiumBundleProductId);
 
   Future<void> buyRemoveAds() async {
     if (!iapAvailable) return;
     final product = _productById(_removeAdsProductId);
+    if (product == null) return;
+    final param = PurchaseParam(productDetails: product);
+    await InAppPurchase.instance.buyNonConsumable(purchaseParam: param);
+  }
+
+  Future<void> buyPremiumBundle() async {
+    if (!iapAvailable) return;
+    final product = _productById(_premiumBundleProductId);
     if (product == null) return;
     final param = PurchaseParam(productDetails: product);
     await InAppPurchase.instance.buyNonConsumable(purchaseParam: param);
