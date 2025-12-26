@@ -474,31 +474,7 @@ class GameProvider extends ChangeNotifier {
     return null;
   }
 
-  String? _currencySymbol(String? code) {
-    switch (code?.toUpperCase()) {
-      case "TRY":
-        return "₺";
-    }
-    return null;
-  }
-
-  String _formatPrice(ProductDetails product) {
-    // Prefer the store-provided formatted price. Only patch in a symbol when
-    // the store reports TRY but omits the symbol for some reason.
-    final String? detectedSymbol = _currencySymbol(product.currencyCode);
-    final price = product.price;
-    if (detectedSymbol == null || price.contains(detectedSymbol)) {
-      return price;
-    }
-    final raw = product.rawPrice;
-    if (raw != null) {
-      final bool isWhole = raw == raw.roundToDouble();
-      final String amount =
-          isWhole ? raw.toStringAsFixed(0) : raw.toStringAsFixed(2);
-      return "$detectedSymbol$amount";
-    }
-    return "$detectedSymbol$price";
-  }
+  String _formatPrice(ProductDetails product) => product.price;
 
   ProductDetails? _productById(String productId) {
     for (final p in _products) {
