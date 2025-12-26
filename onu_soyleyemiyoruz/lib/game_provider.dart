@@ -16,10 +16,10 @@ import 'models.dart';
 enum CategoryAccess { free, adUnlock, premium }
 
 enum _AchievementKey {
-  firstWin,
-  perfectRound,
-  quickThinker,
-  marathonRounds,
+  fullHouse,
+  everyoneNarrates,
+  balancedBattle,
+  marathonNight,
 }
 
 class _AchievementIds {
@@ -43,14 +43,14 @@ class GameProvider extends ChangeNotifier {
   };
   // Replace these IDs with your App Store / Play Console achievement IDs.
   static const Map<_AchievementKey, _AchievementIds> _achievementIds = {
-    _AchievementKey.firstWin:
-        _AchievementIds(ios: "first_win", android: "first_win"),
-    _AchievementKey.perfectRound:
-        _AchievementIds(ios: "perfect_round", android: "perfect_round"),
-    _AchievementKey.quickThinker:
-        _AchievementIds(ios: "quick_thinker", android: "quick_thinker"),
-    _AchievementKey.marathonRounds:
-        _AchievementIds(ios: "marathon_5_rounds", android: "marathon_5_rounds"),
+    _AchievementKey.fullHouse:
+        _AchievementIds(ios: "full_house", android: "full_house"),
+    _AchievementKey.everyoneNarrates:
+        _AchievementIds(ios: "everyone_narrates", android: "everyone_narrates"),
+    _AchievementKey.balancedBattle:
+        _AchievementIds(ios: "balanced_battle", android: "balanced_battle"),
+    _AchievementKey.marathonNight:
+        _AchievementIds(ios: "marathon_night", android: "marathon_night"),
   };
   static const Set<String> _freeCategories = {
     "Genel",
@@ -740,19 +740,25 @@ class GameProvider extends ChangeNotifier {
 
   Future<void> _maybeReportAchievements(RoundSummary summary) async {
     if (!gameCenterSupported || !gameCenterSignedIn) return;
-    if (isGameEnded && gameWinner != null) {
-      await _unlockAchievement(_AchievementKey.firstWin);
+    final bool hasMinimumTeams = teamA.length >= 2 && teamB.length >= 2;
+    final int totalPlayers = teamA.length + teamB.length;
+    if (hasMinimumTeams && totalPlayers >= 4) {
+      await _unlockAchievement(_AchievementKey.fullHouse);
     }
-    if (summary.taboo == 0 &&
-        summary.pass == 0 &&
-        summary.correct >= 5) {
-      await _unlockAchievement(_AchievementKey.perfectRound);
+    if (hasMinimumTeams && teamAScore >= 10 && teamBScore >= 10) {
+      await _unlockAchievement(_AchievementKey.balancedBattle);
     }
-    if (summary.correct >= 8) {
-      await _unlockAchievement(_AchievementKey.quickThinker);
+    if (hasMinimumTeams && summary.roundNumber >= 6) {
+      await _unlockAchievement(_AchievementKey.marathonNight);
     }
-    if (summary.roundNumber >= 5) {
-      await _unlockAchievement(_AchievementKey.marathonRounds);
+    if (hasMinimumTeams) {
+      final narrators =
+          roundSummaries.map((round) => round.narrator).toSet();
+      final everyonePlayed =
+          teamA.every(narrators.contains) && teamB.every(narrators.contains);
+      if (everyonePlayed) {
+        await _unlockAchievement(_AchievementKey.everyoneNarrates);
+      }
     }
   }
 
