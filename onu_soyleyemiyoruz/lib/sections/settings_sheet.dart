@@ -462,50 +462,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ],
                               const SizedBox(height: 12),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                      onPressed:
-                                          game.adsRemoved || !game.iapAvailable
-                                          ? null
-                                          : () async {
-                                              await game.playClick();
-                                              await game.buyRemoveAds();
-                                            },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: game.adsRemoved
-                                            ? Colors.grey
-                                            : adsAccent,
-                                        padding: const EdgeInsets.all(14),
-                                        elevation: 0,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            14,
-                                          ),
-                                        ),
-                                      ),
-                                      icon: Icon(
-                                        game.adsRemoved
-                                            ? Icons.check
-                                            : Icons.shopping_bag_outlined,
-                                        color: Colors.white,
-                                      ),
-                                      label: Text(
-                                        game.adsRemoved
-                                            ? game.t("remove_ads_owned")
-                                            : game.removeAdsPrice != null
-                                            ? "${game.t("remove_ads")} • ${game.removeAdsPrice!}"
-                                            : game.t("remove_ads"),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                              LayoutBuilder(
+                                builder: (context, c) {
+                                  final bool stackButtons = c.maxWidth < 400;
+                                  final bool showRemoveAds = !game.adsRemoved;
+                                  final removeAdsButton = ElevatedButton.icon(
+                                    onPressed:
+                                        !game.iapAvailable
+                                        ? null
+                                        : () async {
+                                            await game.playClick();
+                                            await game.buyRemoveAds();
+                                          },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: adsAccent,
+                                      padding: const EdgeInsets.all(14),
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  OutlinedButton.icon(
+                                    icon: const Icon(
+                                      Icons.shopping_bag_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    label: Text(
+                                      game.removeAdsPrice != null
+                                          ? "${game.t("remove_ads")} • ${game.removeAdsPrice!}"
+                                          : game.t("remove_ads"),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  );
+                                  final restoreButton = OutlinedButton.icon(
                                     onPressed: game.iapAvailable
                                         ? () async {
                                             await game.playClick();
@@ -530,8 +521,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       game.t("restore_purchases"),
                                       style: TextStyle(color: iconColor),
                                     ),
-                                  ),
-                                ],
+                                  );
+                                  if (!showRemoveAds) {
+                                    return SizedBox(
+                                      width: double.infinity,
+                                      child: restoreButton,
+                                    );
+                                  }
+                                  if (stackButtons) {
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: removeAdsButton,
+                                        ),
+                                        const SizedBox(height: 10),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: restoreButton,
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                  return Row(
+                                    children: [
+                                      Expanded(child: removeAdsButton),
+                                      const SizedBox(width: 10),
+                                      restoreButton,
+                                    ],
+                                  );
+                                },
                               ),
                             ],
                           ),

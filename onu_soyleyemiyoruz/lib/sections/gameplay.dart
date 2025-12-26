@@ -92,30 +92,47 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         if (didPop) return;
         showDialog(
           context: context,
-          builder: (dialogCtx) => AlertDialog(
-            title: Text(game.t("exit_game_title")),
-            content: Text(game.t("exit_game_body")),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  await game.playClick();
-                  if (!context.mounted) return;
-                  Navigator.pop(dialogCtx);
-                },
-                child: Text(game.t("cancel")),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  await game.playClick();
-                  if (!context.mounted) return;
-                  Navigator.pop(dialogCtx);
-                  game.abortCurrentRound();
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
+          barrierColor: Colors.black.withValues(alpha: 0.35),
+          builder: (dialogCtx) => Stack(
+            children: [
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: BackdropFilter(
+                    filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                    child: Container(
+                      color: Colors.black.withValues(alpha: 0.2),
+                    ),
+                  ),
                 ),
-                child: Text(game.t("exit_game_action")),
+              ),
+              Center(
+                child: AlertDialog(
+                  title: Text(game.t("exit_game_title")),
+                  content: Text(game.t("exit_game_body")),
+                  actions: [
+                    TextButton(
+                      onPressed: () async {
+                        await game.playClick();
+                        if (!context.mounted) return;
+                        Navigator.pop(dialogCtx);
+                      },
+                      child: Text(game.t("cancel")),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await game.playClick();
+                        if (!context.mounted) return;
+                        Navigator.pop(dialogCtx);
+                        game.abortCurrentRound();
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                      ),
+                      child: Text(game.t("exit_game_action")),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

@@ -14,6 +14,8 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
   late Set<String> _selectedCategories;
   late Set<String> _disabledIds;
   late final Map<String, IconData> _categoryIcons;
+  Set<String> _activeRewardedCategories = {};
+  Timer? _rewardTicker;
 
   @override
   void initState() {
@@ -41,8 +43,61 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
 
   @override
   void dispose() {
+    _rewardTicker?.cancel();
     _categoryScrollController.dispose();
     super.dispose();
+  }
+
+  bool _hasActiveReward(GameProvider game) {
+    return game.availableCategories.any(
+      (cat) => game.rewardRemaining(cat) != null,
+    );
+  }
+
+  void _refreshRewardState(GameProvider game, {bool showExpiry = false}) {
+    final messenger = mounted ? ScaffoldMessenger.maybeOf(context) : null;
+    final currentRewards = <String>{};
+    for (final cat in game.availableCategories) {
+      if (game.rewardRemaining(cat) != null) {
+        currentRewards.add(cat);
+      }
+    }
+    final expired = _activeRewardedCategories.difference(currentRewards);
+    if (expired.isNotEmpty && showExpiry && messenger != null) {
+      for (final cat in expired) {
+        final label = game.categoryLabel(cat);
+        _showSnack(
+          messenger,
+          game.t("reward_limit_reached", params: {"category": label}),
+          isError: true,
+        );
+      }
+      _selectedCategories = Set.of(game.selectedCategories);
+      _disabledIds = Set.of(game.disabledCardIds);
+    }
+    _activeRewardedCategories = currentRewards;
+    if (_activeRewardedCategories.isEmpty) {
+      _rewardTicker?.cancel();
+    }
+  }
+
+  void _startRewardTicker(GameProvider game) {
+    _rewardTicker?.cancel();
+    _refreshRewardState(game);
+    if (!_hasActiveReward(game)) return;
+    _rewardTicker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      _refreshRewardState(game, showExpiry: true);
+      if (!_hasActiveReward(game)) {
+        _rewardTicker?.cancel();
+      }
+      setState(() {});
+    });
+  }
+
+  void _ensureRewardTicker(GameProvider game) {
+    if (_rewardTicker?.isActive == true) return;
+    _startRewardTicker(game);
   }
 
   Future<void> _promptUnlockCategory(
@@ -60,64 +115,113 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
     final price = game.priceForCategory(category);
     await showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(game.t("unlock_category_title")),
-        content: Text(body),
-        actions: [
-          TextButton(
-            onPressed: () {
-              game.playClick();
-              Navigator.pop(dialogContext);
-            },
-            child: Text(game.t("cancel")),
-          ),
-          TextButton(
-            onPressed: () async {
-              game.playClick();
-              Navigator.pop(dialogContext);
-              final unlocked = await game.unlockCategoryWithReward(category);
-              if (!mounted) return;
-              if (!unlocked) {
-                _showSnack(messenger, game.t("unlock_failed"), isError: true);
-                return;
-              }
-              setState(() {
-                _selectedCategories = Set.of(game.selectedCategories);
-                _disabledIds = Set.of(game.disabledCardIds);
-              });
-              _showSnack(
-                messenger,
-                game.t("unlock_success", params: {"category": label}),
-                isSuccess: true,
-              );
-            },
-            child: Text(
-              access == CategoryAccess.adUnlock
-                  ? game.t("watch_ad_unlock")
-                  : game.t("watch_ad_1h"),
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      builder: (dialogContext) {
+        final bool isDark = Theme.of(dialogContext).brightness == Brightness.dark;
+        final Color dialogBg = isDark
+            ? Colors.black.withValues(alpha: 0.9)
+            : Colors.white.withValues(alpha: 0.96);
+        final Color titleColor = isDark ? Colors.white : Colors.black87;
+        final Color contentColor = isDark ? Colors.white70 : Colors.black87;
+        final Color actionColor =
+            isDark ? Colors.amber : Colors.deepPurple.shade700;
+        return BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: AlertDialog(
+            backgroundColor: dialogBg,
+            title: Text(
+              game.t("unlock_category_title"),
+              style: TextStyle(color: titleColor, fontWeight: FontWeight.bold),
             ),
-          ),
-          if (access == CategoryAccess.premium && game.iapAvailable)
-            ElevatedButton(
-              onPressed: () async {
-                game.playClick();
-                Navigator.pop(dialogContext);
-                await game.buyCategoryPack(category);
-              },
-              child: Text(
-                price != null
-                    ? "${game.t("buy_unlock_forever")} • $price"
-                    : game.t("buy_unlock_forever"),
+            content: Text(
+              body,
+              style: TextStyle(color: contentColor),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  game.playClick();
+                  Navigator.pop(dialogContext);
+                },
+                style: TextButton.styleFrom(foregroundColor: actionColor),
+                child: Text(game.t("cancel")),
               ),
-            ),
-        ],
-      ),
+              TextButton(
+                onPressed: () async {
+                  game.playClick();
+                  Navigator.pop(dialogContext);
+                  final activeTimed = game.activeTimedRewardCategory;
+                  if (access == CategoryAccess.premium && activeTimed != null) {
+                    _showSnack(
+                      messenger,
+                      game.t("reward_active_warning"),
+                      isError: true,
+                    );
+                    return;
+                  }
+                  final unlocked = await game.unlockCategoryWithReward(category);
+                  if (!mounted) return;
+                  if (!unlocked) {
+                    _showSnack(
+                      messenger,
+                      game.t("unlock_failed"),
+                      isError: true,
+                    );
+                    return;
+                  }
+                  setState(() {
+                    _selectedCategories = Set.of(game.selectedCategories);
+                    _disabledIds = Set.of(game.disabledCardIds);
+                  });
+                  final bool timedUnlock =
+                      access == CategoryAccess.premium && !game.recentUnlockedPermanent;
+                  _showSnack(
+                    messenger,
+                    timedUnlock
+                        ? game.t(
+                            "unlock_redeemed_1h",
+                            params: {"category": label},
+                          )
+                        : game.t(
+                            "unlock_success",
+                            params: {"category": label},
+                          ),
+                    isSuccess: true,
+                  );
+                  game.clearRecentUnlockedCategory();
+                  _ensureRewardTicker(game);
+                },
+                style: TextButton.styleFrom(foregroundColor: actionColor),
+                child: Text(
+                  access == CategoryAccess.adUnlock
+                      ? game.t("watch_ad_unlock")
+                      : game.t("watch_ad_1h"),
+                ),
+              ),
+              if (access == CategoryAccess.premium && game.iapAvailable)
+                ElevatedButton(
+                  onPressed: () async {
+                    game.playClick();
+                    Navigator.pop(dialogContext);
+                    await game.buyCategoryPack(category);
+                  },
+                  child: Text(
+                    price != null
+                        ? "${game.t("buy_unlock_forever")} • $price"
+                        : game.t("buy_unlock_forever"),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     var game = Provider.of<GameProvider>(context);
+    _ensureRewardTicker(game);
     final messenger = ScaffoldMessenger.of(context);
     var wordsMap = game.wordsByCategory;
     if (game.recentUnlockedCategory != null) {

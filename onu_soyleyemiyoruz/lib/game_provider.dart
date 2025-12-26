@@ -474,6 +474,32 @@ class GameProvider extends ChangeNotifier {
     return null;
   }
 
+  String? _currencySymbol(String? code) {
+    switch (code?.toUpperCase()) {
+      case "TRY":
+        return "₺";
+    }
+    return null;
+  }
+
+  String _formatPrice(ProductDetails product) {
+    // Prefer the store-provided formatted price. Only patch in a symbol when
+    // the store reports TRY but omits the symbol for some reason.
+    final String? detectedSymbol = _currencySymbol(product.currencyCode);
+    final price = product.price;
+    if (detectedSymbol == null || price.contains(detectedSymbol)) {
+      return price;
+    }
+    final raw = product.rawPrice;
+    if (raw != null) {
+      final bool isWhole = raw == raw.roundToDouble();
+      final String amount =
+          isWhole ? raw.toStringAsFixed(0) : raw.toStringAsFixed(2);
+      return "$detectedSymbol$amount";
+    }
+    return "$detectedSymbol$price";
+  }
+
   ProductDetails? _productById(String productId) {
     for (final p in _products) {
       if (p.id == productId) return p;
@@ -481,7 +507,11 @@ class GameProvider extends ChangeNotifier {
     return null;
   }
 
-  String? priceForProduct(String productId) => _productById(productId)?.price;
+  String? priceForProduct(String productId) {
+    final product = _productById(productId);
+    if (product == null) return null;
+    return _formatPrice(product);
+  }
 
   String? priceForCategory(String category) {
     final productId = _premiumCategoryProductIds[category];
@@ -491,6 +521,16 @@ class GameProvider extends ChangeNotifier {
 
   String? get removeAdsPrice => priceForProduct(_removeAdsProductId);
   String? get premiumBundlePrice => priceForProduct(_premiumBundleProductId);
+
+  String? get activeTimedRewardCategory {
+    final now = DateTime.now();
+    for (final entry in _rewardedCategoryUnlocks.entries) {
+      if (entry.value.isAfter(now)) {
+        return entry.key;
+      }
+    }
+    return null;
+  }
 
   Future<void> buyRemoveAds() async {
     if (!iapAvailable) return;
@@ -685,6 +725,12 @@ class GameProvider extends ChangeNotifier {
     if (access == CategoryAccess.premium &&
         _purchasedCategoryIds.contains(category)) {
       return true;
+    }
+    if (access == CategoryAccess.premium) {
+      final activeTimed = activeTimedRewardCategory;
+      if (activeTimed != null && activeTimed != category) {
+        return false;
+      }
     }
     final rewarded = await showRewardedAd();
     if (!rewarded) return false;
@@ -1223,7 +1269,7 @@ class GameProvider extends ChangeNotifier {
         "remove_ads_owned": "Reklamlar kaldırıldı",
         "restore_purchases": "Satın Alımları Geri Yükle",
         "watch_ad_unlock": "Reklam izle",
-        "watch_ad_1h": "İzle ve 1 saatliğine aç",
+        "watch_ad_1h": "İzle & 1 saatlik aç",
         "buy_unlock_forever": "Satın al, kalıcı aç",
         "watch_ad_unlock_short": "İZLE VE AÇ",
         "buy_unlock_short": "SATIN AL VE AÇ",
@@ -1231,11 +1277,15 @@ class GameProvider extends ChangeNotifier {
         "unlock_category_body_ad":
             "{category} kategorisini açmak için reklam izle",
         "unlock_category_body_premium":
-            "{category} kategorisini 1 saatliğine açmak için reklam izle veya satın al",
+            "{category} kategorisini 1 saatliğine açmak için reklam izle veya 4 premium kategoriye sahip olmak için satın al",
         "unlock_success": "{category} açıldı",
         "unlock_failed": "Reklam şu an hazır değil",
         "unlock_redeemed_forever": "{category} kalıcı açıldı",
         "unlock_redeemed_1h": "{category} 1 saatliğine açıldı",
+        "reward_limit_reached":
+            "{category} için 1 saatlik erişim sona erdi. Yeniden açmalısın.",
+        "reward_active_warning":
+            "Premium kategorilerden biri şu anda zaten kullanımda. Süre bitince tekrar deneyebilirsin.",
         "badge_locked": "KİLİTLİ",
         "badge_paid": "PARALI",
         "badge_ad": "REKLAMLA",
@@ -1308,7 +1358,7 @@ class GameProvider extends ChangeNotifier {
         "custom_empty_warning": "Custom category is empty. Add words first.",
         "categories_updated": "Categories updated",
         "status_on": "ON",
-        "status_partial": "PARTIAL ON",
+        "status_partial": "PARTIAL",
         "status_off": "OFF",
         "words_button": "WORDS",
         "no_cards": "No Cards",
@@ -1489,11 +1539,15 @@ class GameProvider extends ChangeNotifier {
         "unlock_category_body_ad":
             "Watch an ad to unlock the {category} category",
         "unlock_category_body_premium":
-            "Watch an ad to unlock for 1 hour or buy the {category} category",
+            "Watch an ad to unlock {category} for 1 hour or buy the 4 premium category to unlock all for good.",
         "unlock_success": "{category} unlocked",
         "unlock_failed": "Ad is not ready",
         "unlock_redeemed_forever": "{category} unlocked forever",
         "unlock_redeemed_1h": "{category} unlocked for 1 hour",
+        "reward_limit_reached":
+            "{category} 1-hour access ended. Please unlock again.",
+        "reward_active_warning":
+            "Another premium category is already unlocked. Try again when it ends.",
         "badge_locked": "LOCKED",
         "badge_paid": "PAID",
         "badge_ad": "AD",
