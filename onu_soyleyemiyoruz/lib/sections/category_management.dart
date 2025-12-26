@@ -31,10 +31,10 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
       "Sanat": Icons.brush,
       "Teknoloji": Icons.memory,
       "Tarih": Icons.history_edu_outlined,
-      "Futbol Paketi": Icons.sports_soccer,
+      "Futbol": Icons.sports_soccer,
       "90'lar Nostalji": Icons.album,
-      "Zor Seviye Paketi": Icons.psychology,
-      "Gece Yarısı Paketi": Icons.nights_stay,
+      "Zor Seviye": Icons.psychology,
+      "Gece Yarısı": Icons.favorite,
       "Özel": Icons.star,
     };
   }

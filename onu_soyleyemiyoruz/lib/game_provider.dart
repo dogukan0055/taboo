@@ -36,10 +36,10 @@ class GameProvider extends ChangeNotifier {
   static const String _teamBDefaultEn = "TEAM B";
   static const String _removeAdsProductId = "remove_ads";
   static const Map<String, String> _premiumCategoryProductIds = {
-    "Futbol Paketi": "pack_football",
+    "Futbol": "pack_football",
     "90'lar Nostalji": "pack_90s",
-    "Zor Seviye Paketi": "pack_hard",
-    "Gece Yarısı Paketi": "pack_midnight",
+    "Zor Seviye": "pack_hard",
+    "Gece Yarısı": "pack_midnight",
   };
   // Replace these IDs with your App Store / Play Console achievement IDs.
   static const Map<_AchievementKey, _AchievementIds> _achievementIds = {
@@ -69,10 +69,10 @@ class GameProvider extends ChangeNotifier {
   };
   static const Set<String> _adUnlockCategories = {"Spor", "Bilim", "Yemek"};
   static const Set<String> _premiumCategories = {
-    "Futbol Paketi",
+    "Futbol",
     "90'lar Nostalji",
-    "Zor Seviye Paketi",
-    "Gece Yarısı Paketi",
+    "Zor Seviye",
+    "Gece Yarısı",
   };
   // --- Global Settings ---
   bool soundEnabled = true;
@@ -126,10 +126,10 @@ class GameProvider extends ChangeNotifier {
     "Spor",
     "Bilim",
     "Yemek",
-    "Futbol Paketi",
+    "Futbol",
     "90'lar Nostalji",
-    "Zor Seviye Paketi",
-    "Gece Yarısı Paketi",
+    "Zor Seviye",
+    "Gece Yarısı",
     "Özel",
   ];
   Set<String> selectedCategories = {
@@ -1160,10 +1160,10 @@ class GameProvider extends ChangeNotifier {
         "category_doga": "Doğa",
         "category_tarih": "Tarih",
         "category_ozel": "Özel",
-        "category_futbol_pack": "Futbol Paketi",
+        "category_futbol_pack": "Futbol",
         "category_90s": "90'lar Nostalji",
-        "category_hard_pack": "Zor Seviye Paketi",
-        "category_midnight_pack": "Gece Yarısı Paketi",
+        "category_hard_pack": "Zor Seviye",
+        "category_midnight_pack": "Ateşli Gece",
         "ads_section_title": "Satın Alımlar",
         "remove_ads": "Reklamları Kaldır",
         "remove_ads_desc": "Reklamlar kapanır, Spor/Bilim/Yemek açılır",
@@ -1416,10 +1416,10 @@ class GameProvider extends ChangeNotifier {
         "category_doga": "Nature",
         "category_tarih": "History",
         "category_ozel": "Custom",
-        "category_futbol_pack": "Football Pack",
+        "category_futbol_pack": "Football",
         "category_90s": "90s Nostalgia",
-        "category_hard_pack": "Hard Mode Pack",
-        "category_midnight_pack": "Midnight Pack",
+        "category_hard_pack": "Hard Mode",
+        "category_midnight_pack": "Naughty Night",
         "ads_section_title": "Purchases",
         "remove_ads": "Remove Ads",
         "remove_ads_desc": "Ads off, Sports/Science/Food unlocked",
@@ -1471,10 +1471,10 @@ class GameProvider extends ChangeNotifier {
     "Teknoloji": "category_teknoloji",
     "Doğa": "category_doga",
     "Tarih": "category_tarih",
-    "Futbol Paketi": "category_futbol_pack",
+    "Futbol": "category_futbol_pack",
     "90'lar Nostalji": "category_90s",
-    "Zor Seviye Paketi": "category_hard_pack",
-    "Gece Yarısı Paketi": "category_midnight_pack",
+    "Zor Seviye": "category_hard_pack",
+    "Gece Yarısı": "category_midnight_pack",
     "Özel": "category_ozel",
   };
 
