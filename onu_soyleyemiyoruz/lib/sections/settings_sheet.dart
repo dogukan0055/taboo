@@ -14,6 +14,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      await Provider.of<GameProvider>(context, listen: false)
+          .refreshIapAvailability();
+    });
   }
 
   @override
@@ -46,6 +51,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     var game = Provider.of<GameProvider>(context);
     final messenger = ScaffoldMessenger.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool premiumOwned = game.hasPremiumBundle;
 
     if (game.adsRemovalJustGranted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -673,7 +679,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ],
                                   ),
                                 ),
-                                if (game.premiumBundlePrice != null)
+                                if (premiumOwned ||
+                                    game.premiumBundlePrice != null)
                                   Flexible(
                                     child: Align(
                                       alignment: Alignment.topRight,
@@ -683,31 +690,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           vertical: 8,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: adsAccentSoft,
+                                          color: premiumOwned
+                                              ? const Color(0xFF2E7D32)
+                                                  .withValues(
+                                                  alpha: isDark ? 0.18 : 0.12,
+                                                )
+                                              : adsAccentSoft,
                                           borderRadius: BorderRadius.circular(
                                             14,
                                           ),
                                           border: Border.all(
-                                            color: adsAccent.withValues(
-                                              alpha: 0.35,
-                                            ),
+                                            color: premiumOwned
+                                                ? const Color(0xFF2E7D32)
+                                                    .withValues(alpha: 0.45)
+                                                : adsAccent.withValues(
+                                                    alpha: 0.35,
+                                                  ),
                                           ),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(
-                                              Icons.local_offer,
+                                              premiumOwned
+                                                  ? Icons.check_circle
+                                                  : Icons.local_offer,
                                               size: 16,
-                                              color: adsAccent,
+                                              color: premiumOwned
+                                                  ? const Color(0xFF2E7D32)
+                                                  : adsAccent,
                                             ),
                                             const SizedBox(width: 6),
                                             Flexible(
                                               child: Text(
-                                                game.premiumBundlePrice!,
+                                                premiumOwned
+                                                    ? game.t(
+                                                        "premium_bundle_owned",
+                                                      )
+                                                    : game.premiumBundlePrice!,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
-                                                  color: adsAccent,
+                                                  color: premiumOwned
+                                                      ? const Color(0xFF2E7D32)
+                                                      : adsAccent,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -720,37 +745,77 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            ElevatedButton.icon(
-                              onPressed: !game.iapAvailable
-                                  ? null
-                                  : () async {
-                                      await game.playClick();
-                                      await game.buyPremiumBundle();
-                                    },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: adsAccent,
-                                padding: const EdgeInsets.all(14),
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
+                            if (!premiumOwned)
+                              ElevatedButton.icon(
+                                onPressed: !game.iapAvailable
+                                    ? null
+                                    : () async {
+                                        await game.playClick();
+                                        await game.buyPremiumBundle();
+                                      },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: adsAccent,
+                                  padding: const EdgeInsets.all(14),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
                                 ),
-                              ),
-                              icon: const Icon(
-                                Icons.workspace_premium,
-                                color: Colors.white,
-                              ),
-                              label: Text(
-                                game.premiumBundlePrice != null
-                                    ? "${game.isEnglish ? "Buy Premium Bundle" : "Premium Paket Al"} • ${game.premiumBundlePrice!}"
-                                    : (game.isEnglish
-                                          ? "Buy Premium Bundle"
-                                          : "Premium Paket Al"),
-                                style: const TextStyle(
+                                icon: const Icon(
+                                  Icons.workspace_premium,
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                                ),
+                                label: Text(
+                                  game.premiumBundlePrice != null
+                                      ? "${game.isEnglish ? "Buy Premium Bundle" : "Premium Paket Al"} • ${game.premiumBundlePrice!}"
+                                      : (game.isEnglish
+                                            ? "Buy Premium Bundle"
+                                            : "Premium Paket Al"),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              )
+                            else
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF2E7D32).withValues(
+                                      alpha: isDark ? 0.18 : 0.12,
+                                    ),
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                      color:
+                                          const Color(0xFF2E7D32).withValues(
+                                        alpha: 0.45,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.check_circle,
+                                        color: Color(0xFF2E7D32),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        game.t("premium_bundle_owned"),
+                                        style: const TextStyle(
+                                          color: Color(0xFF2E7D32),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ),

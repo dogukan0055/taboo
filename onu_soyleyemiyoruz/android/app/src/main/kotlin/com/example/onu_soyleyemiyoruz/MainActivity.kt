@@ -1,4 +1,4 @@
-package com.example.onu_soyleyemiyoruz
+package com.dogukansihman.onu_soyleyemiyoruz
 
 import io.flutter.embedding.android.FlutterActivity
 

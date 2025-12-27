@@ -174,6 +174,7 @@ class GameProvider extends ChangeNotifier {
 
   // --- Monetization ---
   bool adsRemoved = false;
+  bool premiumBundleOwned = false;
   bool _adsRemovalJustGranted = false;
   bool iapAvailable = false;
   final Set<String> _adUnlockedCategories = {};
@@ -244,6 +245,8 @@ class GameProvider extends ChangeNotifier {
     disabledCardIds =
         (_prefs?.getStringList("disabledCardIds") ?? disabledCardIds).toSet();
     adsRemoved = _prefs?.getBool("adsRemoved") ?? adsRemoved;
+    premiumBundleOwned =
+        _prefs?.getBool("premiumBundleOwned") ?? premiumBundleOwned;
     _adUnlockedCategories
       ..clear()
       ..addAll(_prefs?.getStringList("adUnlockedCategories") ?? const []);
@@ -273,6 +276,11 @@ class GameProvider extends ChangeNotifier {
       customCards = [];
     }
     _revalidateCategoryAccess();
+    if (!premiumBundleOwned &&
+        adsRemoved &&
+        _premiumCategories.every(_purchasedCategoryIds.contains)) {
+      premiumBundleOwned = true;
+    }
     _syncDisabledWithCategories();
     final bool isEnglishNow = languageCode == "en";
     final String expectedTeamA = isEnglishNow
@@ -289,9 +297,9 @@ class GameProvider extends ChangeNotifier {
         : _teamBDefaultEn;
     if (teamAName == otherLangTeamA) teamAName = expectedTeamA;
     if (teamBName == otherLangTeamB) teamBName = expectedTeamB;
+    await _initMonetization();
     hydrated = true;
     notifyListeners();
-    _initMonetization();
     if (musicEnabled) {
       ensureAudioInitialized();
     }
@@ -317,6 +325,7 @@ class GameProvider extends ChangeNotifier {
     _prefs!.setStringList("selectedCategories", selectedCategories.toList());
     _prefs!.setStringList("disabledCardIds", disabledCardIds.toList());
     _prefs!.setBool("adsRemoved", adsRemoved);
+    _prefs!.setBool("premiumBundleOwned", premiumBundleOwned);
     _prefs!.setStringList(
       "adUnlockedCategories",
       _adUnlockedCategories.toList(),
@@ -386,23 +395,33 @@ class GameProvider extends ChangeNotifier {
   bool get _iapSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
   bool get adsRemovalJustGranted => _adsRemovalJustGranted;
 
-  Future<void> _initMonetization() async {
-    if (_iapSupported && _purchaseSub == null) {
-      iapAvailable = await InAppPurchase.instance.isAvailable();
+  void _ensurePurchaseListener() {
+    if (_purchaseSub != null) return;
+    _purchaseSub = InAppPurchase.instance.purchaseStream.listen(
+      _handlePurchaseUpdates,
+      onDone: () => _purchaseSub = null,
+    );
+  }
+
+  Future<void> _initMonetization({bool skipAds = false}) async {
+    if (_iapSupported) {
+      final available = await InAppPurchase.instance.isAvailable();
+      iapAvailable = available;
       if (iapAvailable) {
-        _purchaseSub = InAppPurchase.instance.purchaseStream.listen(
-          _handlePurchaseUpdates,
-          onDone: () => _purchaseSub = null,
-        );
+        _ensurePurchaseListener();
         await _loadProducts();
       }
     }
-    if (_adsSupported && !adsRemoved) {
+    if (!skipAds && _adsSupported && !adsRemoved) {
       await MobileAds.instance.initialize();
       _loadInterstitial();
       _loadRewarded();
     }
     notifyListeners();
+  }
+
+  Future<void> refreshIapAvailability() async {
+    await _initMonetization(skipAds: true);
   }
 
   Future<void> _loadProducts() async {
@@ -436,6 +455,7 @@ class GameProvider extends ChangeNotifier {
       _adsRemovalJustGranted = true;
     } else if (productId == _premiumBundleProductId) {
       adsRemoved = true;
+      premiumBundleOwned = true;
       _adUnlockedCategories.addAll(_adUnlockCategories);
       for (final cat in _adUnlockCategories) {
         _setCategoryEnabled(cat, true);
@@ -497,6 +517,7 @@ class GameProvider extends ChangeNotifier {
 
   String? get removeAdsPrice => priceForProduct(_removeAdsProductId);
   String? get premiumBundlePrice => priceForProduct(_premiumBundleProductId);
+  bool get hasPremiumBundle => premiumBundleOwned;
 
   String? get activeTimedRewardCategory {
     final now = DateTime.now();
@@ -1243,6 +1264,7 @@ class GameProvider extends ChangeNotifier {
         "remove_ads": "Reklamları Kaldır",
         "remove_ads_desc": "Reklamlar kapanır, Spor/Bilim/Yemek açılır",
         "remove_ads_owned": "Reklamlar kaldırıldı",
+        "premium_bundle_owned": "Premium paket satın alındı",
         "restore_purchases": "Satın Alımları Geri Yükle",
         "watch_ad_unlock": "Reklam izle",
         "watch_ad_1h": "İzle & 1 saatlik aç",
@@ -1505,6 +1527,7 @@ class GameProvider extends ChangeNotifier {
         "remove_ads": "Remove Ads",
         "remove_ads_desc": "Ads off, Sports/Science/Food unlocked",
         "remove_ads_owned": "Ads removed",
+        "premium_bundle_owned": "Premium Bundle owned",
         "restore_purchases": "Restore Purchases",
         "watch_ad_unlock": "Watch ad",
         "watch_ad_1h": "Watch & unlock for 1H",

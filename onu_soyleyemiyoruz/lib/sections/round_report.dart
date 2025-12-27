@@ -239,18 +239,18 @@ class RoundReportScreen extends StatelessWidget {
                                     ),
                                   ),
                                   onPressed: () async {
-                                    await Provider.of<GameProvider>(
-                                      context,
-                                      listen: false,
-                                    ).playClick();
+                                    final navigator = Navigator.of(context);
+                                    final gameNotifier = Provider.of<
+                                        GameProvider>(context, listen: false);
+                                    await gameNotifier.playClick();
+                                    gameNotifier.finishTurn();
                                     if (!context.mounted) return;
                                     await maybeShowInterstitial();
                                     if (!context.mounted) return;
-                                    game.finishTurn();
-                                    Navigator.pushReplacement(
-                                      context,
+                                    navigator.pushReplacement(
                                       MaterialPageRoute(
-                                        builder: (_) => const RoundStartScreen(),
+                                        builder: (_) =>
+                                            const RoundStartScreen(),
                                       ),
                                     );
                                   },
