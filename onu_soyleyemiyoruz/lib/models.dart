@@ -64,12 +64,12 @@ class RoundSummary {
   });
 }
 
-// --- DUMMY DATA ---
+// Turkish initial deck
 final List<WordCard> initialDeckTr = [
   // Genel Kategori
   WordCard(
     word: "SAAT",
-    tabooWords: ["Zaman", "Dakika", "Saniye", "Kol", "Duvar"],
+    tabooWords: ["Zaman", "Akrep", "Yelkovan", "Dakika", "Duvar"],
     category: "Genel",
   ),
   WordCard(
@@ -79,7 +79,7 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "YASTIK",
-    tabooWords: ["Uyku", "Yatak", "Kafa", "Yumuşak", "Gece"],
+    tabooWords: ["Uyku", "Yatak", "Kafa", "Kaz Tüyü", "Gece"],
     category: "Genel",
   ),
   WordCard(
@@ -89,7 +89,7 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "ÇANTA",
-    tabooWords: ["Taşımak", "Okul", "Omuz", "Sırt", "Eşya"],
+    tabooWords: ["Kadın", "Okul", "Omuz", "Sırt", "Takmak"],
     category: "Genel",
   ),
   WordCard(
@@ -104,7 +104,7 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "KAPAK",
-    tabooWords: ["Kapatmak", "Şişe", "Kutu", "Açmak", "Üst"],
+    tabooWords: ["Kapatmak", "Şişe", "Tencere", "Açmak", "Ağız"],
     category: "Genel",
   ),
   WordCard(
@@ -129,32 +129,32 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "PERDE",
-    tabooWords: ["Pencere", "Güneş", "Kapamak", "Tül", "Ev"],
+    tabooWords: ["Pencere", "Güneş", "Işık", "Tül", "Ev"],
     category: "Genel",
   ),
   WordCard(
     word: "HALI",
-    tabooWords: ["Zemin", "Ev", "Desen", "Kilimi", "Sermek"],
+    tabooWords: ["Zemin", "Ev", "Desen", "Kilim", "Sermek"],
     category: "Genel",
   ),
   WordCard(
     word: "DOLAP",
-    tabooWords: ["Kıyafet", "Kapak", "Mutfak", "Raf", "Saklamak"],
+    tabooWords: ["Kıyafet", "Giymek", "Mutfak", "Raf", "Saklamak"],
     category: "Genel",
   ),
   WordCard(
-    word: "YASTIK KILIFI",
-    tabooWords: ["Kumaş", "Uyku", "Yatak", "Geçirmek", "Baş"],
+    word: "KOLONYA",
+    tabooWords: ["Alkol", "Sıvı", "El", "Bayram", "Koku"],
     category: "Genel",
   ),
   WordCard(
     word: "KUMANDA",
-    tabooWords: ["Televizyon", "Tuş", "Pil", "Kanal", "Değiştirmek"],
+    tabooWords: ["Televizyon", "Tuş", "Pil", "Kanal", "Kontrol"],
     category: "Genel",
   ),
   WordCard(
     word: "LAMBА",
-    tabooWords: ["Işık", "Aydınlatma", "Ampul", "Gece", "Elektrik"],
+    tabooWords: ["Işık", "Aydınlatma", "Uyku", "Gece", "Karanlık"],
     category: "Genel",
   ),
   WordCard(
@@ -169,7 +169,7 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "SANDALYE",
-    tabooWords: ["Oturmak", "Masa", "Ahşap", "Ayak", "Ev"],
+    tabooWords: ["Oturmak", "Masa", "Çıkmak", "Ayak", "Ev"],
     category: "Genel",
   ),
   WordCard(
@@ -5204,7 +5204,13 @@ final List<WordCard> initialDeckEn = [
   ),
   WordCard(
     word: "NIRVANA",
-    tabooWords: ["Grunge", "Kurt Cobain", "Smells Like Teen Spirit", "Band", "90s"],
+    tabooWords: [
+      "Grunge",
+      "Kurt Cobain",
+      "Smells Like Teen Spirit",
+      "Band",
+      "90s",
+    ],
     category: "90'lar Nostalji",
   ),
   WordCard(
