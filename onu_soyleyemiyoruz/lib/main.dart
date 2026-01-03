@@ -186,6 +186,7 @@ void _showSnack(
     await Future.delayed(fadeOutDuration);
     messenger.hideCurrentSnackBar();
   }
+
   void handleAction() {
     if (actionHandled || dismissed || notifierDisposed) return;
     actionHandled = true;
@@ -343,17 +344,16 @@ void _showCardPreview(BuildContext context, WordCard card) {
           : Colors.deepPurple.shade700;
       final Color wordColor = isDark ? Colors.white : Colors.black87;
       final Color tabooColor = isDark ? Colors.white70 : Colors.black87;
-      final Color dividerColor =
-          isDark ? Colors.white24 : const Color(0xFFE0E0E0);
+      final Color dividerColor = isDark
+          ? Colors.white24
+          : const Color(0xFFE0E0E0);
       return Stack(
         children: [
           Positioned.fill(
             child: IgnorePointer(
               child: BackdropFilter(
                 filter: ui.ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-                child: Container(
-                  color: Colors.black.withValues(alpha: 0.15),
-                ),
+                child: Container(color: Colors.black.withValues(alpha: 0.15)),
               ),
             ),
           ),
@@ -361,7 +361,7 @@ void _showCardPreview(BuildContext context, WordCard card) {
             backgroundColor: Colors.transparent,
             insetPadding: const EdgeInsets.all(20),
             child: SizedBox(
-              width: min(MediaQuery.of(context).size.width * 0.7, 520),
+              width: min(MediaQuery.of(context).size.width * 0.6, 420),
               child: Container(
                 decoration: BoxDecoration(
                   color: cardColor,
@@ -416,8 +416,9 @@ void _showCardPreview(BuildContext context, WordCard card) {
                         children: card.tabooWords
                             .map(
                               (t) => Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4,
+                                ),
                                 child: Text(
                                   t,
                                   textAlign: TextAlign.center,
@@ -460,40 +461,38 @@ Future<bool> _confirmExitToMenu(
               child: IgnorePointer(
                 child: BackdropFilter(
                   filter: ui.ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-                  child: Container(
-                    color: Colors.black.withValues(alpha: 0.15),
-                  ),
+                  child: Container(color: Colors.black.withValues(alpha: 0.15)),
                 ),
               ),
             ),
             Center(
               child: AlertDialog(
-          title: Text(game.t("confirm_exit_title")),
-          content: Text(game.t("confirm_exit_body")),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                await Provider.of<GameProvider>(
-                  context,
-                  listen: false,
-                ).playClick();
-                if (!context.mounted) return;
-                Navigator.pop(context, false);
-              },
-              child: Text(game.t("no")),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await Provider.of<GameProvider>(
-                  context,
-                  listen: false,
-                ).playClick();
-                if (!context.mounted) return;
-                Navigator.pop(context, true);
-              },
-              child: Text(game.t("yes")),
-            ),
-          ],
+                title: Text(game.t("confirm_exit_title")),
+                content: Text(game.t("confirm_exit_body")),
+                actions: [
+                  TextButton(
+                    onPressed: () async {
+                      await Provider.of<GameProvider>(
+                        context,
+                        listen: false,
+                      ).playClick();
+                      if (!context.mounted) return;
+                      Navigator.pop(context, false);
+                    },
+                    child: Text(game.t("no")),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await Provider.of<GameProvider>(
+                        context,
+                        listen: false,
+                      ).playClick();
+                      if (!context.mounted) return;
+                      Navigator.pop(context, true);
+                    },
+                    child: Text(game.t("yes")),
+                  ),
+                ],
               ),
             ),
           ],

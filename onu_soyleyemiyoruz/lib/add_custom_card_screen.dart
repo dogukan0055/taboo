@@ -281,10 +281,10 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
             builder: (context, constraints) {
               final Size size = MediaQuery.of(context).size;
               final bool isWide = size.shortestSide >= 600;
-              final double baseWidth = size.width * (isWide ? 0.6 : 0.7);
+              final double baseWidth = size.width * (isWide ? 0.5 : 0.6);
               final double formMaxWidth = math.min(
                 baseWidth,
-                isWide ? 560 : 420,
+                isWide ? 480 : 360,
               );
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
