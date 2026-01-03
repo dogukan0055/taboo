@@ -53,20 +53,6 @@ class _GameOverScreenState extends State<GameOverScreen>
     final Color dividerColor = isDark ? Colors.white70 : Colors.black54;
     final GlobalKey boundaryKey = GlobalKey();
     final GlobalKey shareButtonKey = GlobalKey();
-    final summaries = game.roundSummaries;
-    final int totalCorrect =
-        summaries.fold(0, (sum, s) => sum + s.correct);
-    final int totalTaboo = summaries.fold(0, (sum, s) => sum + s.taboo);
-    final int totalPass = summaries.fold(0, (sum, s) => sum + s.pass);
-    final int totalRounds = summaries.length;
-    final int totalPoints = summaries.fold(0, (sum, s) => sum + s.points);
-    final int totalTurns = summaries.isNotEmpty
-        ? summaries.last.turnIndex + 1
-        : 0;
-    final int totalCards =
-        totalCorrect + totalTaboo + totalPass;
-    final double accuracy =
-        totalCards == 0 ? 0 : totalCorrect / totalCards * 100;
     final String appTitle = game.t("app_title");
     Rect? shareOriginRect() {
       RenderBox? box =
@@ -279,68 +265,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 20),
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.08),
-                                borderRadius: BorderRadius.circular(18),
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.12),
-                                ),
-                              ),
-                              child: Wrap(
-                                alignment: WrapAlignment.center,
-                                spacing: 12,
-                                runSpacing: 12,
-                                children: [
-                                  _StatPill(
-                                    icon: Icons.layers,
-                                    label: game.t("rounds_played"),
-                                    value: "$totalRounds",
-                                    color: Colors.amber,
-                                  ),
-                                  _StatPill(
-                                    icon: Icons.timer,
-                                    label: game.t("turns_played"),
-                                    value: "$totalTurns",
-                                    color: Colors.lightBlueAccent,
-                                  ),
-                                  _StatPill(
-                                    icon: Icons.check_circle,
-                                    label: game.t("stat_correct"),
-                                    value: "$totalCorrect",
-                                    color: Colors.greenAccent,
-                                  ),
-                                  _StatPill(
-                                    icon: Icons.block,
-                                    label: game.t("stat_taboo"),
-                                    value: "$totalTaboo",
-                                    color: Colors.redAccent,
-                                  ),
-                                  _StatPill(
-                                    icon: Icons.skip_next,
-                                    label: game.t("tab_pass"),
-                                    value: "$totalPass",
-                                    color: Colors.blueAccent,
-                                  ),
-                                  _StatPill(
-                                    icon: Icons.star,
-                                    label: game.t("stat_score"),
-                                    value: "$totalPoints",
-                                    color: Colors.deepPurpleAccent,
-                                  ),
-                                  _StatPill(
-                                    icon: Icons.track_changes,
-                                    label: game.t("accuracy"),
-                                    value: "${accuracy.toStringAsFixed(1)}%",
-                                    color: Colors.amber,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 26),
                             ElevatedButton(
                               onPressed: () async {
                                 await Provider.of<GameProvider>(
@@ -520,60 +445,6 @@ class _GameOverScreenState extends State<GameOverScreen>
         offset: rand.nextDouble(),
       );
     });
-  }
-}
-
-class _StatPill extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-  const _StatPill({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 18),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
-              ),
-              Text(
-                value,
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 }
 

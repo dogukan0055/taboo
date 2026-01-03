@@ -1423,17 +1423,17 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "CUMHURİYET",
-    tabooWords: ["Atatürk", "Devlet", "Yönetim", "Türkiye", "1923"],
+    tabooWords: ["Türkiye", "Kemalizm", "Yönetim", "Monarşi", "1923"],
     category: "Tarih",
   ),
   WordCard(
     word: "OSMANLI",
-    tabooWords: ["İmparatorluk", "Padişah", "Devlet", "Tarih", "İstanbul"],
+    tabooWords: ["İmparatorluk", "Padişah", "Devlet", "Tarih", "Beylik"],
     category: "Tarih",
   ),
   WordCard(
     word: "İSTANBUL'UN FETHİ",
-    tabooWords: ["1453", "Fatih", "Savaş", "Bizans", "İstanbul"],
+    tabooWords: ["1453", "Fatih Sultan Mehmet", "Kara", "Bizans", "Gemi"],
     category: "Tarih",
   ),
   WordCard(
