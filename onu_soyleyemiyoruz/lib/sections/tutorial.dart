@@ -111,65 +111,70 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
         child: Scrollbar(
           controller: _tutorialScrollController,
           thumbVisibility: true,
-          child: ListView(
-            controller: _tutorialScrollController,
-            padding: const EdgeInsets.all(20),
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white24),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      game.t("game_summary_title"),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 640),
+              child: ListView(
+                controller: _tutorialScrollController,
+                padding: const EdgeInsets.all(20),
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white24),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      game.t("game_summary_body"),
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          game.t("game_summary_title"),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          game.t("game_summary_body"),
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.9),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 16),
+                  _TutorialTipCard(
+                    icon: Icons.timer,
+                    title: game.t("tip_time_management_title"),
+                    description: game.t("tip_time_management_body"),
+                  ),
+                  _TutorialTipCard(
+                    icon: Icons.skip_next,
+                    title: game.t("tip_pass_right_title"),
+                    description: game.t("tip_pass_right_body"),
+                  ),
+                  _TutorialTipCard(
+                    icon: Icons.block,
+                    title: game.t("tip_taboo_penalty_title"),
+                    description: game.t("tip_taboo_penalty_body"),
+                  ),
+                  _TutorialTipCard(
+                    icon: Icons.record_voice_over,
+                    title: game.t("tip_narrator_cycle_title"),
+                    description: game.t("tip_narrator_cycle_body"),
+                  ),
+                  _TutorialTipCard(
+                    icon: Icons.feedback,
+                    title: game.t("tip_feedback_title"),
+                    description: game.t("tip_feedback_body"),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              _TutorialTipCard(
-                icon: Icons.timer,
-                title: game.t("tip_time_management_title"),
-                description: game.t("tip_time_management_body"),
-              ),
-              _TutorialTipCard(
-                icon: Icons.skip_next,
-                title: game.t("tip_pass_right_title"),
-                description: game.t("tip_pass_right_body"),
-              ),
-              _TutorialTipCard(
-                icon: Icons.block,
-                title: game.t("tip_taboo_penalty_title"),
-                description: game.t("tip_taboo_penalty_body"),
-              ),
-              _TutorialTipCard(
-                icon: Icons.record_voice_over,
-                title: game.t("tip_narrator_cycle_title"),
-                description: game.t("tip_narrator_cycle_body"),
-              ),
-              _TutorialTipCard(
-                icon: Icons.feedback,
-                title: game.t("tip_feedback_title"),
-                description: game.t("tip_feedback_body"),
-              ),
-            ],
+            ),
           ),
         ),
       ),

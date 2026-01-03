@@ -263,156 +263,168 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
               child: Scrollbar(
                 controller: _categoryScrollController,
                 thumbVisibility: true,
-                child: GridView(
-                  controller: _categoryScrollController,
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 220,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 1.0,
-                  ),
-                  children: game.availableCategories.map((cat) {
-                    List<WordCard> words = wordsMap[cat] ?? [];
-                    final access = game.categoryAccess(cat);
-                    final bool isUnlocked = game.isCategoryUnlocked(cat);
-                    final bool isLocked =
-                        access != CategoryAccess.free && !isUnlocked;
-                    final bool categoryActive = _selectedCategories.contains(
-                      cat,
-                    );
-                    final int activeCount = words
-                        .where((w) => !_disabledIds.contains(w.id))
-                        .length;
-                    final bool isPartial =
-                        activeCount > 0 && activeCount < words.length;
-                    final bool isCatSelected =
-                        categoryActive &&
-                        !isPartial &&
-                        activeCount == words.length;
-                    final Duration? rewardRemaining = game.rewardRemaining(cat);
-
-                    final Color titleColor = isLocked
-                        ? Colors.white38
-                        : isCatSelected
-                        ? Colors.amber
-                        : isPartial
-                        ? Colors.lightBlueAccent
-                        : Colors.white;
-
-                    return _CategoryCard(
-                      title: game.categoryLabel(cat),
-                      icon: _categoryIcons[cat] ?? Icons.category,
-                      titleColor: titleColor,
-                      countLabel: game.t(
-                        "category_word_count",
-                        params: {
-                          "active": "$activeCount",
-                          "total": "${words.length}",
-                        },
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 760),
+                    child: GridView(
+                      controller: _categoryScrollController,
+                      padding: const EdgeInsets.all(16),
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 220,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 1.0,
                       ),
-                      isSelected: isCatSelected,
-                      isPartial: isPartial,
-                      isLocked: isLocked,
-                      access: access,
-                      rewardRemaining: rewardRemaining,
-                      lockBadge: game.t("badge_locked"),
-                      paidBadge: null,
-                      adBadge: null,
-                      unlockLabel: isLocked
-                          ? access == CategoryAccess.adUnlock
-                                ? game.t("watch_ad_unlock_short")
-                                : game.t("watch_ad_1h")
-                          : null,
-                      buyLabel: isLocked && access == CategoryAccess.premium
-                          ? game.t("buy_unlock_short")
-                          : null,
-                      reduceMotion: reduceMotion,
-                      onToggle: (val) async {
-                        await game.playClick();
-                        if (val && cat == "Özel" && words.isEmpty) {
-                          _showSnack(
-                            messenger,
-                            game.t("custom_empty_warning"),
-                            isError: true,
-                          );
-                          return;
-                        }
-                        setState(() {
-                          if (val) {
-                            _selectedCategories.add(cat);
-                            for (final w in words) {
-                              _disabledIds.remove(w.id);
-                            }
-                          } else {
-                            _selectedCategories.remove(cat);
-                            for (final w in words) {
-                              _disabledIds.add(w.id);
-                            }
-                          }
-                        });
-                      },
-                      onUnlock: isLocked
-                          ? () => _promptUnlockCategory(context, game, cat)
-                          : null,
-                      onBuy: isLocked && access == CategoryAccess.premium
-                          ? () async {
-                              await game.playClick();
-                              await game.buyCategoryPack(cat);
-                            }
-                          : null,
-                      onOpen: () async {
-                        await game.playClick();
-                        if (!context.mounted) return;
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => CategoryWordsScreen(
-                              category: cat,
-                              icon: _categoryIcons[cat] ?? Icons.category,
-                              words: words,
-                              selectedCategories: _selectedCategories,
-                              disabledIds: _disabledIds,
-                              onChanged: () => setState(() {}),
-                            ),
-                          ),
+                      children: game.availableCategories.map((cat) {
+                        List<WordCard> words = wordsMap[cat] ?? [];
+                        final access = game.categoryAccess(cat);
+                        final bool isUnlocked = game.isCategoryUnlocked(cat);
+                        final bool isLocked =
+                            access != CategoryAccess.free && !isUnlocked;
+                        final bool categoryActive = _selectedCategories.contains(
+                          cat,
                         );
-                        if (!context.mounted) return;
-                        setState(() {});
-                      },
-                    );
-                  }).toList(),
+                        final int activeCount = words
+                            .where((w) => !_disabledIds.contains(w.id))
+                            .length;
+                        final bool isPartial =
+                            activeCount > 0 && activeCount < words.length;
+                        final bool isCatSelected =
+                            categoryActive &&
+                            !isPartial &&
+                            activeCount == words.length;
+                        final Duration? rewardRemaining =
+                            game.rewardRemaining(cat);
+
+                        final Color titleColor = isLocked
+                            ? Colors.white38
+                            : isCatSelected
+                            ? Colors.amber
+                            : isPartial
+                            ? Colors.lightBlueAccent
+                            : Colors.white;
+
+                        return _CategoryCard(
+                          title: game.categoryLabel(cat),
+                          icon: _categoryIcons[cat] ?? Icons.category,
+                          titleColor: titleColor,
+                          countLabel: game.t(
+                            "category_word_count",
+                            params: {
+                              "active": "$activeCount",
+                              "total": "${words.length}",
+                            },
+                          ),
+                          isSelected: isCatSelected,
+                          isPartial: isPartial,
+                          isLocked: isLocked,
+                          access: access,
+                          rewardRemaining: rewardRemaining,
+                          lockBadge: game.t("badge_locked"),
+                          paidBadge: null,
+                          adBadge: null,
+                          unlockLabel: isLocked
+                              ? access == CategoryAccess.adUnlock
+                                    ? game.t("watch_ad_unlock_short")
+                                    : game.t("watch_ad_1h")
+                              : null,
+                          buyLabel: isLocked && access == CategoryAccess.premium
+                              ? game.t("buy_unlock_short")
+                              : null,
+                          reduceMotion: reduceMotion,
+                          onToggle: (val) async {
+                            await game.playClick();
+                            if (val && cat == "Özel" && words.isEmpty) {
+                              _showSnack(
+                                messenger,
+                                game.t("custom_empty_warning"),
+                                isError: true,
+                              );
+                              return;
+                            }
+                            setState(() {
+                              if (val) {
+                                _selectedCategories.add(cat);
+                                for (final w in words) {
+                                  _disabledIds.remove(w.id);
+                                }
+                              } else {
+                                _selectedCategories.remove(cat);
+                                for (final w in words) {
+                                  _disabledIds.add(w.id);
+                                }
+                              }
+                            });
+                          },
+                          onUnlock: isLocked
+                              ? () => _promptUnlockCategory(context, game, cat)
+                              : null,
+                          onBuy: isLocked && access == CategoryAccess.premium
+                              ? () async {
+                                  await game.playClick();
+                                  await game.buyCategoryPack(cat);
+                                }
+                              : null,
+                          onOpen: () async {
+                            await game.playClick();
+                            if (!context.mounted) return;
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => CategoryWordsScreen(
+                                  category: cat,
+                                  icon: _categoryIcons[cat] ?? Icons.category,
+                                  words: words,
+                                  selectedCategories: _selectedCategories,
+                                  disabledIds: _disabledIds,
+                                  onChanged: () => setState(() {}),
+                                ),
+                              ),
+                            );
+                            if (!context.mounted) return;
+                            setState(() {});
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    await game.playClick();
-                    if (!context.mounted) return;
-                    game.applyCategoryChanges(
-                      _selectedCategories,
-                      _disabledIds,
-                    );
-                    _showSnack(
-                      messenger,
-                      game.t("categories_updated"),
-                      isSuccess: true,
-                    );
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amber,
-                    padding: const EdgeInsets.all(16),
-                  ),
-                  child: Text(
-                    game.t("save_and_back"),
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 480),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await game.playClick();
+                        if (!context.mounted) return;
+                        game.applyCategoryChanges(
+                          _selectedCategories,
+                          _disabledIds,
+                        );
+                        _showSnack(
+                          messenger,
+                          game.t("categories_updated"),
+                          isSuccess: true,
+                        );
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber,
+                        padding: const EdgeInsets.all(16),
+                      ),
+                      child: Text(
+                        game.t("save_and_back"),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -1009,266 +1021,295 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
             : Scrollbar(
                 controller: _wordScrollController,
                 thumbVisibility: true,
-                child: GridView.builder(
-                  controller: _wordScrollController,
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 220,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 0.9,
-                  ),
-                  itemCount: words.length,
-                  itemBuilder: (context, index) {
-                    final word = words[index];
-                    final isDisabled = widget.disabledIds.contains(word.id);
-                    final isCustom = word.isCustom;
-                    final bool isEnabled = !isDisabled;
-                    final Color accent = isEnabled
-                        ? Colors.amber
-                        : Colors.white38;
-                    final Color borderColor = isEnabled
-                        ? Colors.amber
-                        : Colors.white24;
-                    final Color bgTop = isEnabled
-                        ? Colors.white.withValues(alpha: 0.12)
-                        : Colors.white.withValues(alpha: 0.05);
-                    final Color bgBottom = Colors.black.withValues(alpha: 0.5);
-                    final Duration animDuration = reduceMotion
-                        ? Duration.zero
-                        : const Duration(milliseconds: 200);
-                    return AnimatedContainer(
-                      duration: animDuration,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [bgTop, bgBottom],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: borderColor, width: 1.2),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.25),
-                            blurRadius: 10,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 760),
+                    child: GridView.builder(
+                      controller: _wordScrollController,
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 220,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 0.9,
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () async {
-                            await game.playClick();
-                            setState(
-                              () => _toggleWord(words, word, !isEnabled),
-                            );
-                          },
-                          borderRadius: BorderRadius.circular(18),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                final bool compact =
-                                    constraints.maxHeight < 140;
-                                final bool ultraCompact =
-                                    constraints.maxHeight < 120;
-                                final double wordSize = compact ? 13 : 15;
-                                final double bgIconSize = compact ? 78 : 96;
-                                final bool showCustomActions =
-                                    isCustom && !ultraCompact;
-                                return Stack(
-                                  children: [
-                                    Align(
-                                      alignment: const Alignment(0, 0.2),
-                                      child: Icon(
-                                        widget.icon,
-                                        size: bgIconSize,
-                                        color: Colors.white.withValues(
-                                          alpha: 0.07,
-                                        ),
-                                      ),
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
+                      itemCount: words.length,
+                      itemBuilder: (context, index) {
+                        final word = words[index];
+                        final isDisabled = widget.disabledIds.contains(word.id);
+                        final isCustom = word.isCustom;
+                        final bool isEnabled = !isDisabled;
+                        final Color accent = isEnabled
+                            ? Colors.amber
+                            : Colors.white38;
+                        final Color borderColor = isEnabled
+                            ? Colors.amber
+                            : Colors.white24;
+                        final Color bgTop = isEnabled
+                            ? Colors.white.withValues(alpha: 0.12)
+                            : Colors.white.withValues(alpha: 0.05);
+                        final Color bgBottom =
+                            Colors.black.withValues(alpha: 0.5);
+                        final Duration animDuration = reduceMotion
+                            ? Duration.zero
+                            : const Duration(milliseconds: 200);
+                        return AnimatedContainer(
+                          duration: animDuration,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [bgTop, bgBottom],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(color: borderColor, width: 1.2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.25),
+                                blurRadius: 10,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () async {
+                                await game.playClick();
+                                setState(
+                                  () => _toggleWord(words, word, !isEnabled),
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(18),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final bool compact =
+                                        constraints.maxHeight < 140;
+                                    final bool ultraCompact =
+                                        constraints.maxHeight < 120;
+                                    final double wordSize =
+                                        compact ? 13 : 15;
+                                    final double bgIconSize =
+                                        compact ? 78 : 96;
+                                    final bool showCustomActions =
+                                        isCustom && !ultraCompact;
+                                    return Stack(
                                       children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            _buildWordChip(
-                                              label: isEnabled
-                                                  ? game.t("status_on")
-                                                  : game.t("status_off"),
-                                              color: accent,
-                                              compact: compact,
-                                            ),
-                                            if (isCustom && !compact)
-                                              _buildWordChip(
-                                                label: game.t("custom_label"),
-                                                color: Colors.deepPurpleAccent,
-                                                compact: compact,
-                                              ),
-                                          ],
-                                        ),
-                                        Expanded(
-                                          child: Center(
-                                            child: FittedBox(
-                                              fit: BoxFit.scaleDown,
-                                              child: Text(
-                                                word.word,
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: isEnabled
-                                                      ? Colors.white
-                                                      : Colors.white60,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: wordSize,
-                                                  letterSpacing: 0.2,
-                                                ),
-                                              ),
+                                        Align(
+                                          alignment: const Alignment(0, 0.2),
+                                          child: Icon(
+                                            widget.icon,
+                                            size: bgIconSize,
+                                            color: Colors.white.withValues(
+                                              alpha: 0.07,
                                             ),
                                           ),
                                         ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
                                           children: [
-                                            _buildActionButton(
-                                              icon: Icons.remove_red_eye,
-                                              color: Colors.white70,
-                                              compact: compact,
-                                              onPressed: () async {
-                                                await game.playClick();
-                                                if (!context.mounted) return;
-                                                _showCardPreview(context, word);
-                                              },
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                _buildWordChip(
+                                                  label: isEnabled
+                                                      ? game.t("status_on")
+                                                      : game.t("status_off"),
+                                                  color: accent,
+                                                  compact: compact,
+                                                ),
+                                                if (isCustom && !compact)
+                                                  _buildWordChip(
+                                                    label:
+                                                        game.t("custom_label"),
+                                                    color:
+                                                        Colors.deepPurpleAccent,
+                                                    compact: compact,
+                                                  ),
+                                              ],
                                             ),
-                                            if (showCustomActions) ...[
-                                              const SizedBox(width: 8),
-                                              _buildActionButton(
-                                                icon: Icons.edit,
-                                                color: Colors.white70,
-                                                compact: compact,
-                                                onPressed: () async {
-                                                  await game.playClick();
-                                                  if (!context.mounted) return;
-                                                  final updated =
-                                                      await Navigator.push<
-                                                        String
-                                                      >(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (_) =>
-                                                              AddCustomCardScreen(
+                                            Expanded(
+                                              child: Center(
+                                                child: FittedBox(
+                                                  fit: BoxFit.scaleDown,
+                                                  child: Text(
+                                                    word.word,
+                                                    textAlign:
+                                                        TextAlign.center,
+                                                    style: TextStyle(
+                                                      color: isEnabled
+                                                          ? Colors.white
+                                                          : Colors.white60,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: wordSize,
+                                                      letterSpacing: 0.2,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                _buildActionButton(
+                                                  icon: Icons.remove_red_eye,
+                                                  color: Colors.white70,
+                                                  compact: compact,
+                                                  onPressed: () async {
+                                                    await game.playClick();
+                                                    if (!context.mounted) {
+                                                      return;
+                                                    }
+                                                    _showCardPreview(
+                                                      context,
+                                                      word,
+                                                    );
+                                                  },
+                                                ),
+                                                if (showCustomActions) ...[
+                                                  const SizedBox(width: 8),
+                                                  _buildActionButton(
+                                                    icon: Icons.edit,
+                                                    color: Colors.white70,
+                                                    compact: compact,
+                                                    onPressed: () async {
+                                                      await game.playClick();
+                                                      if (!context.mounted) {
+                                                        return;
+                                                      }
+                                                      final updated =
+                                                          await Navigator.push<
+                                                              String>(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (_) =>
+                                                                  AddCustomCardScreen(
                                                                 existingCard:
                                                                     word,
                                                               ),
-                                                        ),
-                                                      );
-                                                  if (!context.mounted) return;
-                                                  if (updated != null) {
-                                                    setState(() {});
-                                                    widget.onChanged();
-                                                    _showSnack(
-                                                      messenger,
-                                                      game.t(
-                                                        "custom_updated",
-                                                        params: {
-                                                          "word": updated,
-                                                        },
-                                                      ),
-                                                      isSuccess: true,
-                                                    );
-                                                  }
-                                                },
-                                              ),
-                                              const SizedBox(width: 8),
-                                              _buildActionButton(
-                                                icon: Icons.delete_forever,
-                                                color: Colors.redAccent,
-                                                compact: compact,
-                                                onPressed: () {
-                                                  game.playClick();
-                                                  final removed = word;
-                                                  final bool wasSelected =
-                                                      widget.selectedCategories
-                                                          .contains(
-                                                            widget.category,
+                                                            ),
                                                           );
-                                                  final wasDisabled = widget
-                                                      .disabledIds
-                                                      .contains(word.id);
-                                                  game.removeCustomCard(
-                                                    word.id,
-                                                  );
-                                                  setState(() {
-                                                    widget.disabledIds.remove(
-                                                      word.id,
-                                                    );
-                                                  });
-                                                  if (widget.category ==
-                                                      "Özel") {
-                                                    final remaining =
-                                                        game.wordsByCategory["Özel"] ??
-                                                        [];
-                                                    if (remaining.isEmpty) {
-                                                      widget.selectedCategories
-                                                          .remove("Özel");
-                                                    }
-                                                  }
-                                                  widget.onChanged();
-                                                  _showSnack(
-                                                    messenger,
-                                                    game.t(
-                                                      "custom_deleted",
-                                                      params: {
-                                                        "word": word.word,
-                                                      },
-                                                    ),
-                                                    isSuccess: true,
-                                                    actionLabel: game.t("undo"),
-                                                    actionIcon: Icons.undo,
-                                                    onAction: () {
-                                                      game.restoreCustomCard(
-                                                        removed,
-                                                        disabled: wasDisabled,
-                                                      );
-                                                      if (widget.category ==
-                                                              "Özel" &&
-                                                          wasSelected) {
-                                                        widget
-                                                            .selectedCategories
-                                                            .add("Özel");
+                                                      if (!context.mounted) {
+                                                        return;
                                                       }
-                                                      if (wasDisabled) {
-                                                        setState(() {
-                                                          widget.disabledIds
-                                                              .add(removed.id);
-                                                        });
-                                                      } else {
+                                                      if (updated != null) {
                                                         setState(() {});
+                                                        widget.onChanged();
+                                                        _showSnack(
+                                                          messenger,
+                                                          game.t(
+                                                            "custom_updated",
+                                                            params: {
+                                                              "word": updated,
+                                                            },
+                                                          ),
+                                                          isSuccess: true,
+                                                        );
+                                                      }
+                                                    },
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  _buildActionButton(
+                                                    icon: Icons.delete_forever,
+                                                    color: Colors.redAccent,
+                                                    compact: compact,
+                                                    onPressed: () {
+                                                      game.playClick();
+                                                      final removed = word;
+                                                      final bool wasSelected =
+                                                          widget
+                                                              .selectedCategories
+                                                              .contains(
+                                                                widget
+                                                                    .category,
+                                                              );
+                                                      final wasDisabled = widget
+                                                          .disabledIds
+                                                          .contains(word.id);
+                                                      game.removeCustomCard(
+                                                        word.id,
+                                                      );
+                                                      setState(() {
+                                                        widget.disabledIds
+                                                            .remove(word.id);
+                                                      });
+                                                      if (widget.category ==
+                                                          "Özel") {
+                                                        final remaining =
+                                                            game.wordsByCategory[
+                                                                  "Özel"] ??
+                                                                [];
+                                                        if (remaining.isEmpty) {
+                                                          widget
+                                                              .selectedCategories
+                                                              .remove("Özel");
+                                                        }
                                                       }
                                                       widget.onChanged();
+                                                      _showSnack(
+                                                        messenger,
+                                                        game.t(
+                                                          "custom_deleted",
+                                                          params: {
+                                                            "word": word.word,
+                                                          },
+                                                        ),
+                                                        isSuccess: true,
+                                                        actionLabel:
+                                                            game.t("undo"),
+                                                        actionIcon: Icons.undo,
+                                                        onAction: () {
+                                                          game.restoreCustomCard(
+                                                            removed,
+                                                            disabled:
+                                                                wasDisabled,
+                                                          );
+                                                          if (widget.category ==
+                                                                  "Özel" &&
+                                                              wasSelected) {
+                                                            widget
+                                                                .selectedCategories
+                                                                .add("Özel");
+                                                          }
+                                                          if (wasDisabled) {
+                                                            setState(() {
+                                                              widget.disabledIds
+                                                                  .add(
+                                                                    removed.id,
+                                                                  );
+                                                            });
+                                                          } else {
+                                                            setState(() {});
+                                                          }
+                                                          widget.onChanged();
+                                                        },
+                                                      );
                                                     },
-                                                  );
-                                                },
-                                              ),
-                                            ],
+                                                  ),
+                                                ],
+                                              ],
+                                            ),
                                           ],
                                         ),
                                       ],
-                                    ),
-                                  ],
-                                );
-                              },
+                                    );
+                                  },
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
       ),

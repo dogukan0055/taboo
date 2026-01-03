@@ -70,27 +70,50 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                 ),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(height: isCompactHeight ? 8 : 16),
-                      _MenuButton(
-                        label: game.t("team_management"),
-                        color: Colors.purple,
-                        icon: Icons.groups,
-                        trailingIcon: _teamsExpanded
-                            ? Icons.expand_less
-                            : Icons.expand_more,
-                        onTap: () =>
-                            setState(() => _teamsExpanded = !_teamsExpanded),
-                      ),
-                      if (reduceMotion)
-                        (_teamsExpanded
-                            ? Container(
-                                margin: const EdgeInsets.only(
-                                  top: 14,
-                                  bottom: 6,
-                                ),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 640),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(height: isCompactHeight ? 8 : 16),
+                          _MenuButton(
+                            label: game.t("team_management"),
+                            color: Colors.purple,
+                            icon: Icons.groups,
+                            trailingIcon: _teamsExpanded
+                                ? Icons.expand_less
+                                : Icons.expand_more,
+                            onTap: () =>
+                                setState(() => _teamsExpanded = !_teamsExpanded),
+                          ),
+                          if (reduceMotion)
+                            (_teamsExpanded
+                                ? Container(
+                                    margin: const EdgeInsets.only(
+                                      top: 14,
+                                      bottom: 6,
+                                    ),
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.08),
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(color: Colors.white24),
+                                    ),
+                                    child: const TeamManagerPanel(
+                                      showCloseButton: false,
+                                    ),
+                                  )
+                                : const SizedBox.shrink())
+                          else
+                            AnimatedCrossFade(
+                              duration: const Duration(milliseconds: 250),
+                              crossFadeState: _teamsExpanded
+                                  ? CrossFadeState.showSecond
+                                  : CrossFadeState.showFirst,
+                              firstChild: const SizedBox.shrink(),
+                              secondChild: Container(
+                                margin: const EdgeInsets.only(top: 14, bottom: 6),
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withValues(alpha: 0.08),
@@ -100,169 +123,151 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                                 child: const TeamManagerPanel(
                                   showCloseButton: false,
                                 ),
-                              )
-                            : const SizedBox.shrink())
-                      else
-                        AnimatedCrossFade(
-                          duration: const Duration(milliseconds: 250),
-                          crossFadeState: _teamsExpanded
-                              ? CrossFadeState.showSecond
-                              : CrossFadeState.showFirst,
-                          firstChild: const SizedBox.shrink(),
-                          secondChild: Container(
-                            margin: const EdgeInsets.only(top: 14, bottom: 6),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: Colors.white24),
+                              ),
                             ),
-                            child: const TeamManagerPanel(
-                              showCloseButton: false,
+                          const SizedBox(height: 12),
+                          _MenuButton(
+                            label: game.t("manage_categories"),
+                            color: Colors.orange,
+                            icon: Icons.category,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const CategoryManagementScreen(),
+                              ),
                             ),
                           ),
-                        ),
-                      const SizedBox(height: 12),
-                      _MenuButton(
-                        label: game.t("manage_categories"),
-                        color: Colors.orange,
-                        icon: Icons.category,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const CategoryManagementScreen(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Column(
-                          children: [
-                            _buildUniqueSelector(
-                              game.t("round_time_label"),
-                              [30, 45, 60, 75, 90],
-                              game.roundTime,
-                              (val) {
-                                if (val == game.roundTime) return;
-                                game.updateSettings(time: val);
-                                _showSnack(
-                                  messenger,
-                                  game.t(
-                                    "round_time_changed",
-                                    params: {"seconds": "$val"},
-                                  ),
-                                );
-                              },
-                              labelBuilder: (val) => "$val",
-                              reduceMotion: reduceMotion,
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(16),
                             ),
-                            const Divider(color: Colors.white24),
-                            _buildUniqueSelector(
-                              game.t("target_score_label"),
-                              [20, 30, 50, 75, -1],
-                              game.targetScore,
-                              (val) {
-                                if (val == game.targetScore) return;
-                                game.updateSettings(score: val);
-                                final label = val == -1
+                            child: Column(
+                              children: [
+                                _buildUniqueSelector(
+                                  game.t("round_time_label"),
+                                  [30, 45, 60, 75, 90],
+                                  game.roundTime,
+                                  (val) {
+                                    if (val == game.roundTime) return;
+                                    game.updateSettings(time: val);
+                                    _showSnack(
+                                      messenger,
+                                      game.t(
+                                        "round_time_changed",
+                                        params: {"seconds": "$val"},
+                                      ),
+                                    );
+                                  },
+                                  labelBuilder: (val) => "$val",
+                                  reduceMotion: reduceMotion,
+                                ),
+                                const Divider(color: Colors.white24),
+                                _buildUniqueSelector(
+                                  game.t("target_score_label"),
+                                  [20, 30, 50, 75, -1],
+                                  game.targetScore,
+                                  (val) {
+                                    if (val == game.targetScore) return;
+                                    game.updateSettings(score: val);
+                                    final label = val == -1
+                                        ? game.t("target_score_unlimited")
+                                        : game.t(
+                                            "target_score_changed",
+                                            params: {"score": "$val"},
+                                          );
+                                    _showSnack(messenger, label);
+                                  },
+                                  labelBuilder: (val) => val == -1 ? "∞" : "$val",
+                                  reduceMotion: reduceMotion,
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 8,
+                            alignment: WrapAlignment.start,
+                            children: [
+                              _InfoChip(
+                                icon: Icons.timer,
+                                label: game.t(
+                                  "round_time_chip",
+                                  params: {"seconds": "${game.roundTime}"},
+                                ),
+                              ),
+                              _InfoChip(
+                                icon: Icons.flag,
+                                label: game.targetScore == -1
                                     ? game.t("target_score_unlimited")
                                     : game.t(
-                                        "target_score_changed",
-                                        params: {"score": "$val"},
-                                      );
-                                _showSnack(messenger, label);
-                              },
-                              labelBuilder: (val) => val == -1 ? "∞" : "$val",
-                              reduceMotion: reduceMotion,
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 8,
-                        alignment: WrapAlignment.start,
-                        children: [
-                          _InfoChip(
-                            icon: Icons.timer,
-                            label: game.t(
-                              "round_time_chip",
-                              params: {"seconds": "${game.roundTime}"},
-                            ),
+                                        "target_score_chip",
+                                        params: {"score": "${game.targetScore}"},
+                                      ),
+                              ),
+                            ],
                           ),
-                          _InfoChip(
-                            icon: Icons.flag,
-                            label: game.targetScore == -1
-                                ? game.t("target_score_unlimited")
-                                : game.t(
-                                    "target_score_chip",
-                                    params: {"score": "${game.targetScore}"},
-                                  ),
+
+                          SizedBox(height: isCompactHeight ? 18 : 28),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              padding: const EdgeInsets.all(20),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () async {
+                              await game.playClick();
+                              if (!context.mounted) return;
+                              if (game.teamA.length < 2 || game.teamB.length < 2) {
+                                String msg = "";
+                                if (game.teamA.length < 2) {
+                                  msg = game.t(
+                                    "missing_players",
+                                    params: {"team": game.teamAName},
+                                  );
+                                } else if (game.teamB.length < 2) {
+                                  msg = game.t(
+                                    "missing_players",
+                                    params: {"team": game.teamBName},
+                                  );
+                                }
+                                _showSnack(messenger, msg, isError: true);
+                                return;
+                              }
+                              if (game.teamA.length != game.teamB.length) {
+                                _showSnack(
+                                  messenger,
+                                  game.t("equal_players_required"),
+                                  isError: true,
+                                );
+                                return;
+                              }
+                              game.startGame();
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => const DiceRollDialog(),
+                              );
+                            },
+                            child: Text(
+                              game.t("roll_and_play"),
+                              style: const TextStyle(
+                                color: Colors.deepPurple,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ],
                       ),
-
-                      SizedBox(height: isCompactHeight ? 18 : 28),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: const EdgeInsets.all(20),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () async {
-                          await game.playClick();
-                          if (!context.mounted) return;
-                          if (game.teamA.length < 2 || game.teamB.length < 2) {
-                            String msg = "";
-                            if (game.teamA.length < 2) {
-                              msg = game.t(
-                                "missing_players",
-                                params: {"team": game.teamAName},
-                              );
-                            } else if (game.teamB.length < 2) {
-                              msg = game.t(
-                                "missing_players",
-                                params: {"team": game.teamBName},
-                              );
-                            }
-                            _showSnack(messenger, msg, isError: true);
-                            return;
-                          }
-                          if (game.teamA.length != game.teamB.length) {
-                            _showSnack(
-                              messenger,
-                              game.t("equal_players_required"),
-                              isError: true,
-                            );
-                            return;
-                          }
-                          game.startGame();
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (_) => const DiceRollDialog(),
-                          );
-                        },
-                        child: Text(
-                          game.t("roll_and_play"),
-                          style: const TextStyle(
-                            color: Colors.deepPurple,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -547,6 +552,14 @@ class TeamManagerPanel extends StatelessWidget {
                       style: const TextStyle(color: Colors.white, fontSize: 14),
                     ),
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.amber, size: 22),
+                    onPressed: () async {
+                      await game.playClick();
+                      if (!context.mounted) return;
+                      _showEditPlayer(context, game, isTeamA, p);
+                    },
+                  ),
                   GestureDetector(
                     onTap: () async {
                       await game.playClick();
@@ -766,6 +779,59 @@ class TeamManagerPanel extends StatelessWidget {
               );
             },
             child: Text(game.t("add")),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditPlayer(
+    BuildContext context,
+    GameProvider game,
+    bool isTeamA,
+    String currentName,
+  ) {
+    final messenger = ScaffoldMessenger.of(context);
+    TextEditingController c = TextEditingController(text: currentName);
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(game.t("edit_player")),
+        content: TextField(
+          controller: c,
+          maxLength: 16,
+          textCapitalization: TextCapitalization.words,
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(game.nameAllowedChars),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              game.playClick();
+              Navigator.pop(dialogContext);
+            },
+            child: Text(game.t("cancel")),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              game.playClick();
+              final err = game.editPlayer(currentName, c.text, isTeamA);
+              if (err != null) {
+                _showSnack(messenger, err, isError: true);
+                return;
+              }
+              Navigator.pop(dialogContext);
+              _showSnack(
+                messenger,
+                game.t(
+                  "player_updated",
+                  params: {"player": game.languageUpper(c.text)},
+                ),
+                isSuccess: true,
+              );
+            },
+            child: Text(game.t("save")),
           ),
         ],
       ),

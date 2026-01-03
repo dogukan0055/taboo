@@ -1085,6 +1085,11 @@ class GameProvider extends ChangeNotifier {
         "add": "Ekle",
         "player_added": "{player} adlı oyuncu {team} takımına eklendi",
         "player_removed": "{player} adlı oyuncu {team} takımından çıkarıldı",
+        "player_updated": "Oyuncu adı {player} olarak güncellendi",
+        "edit_player": "Oyuncuyu Düzenle",
+        "accuracy": "İsabet",
+        "rounds_played": "Oynanan Tur",
+        "turns_played": "Atılan Zar",
         "category_word_count": "{active} / {total} Kelime",
         "custom_empty_warning": "Özel kategorisi boş. Önce kelime ekleyin.",
         "categories_updated": "Kategoriler güncellendi",
@@ -1352,6 +1357,11 @@ class GameProvider extends ChangeNotifier {
         "add": "Add",
         "player_added": "{player} added to {team}",
         "player_removed": "{player} removed from {team}",
+        "player_updated": "Player name updated to {player}",
+        "edit_player": "Edit Player",
+        "accuracy": "Accuracy",
+        "rounds_played": "Rounds",
+        "turns_played": "Turns",
         "category_word_count": "{active} / {total} Words",
         "custom_empty_warning": "Custom category is empty. Add words first.",
         "categories_updated": "Categories updated",
@@ -1852,6 +1862,28 @@ class GameProvider extends ChangeNotifier {
     } else {
       teamB.add(valid);
     }
+    _persist();
+    notifyListeners();
+    return null;
+  }
+
+  String? editPlayer(String oldName, String newName, bool toTeamA) {
+    if (newName.trim().isEmpty) return t("error_name_empty");
+    if (containsProhibitedWords(newName)) return t("error_name_profanity");
+    if (newName.trim().length > 16) return t("error_player_name_max");
+
+    String? valid = validateNameInput(newName);
+    if (valid == null) return t("error_name_invalid");
+    final list = toTeamA ? teamA : teamB;
+    final exists = list.any((p) => p.toLowerCase() == valid.toLowerCase());
+    if (exists && oldName.toLowerCase() != valid.toLowerCase()) {
+      return t("error_player_exists");
+    }
+    final idx = list.indexWhere(
+      (p) => p.toLowerCase() == oldName.toLowerCase(),
+    );
+    if (idx == -1) return t("no_player");
+    list[idx] = valid;
     _persist();
     notifyListeners();
     return null;

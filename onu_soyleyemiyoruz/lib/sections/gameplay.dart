@@ -75,8 +75,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     final Color tabooColor = isDark ? Colors.red.shade700 : Colors.red;
     final Color passColor = isDark ? Colors.blue.shade700 : Colors.blue;
     final Color correctColor = isDark ? Colors.green.shade700 : Colors.green;
-    final Color disabledPassColor =
-        isDark ? Colors.blueGrey.shade700 : Colors.grey;
+    final Color disabledPassColor = isDark
+        ? Colors.blueGrey.shade700
+        : Colors.grey;
     _updateBlink(game.timeLeft);
     if (!game.isPaused && !game.abortedToMenu && game.timeLeft == 0) {
       final navigator = Navigator.of(context);
@@ -193,13 +194,13 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                             : Opacity(
                                 opacity: 0.5,
                                 child: BouncingButton(
-                                icon: Icons.skip_next,
-                                color: disabledPassColor,
-                                label: game.t("label_pass"),
-                                badgeText: "0",
-                                disabled: true,
-                                onTap: () {},
-                              ),
+                                  icon: Icons.skip_next,
+                                  color: disabledPassColor,
+                                  label: game.t("label_pass"),
+                                  badgeText: "0",
+                                  disabled: true,
+                                  onTap: () {},
+                                ),
                               ),
                         BouncingButton(
                           icon: Icons.check,
@@ -259,16 +260,14 @@ class _GamePlayScreenState extends State<GamePlayScreen>
           Positioned.fill(
             child: BackdropFilter(
               filter: ui.ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-              child: Container(
-                color: Colors.black.withValues(alpha: 0.15),
-              ),
+              child: Container(color: Colors.black.withValues(alpha: 0.15)),
             ),
           ),
           Dialog(
             backgroundColor: Colors.transparent,
             insetPadding: const EdgeInsets.symmetric(horizontal: 24),
             child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
+              width: min(MediaQuery.of(context).size.width * 0.8, 520),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
@@ -378,8 +377,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                                   color: Colors.redAccent,
                                   width: 1.4,
                                 ),
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -427,9 +427,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         children: [
           _buildFeedbackToggle(
             icon: game.soundEnabled ? Icons.volume_up : Icons.volume_off,
-            label: game.soundEnabled
-                ? game.t("sound_on")
-                : game.t("sound_off"),
+            label: game.soundEnabled ? game.t("sound_on") : game.t("sound_off"),
             isActive: game.soundEnabled,
             onTap: () async {
               if (!game.soundEnabled) {
@@ -517,94 +515,102 @@ class _GamePlayScreenState extends State<GamePlayScreen>
 
   Widget _buildScoreHeader(GameProvider game) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final double headerWidth =
+        min(MediaQuery.of(context).size.width - 20, 720);
     return Padding(
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            height: 90,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.6)
-                  : Colors.black.withValues(alpha: 0.45),
-              borderRadius: BorderRadius.circular(40),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildTeamScoreItem(
-                    game.teamAName,
-                    game.teamAScore,
-                    Colors.blueAccent,
-                    game.isTeamATurn,
-                    isDark: isDark,
-                  ),
+      child: Center(
+        child: SizedBox(
+          width: headerWidth,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                height: 90,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.black.withValues(alpha: 0.6)
+                      : Colors.black.withValues(alpha: 0.45),
+                  borderRadius: BorderRadius.circular(40),
                 ),
-                Container(
-                  width: 82,
-                  height: 70,
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  alignment: Alignment.center,
-                  child: Container(
-                    width: 70,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      border: Border.all(color: Colors.deepPurple, width: 4),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildTeamScoreItem(
+                        game.teamAName,
+                        game.teamAScore,
+                        Colors.blueAccent,
+                        game.isTeamATurn,
+                        isDark: isDark,
+                      ),
                     ),
-                    alignment: Alignment.center,
-                    child: FadeTransition(
-                      opacity: _blink,
-                      child: Text(
-                        "${game.timeLeft}",
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple,
+                    Container(
+                      width: 82,
+                      height: 70,
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      alignment: Alignment.center,
+                      child: Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          border: Border.all(color: Colors.deepPurple, width: 4),
+                        ),
+                        alignment: Alignment.center,
+                        child: FadeTransition(
+                          opacity: _blink,
+                          child: Text(
+                            "${game.timeLeft}",
+                            style: const TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    Expanded(
+                      child: _buildTeamScoreItem(
+                        game.teamBName,
+                        game.teamBScore,
+                        Colors.redAccent,
+                        !game.isTeamATurn,
+                        isDark: isDark,
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: _buildTeamScoreItem(
-                    game.teamBName,
-                    game.teamBScore,
-                    Colors.redAccent,
-                    !game.isTeamATurn,
-                    isDark: isDark,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: -12,
-            child: Center(
-              child: IconButton(
-                icon: Container(
-                  width: 28,
-                  height: 28,
-                  decoration: const BoxDecoration(
-                    color: Colors.amber,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.pause, color: Colors.black, size: 18),
-                ),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                onPressed: () async {
-                  await game.playClick();
-                  _onPausePressed(game);
-                },
               ),
-            ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: -12,
+                child: Center(
+                  child: IconButton(
+                    icon: Container(
+                      width: 28,
+                      height: 28,
+                      decoration: const BoxDecoration(
+                        color: Colors.amber,
+                        shape: BoxShape.circle,
+                      ),
+                      child:
+                          const Icon(Icons.pause, color: Colors.black, size: 18),
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: () async {
+                      await game.playClick();
+                      _onPausePressed(game);
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -694,7 +700,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     final Color dividerColor = isDark
         ? Colors.white24
         : const Color(0xFFE0E0E0);
-    final double cardWidth = MediaQuery.of(context).size.width * 0.7;
+    final Size screenSize = MediaQuery.of(context).size;
+    final bool isTablet = screenSize.shortestSide >= 600;
+    final double cardWidth = screenSize.width * (isTablet ? 0.4 : 0.6);
     return Align(
       alignment: Alignment.center,
       child: SizedBox(

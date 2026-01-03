@@ -83,6 +83,10 @@ class RoundReportScreen extends StatelessWidget {
         .toList();
     final bool isGameEnded = game.isGameEnded;
     final bool canManualEnd = _canEndGameManually(game);
+    final int total = correctList.length + tabooList.length + passList.length;
+    final int score = correctList.length - tabooList.length;
+    final double accuracy =
+        total == 0 ? 0 : (correctList.length / total * 100);
 
     return PopScope(
       canPop: false,
@@ -133,176 +137,183 @@ class RoundReportScreen extends StatelessWidget {
           ),
           body: SafeArea(
             top: false,
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 20,
-                    horizontal: 40,
-                  ),
-                  color: scaffoldColor,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _statCol(
-                        game.t("stat_correct"),
-                        correctList.length,
-                        Colors.green,
-                        textColor,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 900),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 20,
+                        horizontal: 20,
                       ),
-                      _statCol(
-                        game.t("stat_taboo"),
-                        tabooList.length,
-                        Colors.red,
-                        textColor,
-                      ),
-                      _statCol(
-                        game.t("stat_score"),
-                        correctList.length - tabooList.length,
-                        Colors.deepPurple,
-                        textColor,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _InfoChip(
-                        icon: Icons.style,
-                        label: game.allCardsUsed
-                            ? game.t("cards_finished")
-                            : game.t(
-                                "remaining_cards",
-                                params: {"count": "${game.remainingCards}"},
-                              ),
-                        textColor: textColor,
-                        fillColor: chipFillColor,
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      _buildSimpleCardList(
-                        game,
-                        correctList,
-                        Colors.green,
-                        reduceMotion,
-                        isDark,
-                      ),
-                      _buildSimpleCardList(
-                        game,
-                        tabooList,
-                        Colors.red,
-                        reduceMotion,
-                        isDark,
-                      ),
-                      _buildSimpleCardList(
-                        game,
-                        passList,
-                        Colors.blue,
-                        reduceMotion,
-                        isDark,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(20.0),
-                  color: scaffoldColor,
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: isGameEnded
-                        ? _buildEndGameButton(
-                            context,
-                            game,
-                            dangerButtonColor,
-                            isManual: false,
-                          )
-                        : Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: primaryButtonColor,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.all(18),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  onPressed: () async {
-                                    final navigator = Navigator.of(context);
-                                    final gameNotifier = Provider.of<
-                                        GameProvider>(context, listen: false);
-                                    await gameNotifier.playClick();
-                                    gameNotifier.finishTurn();
-                                    if (!context.mounted) return;
-                                    await maybeShowInterstitial();
-                                    if (!context.mounted) return;
-                                    navigator.pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            const RoundStartScreen(),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    game.t("continue"),
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              if (game.targetScore == -1) ...[
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: _buildEndGameButton(
-                                    context,
-                                    game,
-                                    dangerButtonColor,
-                                    isManual: true,
-                                    enabled: canManualEnd,
-                                  ),
-                                ),
-                              ],
-                            ],
+                      color: scaffoldColor,
+                      child: Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          _statCard(
+                            game.t("stat_correct"),
+                            "${correctList.length}",
+                            Icons.check_circle,
+                            Colors.green,
+                            isDark,
                           ),
-                  ),
+                          _statCard(
+                            game.t("stat_taboo"),
+                            "${tabooList.length}",
+                            Icons.block,
+                            Colors.redAccent,
+                            isDark,
+                          ),
+                          _statCard(
+                            game.t("tab_pass"),
+                            "${passList.length}",
+                            Icons.skip_next,
+                            Colors.blueAccent,
+                            isDark,
+                          ),
+                          _statCard(
+                            game.t("stat_score"),
+                            "$score",
+                            Icons.star,
+                            Colors.deepPurple,
+                            isDark,
+                          ),
+                          _statCard(
+                            game.t("accuracy"),
+                            "${accuracy.toStringAsFixed(1)}%",
+                            Icons.track_changes,
+                            Colors.amber,
+                            isDark,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _InfoChip(
+                            icon: Icons.style,
+                            label: game.allCardsUsed
+                                ? game.t("cards_finished")
+                                : game.t(
+                                    "remaining_cards",
+                                    params: {"count": "${game.remainingCards}"},
+                                  ),
+                            textColor: textColor,
+                            fillColor: chipFillColor,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          _buildSimpleCardList(
+                            game,
+                            correctList,
+                            Colors.green,
+                            reduceMotion,
+                            isDark,
+                          ),
+                          _buildSimpleCardList(
+                            game,
+                            tabooList,
+                            Colors.red,
+                            reduceMotion,
+                            isDark,
+                          ),
+                          _buildSimpleCardList(
+                            game,
+                            passList,
+                            Colors.blue,
+                            reduceMotion,
+                            isDark,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(20.0),
+                      color: scaffoldColor,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: isGameEnded
+                            ? _buildEndGameButton(
+                                context,
+                                game,
+                                dangerButtonColor,
+                                isManual: false,
+                              )
+                            : Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: primaryButtonColor,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.all(18),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        final navigator = Navigator.of(context);
+                                        final gameNotifier = Provider.of<
+                                            GameProvider>(context, listen: false);
+                                        await gameNotifier.playClick();
+                                        gameNotifier.finishTurn();
+                                        if (!context.mounted) return;
+                                        await maybeShowInterstitial();
+                                        if (!context.mounted) return;
+                                        navigator.pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const RoundStartScreen(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        game.t("continue"),
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  if (game.targetScore == -1) ...[
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: _buildEndGameButton(
+                                        context,
+                                        game,
+                                        dangerButtonColor,
+                                        isManual: true,
+                                        enabled: canManualEnd,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
-
-  Widget _statCol(String label, int val, Color c, Color valueColor) => Column(
-    children: [
-      Text(
-        label,
-        style: TextStyle(color: c, fontWeight: FontWeight.bold),
-      ),
-      Text(
-        "$val",
-        style: TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.w900,
-          color: valueColor,
-        ),
-      ),
-    ],
-  );
 
   Widget _buildEndGameButton(
     BuildContext context,
@@ -579,6 +590,60 @@ class RoundReportScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _statCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+    bool isDark,
+  ) {
+    final Color bg = isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.black.withValues(alpha: 0.05);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: color.withValues(alpha: 0.35),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 18),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: isDark ? Colors.white70 : Colors.black87,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.2,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

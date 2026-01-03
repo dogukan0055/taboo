@@ -26,7 +26,8 @@ class RoundStartScreen extends StatelessWidget {
     final Color teamATint = Colors.blueAccent;
     final Color teamBTint = Colors.redAccent;
     final Color startButtonColor = isDark ? Colors.amber[400]! : Colors.white;
-    final double maxWidth = MediaQuery.of(context).size.width * 0.9;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double contentWidth = min(screenWidth * 0.9, 640);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -70,7 +71,7 @@ class RoundStartScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
-                  width: maxWidth,
+                  width: contentWidth,
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
@@ -86,7 +87,7 @@ class RoundStartScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
-                  width: maxWidth,
+                  width: contentWidth,
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
@@ -104,7 +105,7 @@ class RoundStartScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
-                  width: maxWidth,
+                  width: contentWidth,
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
@@ -120,7 +121,7 @@ class RoundStartScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 SizedBox(
-                  width: maxWidth,
+                  width: contentWidth,
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
@@ -140,7 +141,7 @@ class RoundStartScreen extends StatelessWidget {
 
                 // Explicit Team Score Display
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
+                  width: contentWidth,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18,
                     vertical: 12,

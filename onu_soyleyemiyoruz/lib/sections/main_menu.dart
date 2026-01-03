@@ -14,70 +14,79 @@ class MainMenuScreen extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(30.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Spacer(),
-                  Center(
-                    child: Image.asset(
-                      "assets/image/ingame_logo.png",
-                      height: 160,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    game.t("menu_title"),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    softWrap: false,
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
-                      height: 1.0,
-                    ),
-                  ),
-                  const Spacer(),
-                  _MenuButton(
-                    label: game.t("menu_play"),
-                    color: Colors.green,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const SetupHubScreen()),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  _MenuButton(
-                    label: game.t("menu_settings"),
-                    color: Colors.teal,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const SettingsScreen(),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Spacer(),
+                      Center(
+                        child: Image.asset(
+                          "assets/image/ingame_logo.png",
+                          height: 160,
+                          fit: BoxFit.contain,
                         ),
-                      );
-                    },
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        game.t("menu_title"),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        softWrap: false,
+                        style: TextStyle(
+                          fontSize: 34,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          height: 1.0,
+                        ),
+                      ),
+                      const Spacer(),
+                      _MenuButton(
+                        label: game.t("menu_play"),
+                        color: Colors.green,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const SetupHubScreen(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      _MenuButton(
+                        label: game.t("menu_settings"),
+                        color: Colors.teal,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const SettingsScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                      _MenuButton(
+                        label: game.t("menu_how_to_play"),
+                        color: Colors.blue,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const TutorialScreen(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      _MenuButton(
+                        label: game.t("menu_exit"),
+                        color: Colors.red,
+                        onTap: () => SystemNavigator.pop(),
+                      ),
+                      const Spacer(),
+                    ],
                   ),
-                  const SizedBox(height: 15),
-                  _MenuButton(
-                    label: game.t("menu_how_to_play"),
-                    color: Colors.blue,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const TutorialScreen()),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  _MenuButton(
-                    label: game.t("menu_exit"),
-                    color: Colors.red,
-                    onTap: () => SystemNavigator.pop(),
-                  ),
-                  const Spacer(),
-                ],
+                ),
               ),
             ),
             const Positioned(

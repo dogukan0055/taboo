@@ -272,101 +272,108 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
+              final bool isTablet = constraints.maxWidth >= 600;
+              final double formMaxWidth = isTablet ? 520 : 460;
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _cardPreview(),
-                      const SizedBox(height: 20),
-                      if (_editing) ...[
-                        ElevatedButton(
-                        onPressed: () => _handleSave(exitAfter: true),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: saveColor,
-                            foregroundColor: saveTextColor,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          child: Text(
-                            game.t("save"),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      const SizedBox(height: 10),
-                      OutlinedButton(
-                      onPressed: () async {
-                        await Provider.of<GameProvider>(context, listen: false)
-                            .playClick();
-                        if (!context.mounted) return;
-                        Navigator.pop(context);
-                      },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: dangerColor,
-                            side: BorderSide(color: dangerBorderColor),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          child: Text(game.t("exit")),
-                        ),
-                      ] else ...[
-                        Row(
-                          children: [
-                            Expanded(
-                            child: ElevatedButton(
-                              onPressed: () => _handleSave(exitAfter: true),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: saveColor,
-                                  foregroundColor: saveTextColor,
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 14),
-                                ),
-                                child: Text(
-                                  game.t("save_and_exit"),
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
-                                ),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: formMaxWidth),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _cardPreview(),
+                          const SizedBox(height: 20),
+                          if (_editing) ...[
+                            ElevatedButton(
+                            onPressed: () => _handleSave(exitAfter: true),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: saveColor,
+                                foregroundColor: saveTextColor,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                              ),
+                              child: Text(
+                                game.t("save"),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                            child: ElevatedButton(
-                              onPressed: () => _handleSave(exitAfter: false),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: continueColor,
-                                  foregroundColor: continueTextColor,
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 14),
-                                ),
-                                child: Text(
-                                  game.t("save_and_continue"),
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                ),
+                          const SizedBox(height: 10),
+                          OutlinedButton(
+                          onPressed: () async {
+                            await Provider.of<GameProvider>(context, listen: false)
+                                .playClick();
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
+                          },
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: dangerColor,
+                                side: BorderSide(color: dangerBorderColor),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
+                              child: Text(game.t("exit")),
+                            ),
+                          ] else ...[
+                            Row(
+                              children: [
+                                Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () => _handleSave(exitAfter: true),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: saveColor,
+                                      foregroundColor: saveTextColor,
+                                      padding:
+                                          const EdgeInsets.symmetric(vertical: 14),
+                                    ),
+                                    child: Text(
+                                      game.t("save_and_exit"),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () => _handleSave(exitAfter: false),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: continueColor,
+                                      foregroundColor: continueTextColor,
+                                      padding:
+                                          const EdgeInsets.symmetric(vertical: 14),
+                                    ),
+                                    child: Text(
+                                      game.t("save_and_continue"),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            OutlinedButton(
+                            onPressed: () async {
+                              await Provider.of<GameProvider>(context, listen: false)
+                                  .playClick();
+                              if (!context.mounted) return;
+                              Navigator.pop(context);
+                            },
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: dangerColor,
+                                side: BorderSide(color: dangerBorderColor),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                              ),
+                              child: Text(game.t("exit_without_save")),
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 10),
-                        OutlinedButton(
-                        onPressed: () async {
-                          await Provider.of<GameProvider>(context, listen: false)
-                              .playClick();
-                          if (!context.mounted) return;
-                          Navigator.pop(context);
-                        },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: dangerColor,
-                            side: BorderSide(color: dangerBorderColor),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          child: Text(game.t("exit_without_save")),
-                        ),
-                      ],
-                    ],
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               );

@@ -361,7 +361,7 @@ void _showCardPreview(BuildContext context, WordCard card) {
             backgroundColor: Colors.transparent,
             insetPadding: const EdgeInsets.all(20),
             child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.7,
+              width: min(MediaQuery.of(context).size.width * 0.7, 520),
               child: Container(
                 decoration: BoxDecoration(
                   color: cardColor,

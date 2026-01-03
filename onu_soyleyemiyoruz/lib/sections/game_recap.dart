@@ -51,6 +51,7 @@ class GameRecapTeamScreen extends StatelessWidget {
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
                           minHeight: constraints.maxHeight,
+                          maxWidth: 900,
                         ),
                         child: IntrinsicHeight(
                           child: Column(
@@ -175,6 +176,7 @@ class GameRecapPlayerScreen extends StatelessWidget {
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
                           minHeight: constraints.maxHeight,
+                          maxWidth: 900,
                         ),
                         child: IntrinsicHeight(
                           child: Column(
