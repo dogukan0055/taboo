@@ -267,7 +267,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             backgroundColor: Colors.transparent,
             insetPadding: const EdgeInsets.symmetric(horizontal: 24),
             child: SizedBox(
-              width: min(MediaQuery.of(context).size.width * 0.8, 520),
+              width: min(MediaQuery.of(context).size.width * 0.9, 600),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
@@ -707,14 +707,17 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         : const Color(0xFFE0E0E0);
     final Size screenSize = MediaQuery.of(context).size;
     final bool isTablet = screenSize.shortestSide >= 600;
-    final double cardWidth = screenSize.width * (isTablet ? 0.5 : 0.75);
+    final double cardWidth = screenSize.width * (isTablet ? 0.55 : 0.78);
+    final double maxCardHeight = isTablet ? 520 : screenSize.height * 0.85;
     final List<String> sortedTabooWords = List.of(card.tabooWords)
       ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
     return Align(
       alignment: Alignment.center,
-      child: SizedBox(
-        key: ValueKey(card.id),
-        width: cardWidth,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: cardWidth,
+          maxHeight: maxCardHeight,
+        ),
         child: Container(
           decoration: BoxDecoration(
             color: cardColor,
@@ -759,14 +762,13 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                          flex: 2,
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: FittedBox(
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(height: 16),
+                              FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
                                   card.word,
@@ -780,27 +782,25 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                            ),
+                              const SizedBox(height: 6),
+                              Divider(
+                                thickness: 2,
+                                indent: 40,
+                                endIndent: 40,
+                                color: dividerColor,
+                              ),
+                            ],
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 40),
-                          child: Divider(
-                            thickness: 2,
-                            indent: 40,
-                            endIndent: 40,
-                            color: dividerColor,
-                          ),
-                        ),
+                        const SizedBox(height: 2),
                         Expanded(
-                          flex: 4,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: sortedTabooWords
                                 .map(
                                   (t) => Padding(
                                     padding: const EdgeInsets.symmetric(
-                                      vertical: 2,
+                                      vertical: 1,
                                       horizontal: 6,
                                     ),
                                     child: FittedBox(

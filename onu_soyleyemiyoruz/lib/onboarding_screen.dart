@@ -112,7 +112,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final game = Provider.of<GameProvider>(context);
     final pages = _buildPages(game);
     final isLast = _index == pages.length - 1;
-
+    final Size size = MediaQuery.of(context).size;
+    final bool isWide = size.shortestSide >= 600;
+    final double maxContentWidth = isWide ? 960 : 640;
+    final double lottieHeight =
+        (size.height * 0.32).clamp(240.0, isWide ? 380.0 : 280.0);
+    final double titleSize = isWide ? 36 : 28;
+    final double subtitleSize = isWide ? 20 : 16;
+    final EdgeInsets pagePadding = isWide
+        ? const EdgeInsets.symmetric(horizontal: 64, vertical: 36)
+        : const EdgeInsets.all(24);
     return Scaffold(
       body: AnimatedContainer(
         duration: const Duration(milliseconds: 400),
@@ -132,45 +141,54 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       itemBuilder: (context, i) {
                         final page = pages[i];
                         return Padding(
-                          padding: const EdgeInsets.all(24),
+                          padding: pagePadding,
                           child: AnimatedScale(
                             scale: _index == i ? 1 : 0.96,
                             duration: const Duration(milliseconds: 300),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 400),
-                                  child: SizedBox(
-                                    key: ValueKey(page.lottie),
-                                    height: 220,
-                                    child: Lottie.asset(
-                                      page.lottie,
-                                      repeat: true,
+                            child: Center(
+                              child: ConstrainedBox(
+                                constraints:
+                                    BoxConstraints(maxWidth: maxContentWidth),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    AnimatedSwitcher(
+                                      duration:
+                                          const Duration(milliseconds: 400),
+                                      child: SizedBox(
+                                        key: ValueKey(page.lottie),
+                                        height: lottieHeight,
+                                        child: Lottie.asset(
+                                          page.lottie,
+                                          repeat: true,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    SizedBox(height: isWide ? 36 : 28),
+                                    Text(
+                                      page.title,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: titleSize,
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.white,
+                                        height: 1.1,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      page.subtitle,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: subtitleSize,
+                                        height: 1.6,
+                                        color:
+                                            Colors.white.withValues(alpha: .85),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 32),
-                                Text(
-                                  page.title,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.w900,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  page.subtitle,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    height: 1.5,
-                                    color: Colors.white.withValues(alpha: .85),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         );
@@ -202,7 +220,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                   // -------- Buttons --------
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                    padding: EdgeInsets.fromLTRB(
+                      isWide ? 48 : 24,
+                      0,
+                      isWide ? 48 : 24,
+                      isWide ? 32 : 24,
+                    ),
                     child: Row(
                       children: [
                         if (_index > 0)
@@ -210,11 +233,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             onPressed: _previous,
                             child: Text(
                               game.t("onboard_back"),
-                              style: const TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: isWide ? 16 : 14,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           )
                         else
-                          const SizedBox(width: 72),
+                          SizedBox(width: isWide ? 96 : 72),
                         const Spacer(),
                         Expanded(
                           child: ElevatedButton(
@@ -222,18 +249,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.amber,
                               foregroundColor: Colors.deepPurple,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              padding: EdgeInsets.symmetric(
+                                vertical: isWide ? 18 : 14,
+                              ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
+                                borderRadius: BorderRadius.circular(16),
                               ),
                             ),
                             child: Text(
                               isLast
                                   ? game.t("onboard_start")
                                   : game.t("onboard_next"),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: isWide ? 18 : 16,
                               ),
                             ),
                           ),
@@ -255,7 +284,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       game.t("onboard_skip"),
                       style: const TextStyle(
                         color: Colors.white70,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
                       ),
                     ),
                   ),

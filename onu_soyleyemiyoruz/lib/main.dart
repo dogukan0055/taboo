@@ -124,6 +124,15 @@ class MyApp extends StatelessWidget {
           theme: theme,
           darkTheme: darkTheme,
           themeMode: game.themeMode,
+          builder: (context, child) {
+            final media = MediaQuery.of(context);
+            final bool isTablet = media.size.shortestSide >= 700;
+            final textScaler = TextScaler.linear(isTablet ? 1.2 : 1.0);
+            return MediaQuery(
+              data: media.copyWith(textScaler: textScaler),
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
           home: home,
         );
       },
