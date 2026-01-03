@@ -103,16 +103,6 @@ final List<WordCard> initialDeckTr = [
     category: "Genel",
   ),
   WordCard(
-    word: "KAPAK",
-    tabooWords: ["Kapatmak", "Şişe", "Tencere", "Açmak", "Ağız"],
-    category: "Genel",
-  ),
-  WordCard(
-    word: "YORGAN",
-    tabooWords: ["Uyku", "Yatak", "Sıcak", "Gece", "Üst"],
-    category: "Genel",
-  ),
-  WordCard(
     word: "FIRÇA",
     tabooWords: ["Saç", "Taramak", "Boyamak", "Diş", "Kıl"],
     category: "Genel",
@@ -248,11 +238,6 @@ final List<WordCard> initialDeckTr = [
     category: "Genel",
   ),
   WordCard(
-    word: "ÇÖP KUTUSU",
-    tabooWords: ["Atmak", "Sokak", "Temizlik", "Ev", "Poşet"],
-    category: "Genel",
-  ),
-  WordCard(
     word: "NOT DEFTERİ",
     tabooWords: ["Yazmak", "Küçük", "Taşımak", "Sayfa", "Kalem"],
     category: "Genel",
@@ -335,11 +320,6 @@ final List<WordCard> initialDeckTr = [
     category: "Sanat",
   ),
   WordCard(
-    word: "SOYUT",
-    tabooWords: ["Anlamsız", "Şekil", "Modern", "Resim", "Somut"],
-    category: "Sanat",
-  ),
-  WordCard(
     word: "KARİKATÜR",
     tabooWords: ["Çizim", "Mizah", "Abartı", "Dergi", "Komik"],
     category: "Sanat",
@@ -380,16 +360,6 @@ final List<WordCard> initialDeckTr = [
     category: "Sanat",
   ),
   WordCard(
-    word: "ŞİİR",
-    tabooWords: ["Dize", "Şair", "Kısa", "Duygu", "Yazı"],
-    category: "Sanat",
-  ),
-  WordCard(
-    word: "ŞAİR",
-    tabooWords: ["Şiir", "Yazmak", "Dize", "Edebiyat", "Kalem"],
-    category: "Sanat",
-  ),
-  WordCard(
     word: "BESTECİ",
     tabooWords: ["Müzik", "Nota", "Yazmak", "Harman", "Eser"],
     category: "Sanat",
@@ -422,11 +392,6 @@ final List<WordCard> initialDeckTr = [
   WordCard(
     word: "PİYANO",
     tabooWords: ["Tuş", "Müzik", "Çalmak", "Nota", "Kuyruklu"],
-    category: "Sanat",
-  ),
-  WordCard(
-    word: "NOTA",
-    tabooWords: ["Müzik", "Anahtar", "Ses", "Kağıt", "Çalmak"],
     category: "Sanat",
   ),
   WordCard(
@@ -537,16 +502,6 @@ final List<WordCard> initialDeckTr = [
     category: "Bilim",
   ),
   WordCard(
-    word: "IŞIK",
-    tabooWords: ["Görmek", "Hız", "Aydınlık", "Karanlık", "Güneş"],
-    category: "Bilim",
-  ),
-  WordCard(
-    word: "SES",
-    tabooWords: ["Dalga", "Duymak", "Titreşim", "Kulak", "Gürültü"],
-    category: "Bilim",
-  ),
-  WordCard(
     word: "DALGA",
     tabooWords: ["Su", "Ses", "Işık", "Titreşim", "Yayılmak"],
     category: "Bilim",
@@ -599,11 +554,6 @@ final List<WordCard> initialDeckTr = [
   WordCard(
     word: "BAĞIŞIKLIK",
     tabooWords: ["Vücut", "Hastalık", "Savunma", "Aşı", "Koruma"],
-    category: "Bilim",
-  ),
-  WordCard(
-    word: "İNSAN VÜCUDU",
-    tabooWords: ["Organ", "Kas", "Kemik", "Sistem", "Canlı"],
     category: "Bilim",
   ),
   WordCard(
@@ -692,8 +642,8 @@ final List<WordCard> initialDeckTr = [
     category: "Bilim",
   ),
   WordCard(
-    word: "İKLİM",
-    tabooWords: ["Mevsim", "Hava", "Sıcaklık", "Dünya", "Değişim"],
+    word: "MEVSİM",
+    tabooWords: ["İlkbahar", "Kış", "Sonbahar", "Yaz", "İklim"],
     category: "Bilim",
   ),
   WordCard(
@@ -834,11 +784,6 @@ final List<WordCard> initialDeckTr = [
     category: "Yemek",
   ),
   WordCard(
-    word: "KEBAP",
-    tabooWords: ["Et", "Tavuk", "Odun", "Şiş", "Yiyecek"],
-    category: "Yemek",
-  ),
-  WordCard(
     word: "SUCUK",
     tabooWords: ["Et", "Yumurta", "Kahvaltı", "Kızartmak", "Sosis"],
     category: "Yemek",
@@ -966,11 +911,6 @@ final List<WordCard> initialDeckTr = [
     category: "Spor",
   ),
   WordCard(
-    word: "ATLETİZM",
-    tabooWords: ["Koşu", "Atlama", "Saha", "Olimpiyat", "Sporcu"],
-    category: "Spor",
-  ),
-  WordCard(
     word: "HALTER",
     tabooWords: ["Ağırlık", "Kaldırmak", "Bar", "Güç", "Kas"],
     category: "Spor",
@@ -993,11 +933,6 @@ final List<WordCard> initialDeckTr = [
   WordCard(
     word: "KARATE",
     tabooWords: ["Savaş Sanatı", "Tekme", "Kuşak", "Japon", "Kata"],
-    category: "Spor",
-  ),
-  WordCard(
-    word: "VÜCUT GELİŞTİRME",
-    tabooWords: ["Kas", "Ağırlık", "Fitness", "Protein Tozu", "Salon"],
     category: "Spor",
   ),
   WordCard(
@@ -1258,16 +1193,6 @@ final List<WordCard> initialDeckTr = [
     category: "Doğa",
   ),
   WordCard(
-    word: "LAV",
-    tabooWords: ["Volkan", "Sıcak", "Magma", "Akmak", "Yanmak"],
-    category: "Doğa",
-  ),
-  WordCard(
-    word: "KÜRESEL ISINMA",
-    tabooWords: ["İklim", "Dünya", "Sıcaklık", "Çevre", "Buzul"],
-    category: "Doğa",
-  ),
-  WordCard(
     word: "EKOSİSTEM",
     tabooWords: ["Canlı", "Doğa", "Denge", "Çevre", "Sistem"],
     category: "Doğa",
@@ -1341,11 +1266,6 @@ final List<WordCard> initialDeckTr = [
   WordCard(
     word: "KONSOL",
     tabooWords: ["Oyun", "PlayStation", "Xbox", "Kontrolcü", "Televizyon"],
-    category: "Teknoloji",
-  ),
-  WordCard(
-    word: "BULUT",
-    tabooWords: ["Depolama", "Online", "Veri", "Sunucu", "İnternet"],
     category: "Teknoloji",
   ),
   WordCard(
@@ -1427,6 +1347,56 @@ final List<WordCard> initialDeckTr = [
     category: "Tarih",
   ),
   WordCard(
+    word: "MODERN ÇAĞ",
+    tabooWords: ["Tarih", "Buluş", "Rönesans", "Dönem", "Başlangıç"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "ROMA",
+    tabooWords: ["İmparatorluk", "Sezar", "Antik", "İtalya", "Ordu"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "SEZAR",
+    tabooWords: ["Roma", "İmparator", "Senato", "Suikast", "Salata"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "FRANSIZ DEVRİMİ",
+    tabooWords: ["1789", "Paris", "Bastille", "Özgürlük", "Giyotin"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "KOLOMB",
+    tabooWords: ["Amerika", "Keşif", "Gemi", "1492", "Kaşif"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "SOVYETLER",
+    tabooWords: ["Rusya", "Komünist", "SSCB", "Lenin", "Soğuk Savaş"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "SANAYİ DEVRİMİ",
+    tabooWords: ["Fabrika", "Makine", "İngiltere", "Buhar", "Üretim"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "HAÇLI SEFERLERİ",
+    tabooWords: ["Orta Çağ", "Kudüs", "Din", "Avrupa", "Savaş"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "ORTA ÇAĞ",
+    tabooWords: ["Şövalye", "Kale", "Feodal", "Avrupa", "Karanlık"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "HİTLER",
+    tabooWords: ["Almanya", "Nazi", "Savaş", "Diktatör", "Soykırım"],
+    category: "Tarih",
+  ),
+  WordCard(
     word: "OSMANLI",
     tabooWords: ["İmparatorluk", "Padişah", "Devlet", "Tarih", "Beylik"],
     category: "Tarih",
@@ -1477,98 +1447,13 @@ final List<WordCard> initialDeckTr = [
     category: "Tarih",
   ),
   WordCard(
-    word: "SAVAŞ",
-    tabooWords: ["Ordu", "Silah", "Çatışma", "Cephe", "Tarih"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "ORDU",
-    tabooWords: ["Asker", "Savaş", "Silah", "Cephe", "Birlik"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "ASKER",
-    tabooWords: ["Ordu", "Silah", "Savaş", "Üniforma", "Görev"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "CEPHE",
-    tabooWords: ["Savaş", "Asker", "Hat", "Mücadele", "Alan"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "ANTLAŞMA",
-    tabooWords: ["İmza", "Barış", "Devlet", "Savaş", "Anlaşmak"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "LOZAN",
-    tabooWords: ["Antlaşma", "Türkiye", "1923", "Barış", "Sınır"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "SEVR",
-    tabooWords: ["Antlaşma", "Osmanlı", "Parçalanmak", "Savaş", "Red"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "FETİH",
-    tabooWords: ["Almak", "Savaş", "Toprak", "Zafer", "Ordu"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "ZAFER",
-    tabooWords: ["Kazanmak", "Savaş", "Başarı", "Ordu", "Kutlama"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "TAHT",
-    tabooWords: ["Padişah", "Kral", "Oturmak", "Yönetmek", "Saray"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "TAÇ",
-    tabooWords: ["Kral", "Kraliçe", "Baş", "Altın", "Sembol"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "YAZIT",
-    tabooWords: ["Taş", "Tarih", "Eski", "Yazı", "Anıt"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "ANIT",
-    tabooWords: ["Heykel", "Tarih", "Yapı", "Hatıra", "Taş"],
-    category: "Tarih",
-  ),
-  WordCard(
     word: "MÜZE",
     tabooWords: ["Tarih", "Eser", "Sergi", "Gezmek", "Bina"],
     category: "Tarih",
   ),
   WordCard(
-    word: "ESKİ ÇAĞ",
-    tabooWords: ["Tarih", "Antik", "İlk", "Uygarlık", "Dönem"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "ORTA ÇAĞ",
-    tabooWords: ["Tarih", "Şövalye", "Kale", "Karanlık", "Dönem"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "YENİ ÇAĞ",
-    tabooWords: ["Tarih", "Keşif", "Rönesans", "Dönem", "Başlangıç"],
-    category: "Tarih",
-  ),
-  WordCard(
     word: "RÖNESANS",
-    tabooWords: ["Avrupa", "Sanat", "Yeniden", "Tarih", "Dönem"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "REFORM",
-    tabooWords: ["Din", "Değişim", "Avrupa", "Kilise", "Tarih"],
+    tabooWords: ["Avrupa", "Sanat", "Reform", "Tarih", "Dönem"],
     category: "Tarih",
   ),
   WordCard(
@@ -1577,69 +1462,64 @@ final List<WordCard> initialDeckTr = [
     category: "Tarih",
   ),
   WordCard(
-    word: "MEDENİYET",
-    tabooWords: ["Uygarlık", "Toplum", "Kültür", "Tarih", "Gelişmiş"],
+    word: "KÜLTÜR",
+    tabooWords: ["Uygarlık", "Toplum", "Gelenek", "Tarih", "Gelişim"],
     category: "Tarih",
   ),
   WordCard(
-    word: "YAZI",
-    tabooWords: ["Harf", "Tarih", "İlk", "Tablet", "İletişim"],
+    word: "İPEK YOLU",
+    tabooWords: ["Ticaret", "Çin", "Kervan", "Yol", "Antik"],
     category: "Tarih",
   ),
   WordCard(
-    word: "TAKVİM",
-    tabooWords: ["Zaman", "Gün", "Ay", "Yıl", "Tarih"],
+    word: "ATOM BOMBASI",
+    tabooWords: ["Hiroşima", "Nükleer", "Japon", "Patlama", "Savaş"],
     category: "Tarih",
   ),
   WordCard(
-    word: "KRONOLOJİ",
-    tabooWords: ["Sıra", "Zaman", "Tarih", "Olay", "Dizmek"],
+    word: "SÖMÜRGE",
+    tabooWords: ["İşgal", "Kontrol", "Avrupa", "Afrika", "Bağımsızlık"],
     category: "Tarih",
   ),
   WordCard(
-    word: "DESTAN",
-    tabooWords: ["Hikâye", "Kahraman", "Eski", "Sözlü", "Tarih"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "KİTABE",
-    tabooWords: ["Yazı", "Taş", "Tarih", "Anıt", "Eski"],
+    word: "TRUVA ATI",
+    tabooWords: ["Yunan", "Efsane", "Savaş", "Hile", "Homeros"],
     category: "Tarih",
   ),
   // Futbol
   WordCard(
     word: "GOL",
-    tabooWords: ["Ağ", "File", "Skor", "Top", "Kaleci"],
+    tabooWords: ["Takım", "Maç", "Futbol", "Top", "Atmak"],
     category: "Futbol",
   ),
   WordCard(
     word: "PENALTI",
-    tabooWords: ["Ceza", "Nokta", "Hakem", "Atış", "Kaleci"],
+    tabooWords: ["Ceza Sahası", "Beyaz Nokta", "Hakem", "Atış", "El"],
     category: "Futbol",
   ),
   WordCard(
     word: "OFSAYT",
-    tabooWords: ["Çizgi", "Savunma", "Bayrak", "Yan Hakem", "Pozisyon"],
+    tabooWords: ["Çizgi", "Yakalanmak", "Bayrak", "Yan Hakem", "Pozisyon"],
     category: "Futbol",
   ),
   WordCard(
     word: "TAÇ",
-    tabooWords: ["Kenar", "Çizgi", "Atış", "Oyun", "Top"],
+    tabooWords: ["Kenar", "Çizgi", "Atış", "Yan Hakem", "Dışarı"],
     category: "Futbol",
   ),
   WordCard(
     word: "KORNER",
-    tabooWords: ["Köşe", "Bayrak", "Top", "Atış", "Ceza Sahası"],
+    tabooWords: ["Köşe", "Vuruş", "Top", "Atış", "Ceza Sahası"],
     category: "Futbol",
   ),
   WordCard(
     word: "FORVET",
-    tabooWords: ["Golcü", "Hücum", "Santrafor", "İleri", "Attırmak"],
+    tabooWords: ["Golcü", "Hücum", "Santrafor", "İleri", "Mevki"],
     category: "Futbol",
   ),
   WordCard(
     word: "DEFANS",
-    tabooWords: ["Savunma", "Stoper", "Geri", "Kale", "Koruma"],
+    tabooWords: ["Savunma", "Stoper", "Geri", "Kale", "Mevki"],
     category: "Futbol",
   ),
   WordCard(
@@ -1654,22 +1534,22 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "VAR",
-    tabooWords: ["Video", "İnceleme", "Hakem", "Teknoloji", "Pozisyon"],
+    tabooWords: ["Kontrol", "İnceleme", "Hakem", "Teknoloji", "Pozisyon"],
     category: "Futbol",
   ),
   WordCard(
     word: "TRİBÜN",
-    tabooWords: ["Taraftar", "Stat", "Bağırmak", "Koltuk", "Maç"],
+    tabooWords: ["Taraftar", "Stat", "Bağırmak", "Koltuk", "Eski Açık"],
     category: "Futbol",
   ),
   WordCard(
     word: "TARAFTAR",
-    tabooWords: ["Destek", "Takım", "Tribün", "Forma", "Coşku"],
+    tabooWords: ["Destek", "Takım", "Tribün", "Forma", "12. Adam"],
     category: "Futbol",
   ),
   WordCard(
     word: "DERBİ",
-    tabooWords: ["Rakip", "Şehir", "Büyük", "Maç", "Rekabet"],
+    tabooWords: ["Ezeli Rakip", "Şehir", "Büyük Maç", "Yaka", "Rekabet"],
     category: "Futbol",
   ),
   WordCard(
@@ -1678,43 +1558,38 @@ final List<WordCard> initialDeckTr = [
     category: "Futbol",
   ),
   WordCard(
-    word: "KAPTAN",
-    tabooWords: ["Kol Bandı", "Lider", "Takım", "Sahada", "Yönetmek"],
-    category: "Futbol",
-  ),
-  WordCard(
-    word: "RÖVANŞ",
-    tabooWords: ["İkinci", "Maç", "Tur", "Ev Sahibi", "Deplasman"],
+    word: "TAKIM KAPTANI",
+    tabooWords: ["Pazu Bandı", "Lider", "Maç", "Saha", "Yönetmek"],
     category: "Futbol",
   ),
   WordCard(
     word: "UZATMA",
-    tabooWords: ["Dakika", "Ek", "Hakem", "Süre", "Bitmemek"],
+    tabooWords: ["Dakika", "Ek", "4. Hakem", "Süre", "Maç"],
     category: "Futbol",
   ),
   WordCard(
-    word: "FUTBOL TOPU",
-    tabooWords: ["Yuvarlak", "Deri", "Şut", "Pas", "Top"],
+    word: "MEŞİN YUVARLAK",
+    tabooWords: ["Top Toplayıcı", "Orta", "Şut", "Pas", "Ayak"],
     category: "Futbol",
   ),
   WordCard(
     word: "FORMASYON",
-    tabooWords: ["Diziliş", "4-4-2", "Taktik", "Sistem", "Kadro"],
+    tabooWords: ["Diziliş", "Baklava", "Taktik", "Sistem", "Kadro"],
     category: "Futbol",
   ),
   WordCard(
     word: "DRİBLİNG",
-    tabooWords: ["Adam Geçmek", "Top Sürmek", "Çalım", "Hız", "Bilek"],
+    tabooWords: ["Adam Geçmek", "Top Sürmek", "Çalım", "Sürat", "Bilek"],
     category: "Futbol",
   ),
   WordCard(
     word: "PAS",
-    tabooWords: ["Atmak", "Top", "Kısa", "Uzun", "Takım"],
+    tabooWords: ["Atmak", "Top", "Kısa", "Uzun", "Futbolcu"],
     category: "Futbol",
   ),
   WordCard(
     word: "ŞUT",
-    tabooWords: ["Vurmak", "Kale", "Gol", "Sert", "Deneme"],
+    tabooWords: ["Vurmak", "Kale", "Top", "Sert", "Denemek"],
     category: "Futbol",
   ),
   WordCard(
@@ -1723,33 +1598,28 @@ final List<WordCard> initialDeckTr = [
     category: "Futbol",
   ),
   WordCard(
+    word: "RÖVEŞATA",
+    tabooWords: ["Ters", "Yüksek", "Arkası Dönük", "Zıplamak", "Şut"],
+    category: "Futbol",
+  ),
+  WordCard(
     word: "FAUL",
-    tabooWords: ["Müdahale", "Hakem", "Düdük", "Kural", "Ceza"],
+    tabooWords: ["Müdahale", "Hakem", "Düdük", "Sert", "Çalmak"],
     category: "Futbol",
   ),
   WordCard(
     word: "SARI KART",
-    tabooWords: ["Uyarı", "Hakem", "Ceza", "Kural", "Birinci"],
+    tabooWords: ["Uyarı", "Hakem", "Göstermek", "Kural", "Birinci"],
     category: "Futbol",
   ),
   WordCard(
     word: "KIRMIZI KART",
-    tabooWords: ["Atılmak", "Hakem", "Ceza", "Oyun Dışı", "Faul"],
+    tabooWords: ["Atılmak", "Hakem", "Göstermek", "Oyun Dışı", "Sert"],
     category: "Futbol",
   ),
   WordCard(
     word: "DÜDÜK",
     tabooWords: ["Hakem", "Ses", "Başlamak", "Bitirmek", "Çalmak"],
-    category: "Futbol",
-  ),
-  WordCard(
-    word: "CEZA SAHASI",
-    tabooWords: ["Kale", "18", "Penaltı", "Alan", "Kutu"],
-    category: "Futbol",
-  ),
-  WordCard(
-    word: "KALE SAHASI",
-    tabooWords: ["6", "Kaleci", "Alan", "Kale", "Kutu"],
     category: "Futbol",
   ),
   WordCard(
@@ -1760,11 +1630,6 @@ final List<WordCard> initialDeckTr = [
   WordCard(
     word: "DEPAR",
     tabooWords: ["Sprint", "Hız", "Koşu", "Açılmak", "Kanat"],
-    category: "Futbol",
-  ),
-  WordCard(
-    word: "STAT",
-    tabooWords: ["Stadyum", "Tribün", "Saha", "Maç", "Taraftar"],
     category: "Futbol",
   ),
   WordCard(
@@ -1804,7 +1669,7 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "GOL KRALI",
-    tabooWords: ["En Çok", "Golcü", "Sezon", "Forvet", "Ödül"],
+    tabooWords: ["En Çok", "Skorer", "Sezon", "Forvet", "Ödül"],
     category: "Futbol",
   ),
   WordCard(
@@ -1819,7 +1684,7 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "KALE DİREĞİ",
-    tabooWords: ["Direk", "Kale", "Top", "Vurmak", "Çerçeve"],
+    tabooWords: ["Hamit Altıntop", "Kale", "Dönmek", "Top", "Çerçeve"],
     category: "Futbol",
   ),
   WordCard(
@@ -1828,12 +1693,12 @@ final List<WordCard> initialDeckTr = [
     category: "Futbol",
   ),
   WordCard(
-    word: "FREKİK",
-    tabooWords: ["Serbest", "Faul", "Şut", "Baraj", "Kale"],
+    word: "FRİKİK",
+    tabooWords: ["Serbest Vuruş", "9-15", "Uzak Mesafe", "Baraj", "Kale"],
     category: "Futbol",
   ),
   WordCard(
-    word: "CAMIA",
+    word: "CAMİA",
     tabooWords: ["Kulüp", "Taraftar", "Topluluk", "Renkler", "Birlik"],
     category: "Futbol",
   ),
@@ -1853,16 +1718,32 @@ final List<WordCard> initialDeckTr = [
     category: "Futbol",
   ),
   WordCard(
+    word: "ŞAMPİYONLAR LİGİ",
+    tabooWords: ["UEFA", "Avrupa", "Final", "Büyük Kulüp", "Türk Takımları"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "SÜPER KUPA",
+    tabooWords: [
+      "Kazanan",
+      "Şampiyonlar Ligi",
+      "Avrupa Ligi",
+      "Tek Maç",
+      "Final",
+    ],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "ASİST",
+    tabooWords: ["Pas", "Gol", "Orta", "Katkı", "Şut"],
+    category: "Futbol",
+  ),
+  WordCard(
     word: "STOPER",
     tabooWords: ["Defans", "Merkez", "Savunma", "Kapanmak", "Kale"],
     category: "Futbol",
   ),
   // 90'lar Nostalji
-  WordCard(
-    word: "TAMAGOTCHI",
-    tabooWords: ["Sanal", "Evcil", "Bakmak", "Oyuncak", "Yumurta"],
-    category: "90'lar Nostalji",
-  ),
   WordCard(
     word: "WALKMAN",
     tabooWords: ["Müzik", "Kulaklık", "Kemer", "Kaset", "Taşınabilir"],
@@ -1874,18 +1755,8 @@ final List<WordCard> initialDeckTr = [
     category: "90'lar Nostalji",
   ),
   WordCard(
-    word: "VHS",
-    tabooWords: ["Video", "Kaset", "Film", "Oynatıcı", "Kutu"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "VCD",
-    tabooWords: ["Disk", "Film", "Oynatıcı", "CD", "Görüntü"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
     word: "DİSKET",
-    tabooWords: ["Bilgisayar", "Kaydetmek", "Dosya", "A: Sürücü", "Kare"],
+    tabooWords: ["Bilgisayar", "Küçük Boyut", "Dosya", "Sürücü", "Kare"],
     category: "90'lar Nostalji",
   ),
   WordCard(
@@ -1895,22 +1766,12 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "NOKIA 3310",
-    tabooWords: ["Telefon", "Snake", "Tuşlu", "Şarj", "Cep"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "GAME BOY",
-    tabooWords: ["Nintendo", "Oyun", "El", "Konsol", "Kartuş"],
+    tabooWords: ["Telefon", "Yılan Oyunu", "Tuşlu", "Uzun Şarj", "Kırılmaz"],
     category: "90'lar Nostalji",
   ),
   WordCard(
     word: "ATARİ",
     tabooWords: ["Oyun", "Konsol", "Joystick", "Kartuş", "8-bit"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "SEGA",
-    tabooWords: ["Oyun", "Konsol", "Sonic", "16-bit", "Joystick"],
     category: "90'lar Nostalji",
   ),
   WordCard(
@@ -1930,27 +1791,22 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "BEŞTAŞ",
-    tabooWords: ["Taş", "Oyun", "Atmak", "Çocuk", "Zemin"],
+    tabooWords: ["Avuç", "Yer", "Atmak", "Çocuk", "Zemin"],
     category: "90'lar Nostalji",
   ),
   WordCard(
     word: "SEKSEK",
-    tabooWords: ["Çocuk", "Oyun", "Kare", "Atlama", "Tebeşir"],
+    tabooWords: ["Çizmek", "Zemin", "Kare", "Atlama", "Tebeşir"],
     category: "90'lar Nostalji",
   ),
   WordCard(
     word: "İP ATLAMA",
-    tabooWords: ["Oyun", "Çocuk", "Zıplamak", "İp", "Spor"],
+    tabooWords: ["Çevirmek", "Çocuk", "Zıplamak", "Saymak", "Dairesel"],
     category: "90'lar Nostalji",
   ),
   WordCard(
-    word: "TAZO",
+    word: "TASO",
     tabooWords: ["Cips", "Karton", "Koleksiyon", "Oyun", "Çıkarmak"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "CİPS",
-    tabooWords: ["Patates", "Paket", "Tuz", "Atıştırmalık", "Gazlı"],
     category: "90'lar Nostalji",
   ),
   WordCard(
@@ -1969,32 +1825,12 @@ final List<WordCard> initialDeckTr = [
     category: "90'lar Nostalji",
   ),
   WordCard(
-    word: "POSTER",
-    tabooWords: ["Duvar", "Fotoğraf", "Asmak", "Oda", "Afiş"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "FOTOKOPİ",
-    tabooWords: ["Çoğaltmak", "Kağıt", "Makine", "Okul", "Kopya"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "DERSHANE",
-    tabooWords: ["Kurs", "Öğrenci", "Sınav", "Çalışmak", "Okul"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "ÇİZGİ FİLM",
-    tabooWords: ["Çocuk", "Televizyon", "Kanal", "Karakter", "İzlemek"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
     word: "POKEMON",
     tabooWords: ["Pikachu", "Anime", "Kart", "Toplamak", "Çizgi Film"],
     category: "90'lar Nostalji",
   ),
   WordCard(
-    word: "TETRIS",
+    word: "TETRİS",
     tabooWords: ["Blok", "Oyun", "Düşmek", "Puzzle", "Atari"],
     category: "90'lar Nostalji",
   ),
@@ -2014,28 +1850,8 @@ final List<WordCard> initialDeckTr = [
     category: "90'lar Nostalji",
   ),
   WordCard(
-    word: "MS-DOS",
-    tabooWords: ["Komut", "Siyah Ekran", "Bilgisayar", "Dizin", "Yazmak"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "KASETÇALAR",
-    tabooWords: ["Kaset", "Müzik", "Oynatıcı", "Walkman", "Bant"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "CD ÇALAR",
-    tabooWords: ["Disk", "Müzik", "Oynatıcı", "Şarkı", "Taşınabilir"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
     word: "VİDEO KASET",
     tabooWords: ["VHS", "Film", "Video", "Kutu", "Oynatıcı"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "VİDEO KULÜBÜ",
-    tabooWords: ["Kaset", "Kiralama", "Film", "Dükkan", "VHS"],
     category: "90'lar Nostalji",
   ),
   WordCard(
@@ -2044,27 +1860,7 @@ final List<WordCard> initialDeckTr = [
     category: "90'lar Nostalji",
   ),
   WordCard(
-    word: "KOLLUK",
-    tabooWords: ["Önlük", "Kol", "Lastik", "Okul", "Koruma"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "FALIM SAKIZ",
-    tabooWords: ["Sakız", "Nane", "Paket", "Çiğnemek", "Marka"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "TURBO SAKIZ",
-    tabooWords: ["Sakız", "Tatlı", "Balon", "Çiğnemek", "Marka"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "JELİBON",
-    tabooWords: ["Şeker", "Yumuşak", "Renkli", "Paket", "Atıştırmalık"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "ARCADE SALONU",
+    word: "OYUN SALONU",
     tabooWords: ["Oyun", "Jeton", "Makine", "Salon", "Atari"],
     category: "90'lar Nostalji",
   ),
@@ -2084,11 +1880,6 @@ final List<WordCard> initialDeckTr = [
     category: "90'lar Nostalji",
   ),
   WordCard(
-    word: "CRT MONİTÖR",
-    tabooWords: ["Tüplü", "Bilgisayar", "Ekran", "Ağır", "Kalın"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
     word: "İNTERNET KAFE",
     tabooWords: ["Bilgisayar", "Oyun", "Saat", "Mekan", "Bağlanmak"],
     category: "90'lar Nostalji",
@@ -2101,11 +1892,6 @@ final List<WordCard> initialDeckTr = [
   WordCard(
     word: "FOTOĞRAF FİLMİ",
     tabooWords: ["Makine", "Poz", "Banyo", "Negatif", "Rulo"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "SÜPRİZ YUMURTA",
-    tabooWords: ["Oyuncak", "Çikolata", "Kutu", "Açmak", "Koleksiyon"],
     category: "90'lar Nostalji",
   ),
   // Zor Seviye
@@ -2125,11 +1911,6 @@ final List<WordCard> initialDeckTr = [
     category: "Zor Seviye",
   ),
   WordCard(
-    word: "KONSENSÜS",
-    tabooWords: ["Uzlaşma", "Görüş", "Ortak", "Karar", "Topluluk"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
     word: "SİNERJİ",
     tabooWords: ["Birlik", "Etki", "Enerji", "Takım", "Toplam"],
     category: "Zor Seviye",
@@ -2142,16 +1923,6 @@ final List<WordCard> initialDeckTr = [
   WordCard(
     word: "PARADİGMA",
     tabooWords: ["Model", "Örnek", "Bakış Açısı", "Çerçeve", "Değişim"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
-    word: "EPİSTEMOLOJİ",
-    tabooWords: ["Bilgi", "Felsefe", "Teori", "İnanç", "Kaynak"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
-    word: "ONTOLOJİ",
-    tabooWords: ["Varlık", "Felsefe", "Metafizik", "Gerçeklik", "Oluş"],
     category: "Zor Seviye",
   ),
   WordCard(
@@ -2175,28 +1946,8 @@ final List<WordCard> initialDeckTr = [
     category: "Zor Seviye",
   ),
   WordCard(
-    word: "DİYALEKTİK",
-    tabooWords: ["Tartışma", "Çelişki", "Tez", "Antitez", "Sentez"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
     word: "SÜBLİMİNAL",
     tabooWords: ["Bilinçaltı", "Mesaj", "Gizli", "Fark Etmek", "Reklam"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
-    word: "DEKONSTRÜKSİYON",
-    tabooWords: ["Yapıbozum", "Metin", "Eleştiri", "Çözmek", "Anlam"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
-    word: "ANOMİ",
-    tabooWords: ["Toplum", "Kural", "Düzen", "Yabancılaşma", "Sosyoloji"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
-    word: "AKSİYOM",
-    tabooWords: ["Matematik", "Doğru", "Kabul", "İspat", "Temel"],
     category: "Zor Seviye",
   ),
   WordCard(
@@ -2210,11 +1961,6 @@ final List<WordCard> initialDeckTr = [
     category: "Zor Seviye",
   ),
   WordCard(
-    word: "SENTAKS",
-    tabooWords: ["Dil", "Cümle", "Kural", "Yapı", "Dizim"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
     word: "MORFOLOJİ",
     tabooWords: ["Biçim", "Dil", "Yapı", "Kelime", "İnceleme"],
     category: "Zor Seviye",
@@ -2225,23 +1971,13 @@ final List<WordCard> initialDeckTr = [
     category: "Zor Seviye",
   ),
   WordCard(
-    word: "IZOMER",
+    word: "İZOMER",
     tabooWords: ["Kimya", "Aynı", "Formül", "Farklı", "Molekül"],
     category: "Zor Seviye",
   ),
   WordCard(
     word: "PALİNDROM",
     tabooWords: ["Ters", "Kelime", "Aynı", "Okumak", "Harf"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
-    word: "ANTAGONİST",
-    tabooWords: ["Karakter", "Kötü", "Karşıt", "Hikaye", "Düşman"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
-    word: "PROTAGONİST",
-    tabooWords: ["Kahraman", "Ana", "Karakter", "Hikaye", "Başrol"],
     category: "Zor Seviye",
   ),
   WordCard(
@@ -2285,18 +2021,8 @@ final List<WordCard> initialDeckTr = [
     category: "Zor Seviye",
   ),
   WordCard(
-    word: "KÜBİZM",
-    tabooWords: ["Sanat", "Picasso", "Geometri", "Resim", "Akım"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
     word: "EMPİRİK",
     tabooWords: ["Deney", "Gözlem", "Veri", "Bilim", "Kanıt"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
-    word: "AMBİGÜİTE",
-    tabooWords: ["Belirsizlik", "Çift", "Anlam", "Muğlak", "Kararsız"],
     category: "Zor Seviye",
   ),
   WordCard(
@@ -2340,23 +2066,8 @@ final List<WordCard> initialDeckTr = [
     category: "Zor Seviye",
   ),
   WordCard(
-    word: "FRAGMAN",
-    tabooWords: ["Parça", "Film", "Tanıtım", "Kısa", "Kesit"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
     word: "REDÜKSİYON",
     tabooWords: ["Azaltma", "Kimya", "Elektron", "İndirgeme", "Reaksiyon"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
-    word: "PROJEKSİYON",
-    tabooWords: ["Yansıtma", "Harita", "Cihaz", "Görüntü", "Duvar"],
-    category: "Zor Seviye",
-  ),
-  WordCard(
-    word: "SİMÜLASYON",
-    tabooWords: ["Taklit", "Model", "Sanal", "Deney", "Senaryo"],
     category: "Zor Seviye",
   ),
   // Gece Yarısı
@@ -2365,16 +2076,9 @@ final List<WordCard> initialDeckTr = [
     tabooWords: ["Dokunmak", "Öpüşmek", "Isınmak", "Başlangıç", "Islanmak"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "FANTEZİ",
     tabooWords: ["Hayal", "Rol", "İstek", "Düş", "Senaryo"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "ALT DUDAK",
-    tabooWords: ["Öpmek", "Ağız", "Isırmak", "Yaklaşmak", "Yalamak"],
     category: "Gece Yarısı",
   ),
   WordCard(
@@ -2388,109 +2092,66 @@ final List<WordCard> initialDeckTr = [
     ],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "SEVİŞMEK",
     tabooWords: ["Cinsel", "Birlikte", "Yakınlık", "Ten", "Seks"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "FRANSIZ ÖPÜCÜĞÜ",
     tabooWords: ["Dil", "Ağız", "Derin", "Öpüşmek", "Tutkulu"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "TAHRİK",
     tabooWords: ["Azmak", "Uyandırmak", "Kışkırtmak", "İstek", "Etkilemek"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "CİNSEL GERİLİM",
     tabooWords: ["Bekleyiş", "Dokunmamak", "Bakış", "Sessizlik", "Elektrik"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "SERTLEŞMEK",
     tabooWords: ["Uyarılmak", "Erkek", "Penis", "Kalkmak", "İnmemek"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "ISLANMAK",
     tabooWords: ["Kadın", "Uyarılmak", "Haz", "Azgınlık", "Sırılsıklam"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "BOŞALMAK",
     tabooWords: ["Zirve", "Rahatlamak", "Mutlu Son", "Titremek", "İnlemek"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
-    word: "ORGASM",
+    word: "ORGAZM",
     tabooWords: ["Zirve", "Boşalmak", "Kasılmak", "Titremek", "Haz"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "İHTİRAS",
     tabooWords: ["Tutku", "Doyumsuzluk", "Arzu", "Şehvet", "Aşırı"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
-    word: "ROL YAPMA",
+    word: "ROL YAPMAK",
     tabooWords: ["Karakter", "Fantezi", "Oyun", "Senaryo", "Canlandırma"],
     category: "Gece Yarısı",
   ),
-
-  WordCard(
-    word: "YASAK İLİŞKİ",
-    tabooWords: ["Gizli", "Olmaması Gereken", "Risk", "Heyecan", "Saklı"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "AZDIRMAK",
-    tabooWords: ["Tahrik", "Kışkırtmak", "İstek", "Uyandırmak", "Oynamak"],
-    category: "Gece Yarısı",
-  ),
-
   WordCard(
     word: "CİNSEL ÇEKİM",
     tabooWords: ["Kimya", "Elektrik", "Arzu", "İstek", "Mıknatıs"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
-    word: "HIZLI SEKS",
-    tabooWords: ["Acele", "Tutamamak", "Ani", "Heyecanlı", "Kontrolsüz"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "YAVAŞ SEKS",
-    tabooWords: ["Ağır", "Hissetmek", "Uzun", "Dokunuş", "Sabırlı"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "TEK GECELİK SEKS",
+    word: "TEK GECELİK İLİŞKİ",
     tabooWords: ["Gece", "Yatak", "Gizli", "Ani", "Tutkulu"],
     category: "Gece Yarısı",
   ),
-
-  WordCard(
-    word: "SABAH SEKSİ",
-    tabooWords: ["Uyanmak", "Güne Başlamak", "Yatak", "Ten", "Ani"],
-    category: "Gece Yarısı",
-  ),
-
   WordCard(
     word: "PERFORMANS KAYGISI",
     tabooWords: ["Heyecan", "İlk Kez", "Stres", "Düşünmek", "Baskı"],
@@ -2501,104 +2162,44 @@ final List<WordCard> initialDeckTr = [
     tabooWords: ["Üstte", "Yüz Yüze", "Yatak", "Klasik", "Pozisyon"],
     category: "Gece Yarısı",
   ),
-
-  WordCard(
-    word: "DOGGY STYLE",
-    tabooWords: ["Arkadan", "Eğilmek", "Pozisyon", "Kalça", "Derin"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "ÜSTTE OLMAK",
-    tabooWords: ["Kontrol", "Ritim", "Hareket", "Pozisyon", "Yönlendirmek"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "ARKADAN",
-    tabooWords: ["Ön", "Popo", "Kalça", "Bel", "Kavramak"],
-    category: "Gece Yarısı",
-  ),
   WordCard(
     word: "İNLEMEK",
     tabooWords: ["İnim inim", "Ses", "Bağırmak", "Dayanamamak", "Zevk"],
     category: "Gece Yarısı",
   ),
   WordCard(
-    word: "ATEŞLİ SEKS",
-    tabooWords: ["Tutkulu", "Hızlı", "Azgın", "Kontrolsüz", "Yoğun"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "DUŞTA SEKS",
+    word: "DUŞTA SEVİŞMEK",
     tabooWords: ["Banyo", "Islak", "Kaygan", "Ayakta", "Yakın"],
     category: "Gece Yarısı",
   ),
-
-  WordCard(
-    word: "KAŞIK",
-    tabooWords: ["Yan Yatmak", "Sarılmak", "Yakın", "Rahat", "Pozisyon"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "DUVARA DAYAMAK",
-    tabooWords: ["Ayakta", "Destek", "Yakın", "Ani", "Pozisyon"],
-    category: "Gece Yarısı",
-  ),
-
   WordCard(
     word: "ORAL",
     tabooWords: ["Ağız", "Dil", "Aşağı", "Haz", "Yalamak"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "ANAL",
     tabooWords: ["Arkadan", "Farklı", "Dar", "Risk", "Haz"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "SEXTING",
     tabooWords: ["Mesaj", "Yazışmak", "Telefon", "İma", "Azdırmak"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "NUDE",
     tabooWords: ["Çıplak", "Fotoğraf", "Telefon", "Kadın", "Gizli"],
     category: "Gece Yarısı",
   ),
-
   WordCard(
     word: "DICK PIC",
     tabooWords: ["Fotoğraf", "Telefon", "Erkek", "Göndermek", "Penis"],
     category: "Gece Yarısı",
   ),
-
-  WordCard(
-    word: "DOMALMAK",
-    tabooWords: ["Eğilmek", "Arkadan", "Pozisyon", "Kalça", "Haz"],
-    category: "Gece Yarısı",
-  ),
-
   WordCard(
     word: "ŞAPLAK",
     tabooWords: ["El", "Kalça", "Ses", "Hafif", "Oyun"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "ISIRMAK",
-    tabooWords: ["Diş", "Ten", "Hafif", "İz", "Tahrik"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "EMMEK",
-    tabooWords: ["Ağız", "Dudak", "Yavaş", "Haz", "Oral"],
     category: "Gece Yarısı",
   ),
 ];
@@ -2638,16 +2239,6 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "STAIRS",
     tabooWords: ["Step", "Up", "Down", "Floor", "Building"],
-    category: "Genel",
-  ),
-  WordCard(
-    word: "LID",
-    tabooWords: ["Close", "Bottle", "Tight", "Open", "Top"],
-    category: "Genel",
-  ),
-  WordCard(
-    word: "DUVET",
-    tabooWords: ["Sleep", "Bed", "Warm", "Night", "Cover"],
     category: "Genel",
   ),
   WordCard(
@@ -2786,11 +2377,6 @@ final List<WordCard> initialDeckEn = [
     category: "Genel",
   ),
   WordCard(
-    word: "TRASH CAN",
-    tabooWords: ["Throw", "Street", "Cleaning", "Home", "Bag"],
-    category: "Genel",
-  ),
-  WordCard(
     word: "NOTEPAD",
     tabooWords: ["Write", "Small", "Carry", "Page", "Pen"],
     category: "Genel",
@@ -2873,11 +2459,6 @@ final List<WordCard> initialDeckEn = [
     category: "Sanat",
   ),
   WordCard(
-    word: "ABSTRACT",
-    tabooWords: ["Shape", "Modern", "Art", "Concrete", "Nonfigurative"],
-    category: "Sanat",
-  ),
-  WordCard(
     word: "CARTOON",
     tabooWords: ["Drawing", "Humor", "Exaggeration", "Magazine", "Funny"],
     category: "Sanat",
@@ -2918,16 +2499,6 @@ final List<WordCard> initialDeckEn = [
     category: "Sanat",
   ),
   WordCard(
-    word: "POEM",
-    tabooWords: ["Verse", "Poet", "Short", "Emotion", "Writing"],
-    category: "Sanat",
-  ),
-  WordCard(
-    word: "POET",
-    tabooWords: ["Poem", "Write", "Verse", "Literature", "Pen"],
-    category: "Sanat",
-  ),
-  WordCard(
     word: "COMPOSER",
     tabooWords: ["Music", "Note", "Write", "Mix", "Piece"],
     category: "Sanat",
@@ -2960,11 +2531,6 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "PIANO",
     tabooWords: ["Key", "Music", "Play", "Note", "Grand"],
-    category: "Sanat",
-  ),
-  WordCard(
-    word: "NOTE",
-    tabooWords: ["Music", "Key", "Sound", "Paper", "Play"],
     category: "Sanat",
   ),
   WordCard(
@@ -3075,16 +2641,6 @@ final List<WordCard> initialDeckEn = [
     category: "Bilim",
   ),
   WordCard(
-    word: "LIGHT",
-    tabooWords: ["See", "Speed", "Light", "Dark", "Sun"],
-    category: "Bilim",
-  ),
-  WordCard(
-    word: "SOUND",
-    tabooWords: ["Wave", "Vibration", "Ear", "Hear", "Noise"],
-    category: "Bilim",
-  ),
-  WordCard(
     word: "WAVE",
     tabooWords: ["Water", "Sound", "Light", "Vibration", "Spread"],
     category: "Bilim",
@@ -3137,11 +2693,6 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "IMMUNITY",
     tabooWords: ["Body", "Disease", "Defense", "Vaccine", "Protection"],
-    category: "Bilim",
-  ),
-  WordCard(
-    word: "HUMAN BODY",
-    tabooWords: ["Organ", "Muscle", "Bone", "System", "Living"],
     category: "Bilim",
   ),
   WordCard(
@@ -3272,11 +2823,6 @@ final List<WordCard> initialDeckEn = [
     category: "Yemek",
   ),
   WordCard(
-    word: "CHOCOLATE",
-    tabooWords: ["Sweet", "Cocoa", "Brown", "Candy", "Dessert"],
-    category: "Yemek",
-  ),
-  WordCard(
     word: "COFFEE",
     tabooWords: ["Caffeine", "Bean", "Cup", "Morning", "Turkish"],
     category: "Yemek",
@@ -3357,11 +2903,6 @@ final List<WordCard> initialDeckEn = [
     category: "Yemek",
   ),
   WordCard(
-    word: "BREAD",
-    tabooWords: ["Slice", "Loaf", "Wheat", "Bakery", "Toast"],
-    category: "Yemek",
-  ),
-  WordCard(
     word: "BUTTER",
     tabooWords: ["Spread", "Dairy", "Yellow", "Knife", "Cream"],
     category: "Yemek",
@@ -3384,11 +2925,6 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "CAKE",
     tabooWords: ["Birthday", "Sweet", "Slice", "Dessert", "Frosting"],
-    category: "Yemek",
-  ),
-  WordCard(
-    word: "COOKIE",
-    tabooWords: ["Sweet", "Bake", "Chocolate Chip", "Crunchy", "Dessert"],
     category: "Yemek",
   ),
   WordCard(
@@ -3419,11 +2955,6 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "NOODLES",
     tabooWords: ["Asian", "Soup", "Long", "Ramen", "Slurp"],
-    category: "Yemek",
-  ),
-  WordCard(
-    word: "DUMPLING",
-    tabooWords: ["Wrap", "Steam", "Filling", "Asian", "Dough"],
     category: "Yemek",
   ),
   WordCard(
@@ -3519,11 +3050,6 @@ final List<WordCard> initialDeckEn = [
     category: "Spor",
   ),
   WordCard(
-    word: "ATHLETICS",
-    tabooWords: ["Running", "Jumping", "Field", "Olympics", "Athlete"],
-    category: "Spor",
-  ),
-  WordCard(
     word: "BOXING",
     tabooWords: ["Ring", "Gloves", "Punch", "Mouthpiece", "Fighter"],
     category: "Spor",
@@ -3544,11 +3070,6 @@ final List<WordCard> initialDeckEn = [
     category: "Spor",
   ),
   WordCard(
-    word: "BODYBUILDING",
-    tabooWords: ["Muscle", "Weights", "Fitness", "Protein", "Gym"],
-    category: "Spor",
-  ),
-  WordCard(
     word: "SKIING",
     tabooWords: ["Snow", "Mountain", "Slope", "Winter", "Slide"],
     category: "Spor",
@@ -3556,11 +3077,6 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "ICE SKATING",
     tabooWords: ["Sled", "Glide", "Rink", "Foot", "Cold"],
-    category: "Spor",
-  ),
-  WordCard(
-    word: "ROLLER SKATING",
-    tabooWords: ["Wheel", "Glide", "Foot", "Helmet", "Balance"],
     category: "Spor",
   ),
   WordCard(
@@ -3626,11 +3142,6 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "CANOEING",
     tabooWords: ["Paddle", "Water", "Boat", "River", "Sport"],
-    category: "Spor",
-  ),
-  WordCard(
-    word: "RACKET",
-    tabooWords: ["Tennis", "Hit", "Ball", "Handle", "Net"],
     category: "Spor",
   ),
   WordCard(
@@ -3708,16 +3219,6 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "WATERFALL",
     tabooWords: ["Stream", "High", "Cascade", "Flow", "Noise"],
-    category: "Doğa",
-  ),
-  WordCard(
-    word: "VALLEY",
-    tabooWords: ["Mountain", "Between", "Deep", "River", "Nature"],
-    category: "Doğa",
-  ),
-  WordCard(
-    word: "PLAIN",
-    tabooWords: ["Flat", "Field", "Wide", "Soil", "Farming"],
     category: "Doğa",
   ),
   WordCard(
@@ -3831,28 +3332,8 @@ final List<WordCard> initialDeckEn = [
     category: "Doğa",
   ),
   WordCard(
-    word: "ROCK",
-    tabooWords: ["Stone", "Hard", "Mountain", "Big", "Heavy"],
-    category: "Doğa",
-  ),
-  WordCard(
-    word: "STONE",
-    tabooWords: ["Hard", "Small", "Throw", "Ground", "Nature"],
-    category: "Doğa",
-  ),
-  WordCard(
     word: "VOLCANO",
     tabooWords: ["Lava", "Eruption", "Explode", "Fire", "Mountain"],
-    category: "Doğa",
-  ),
-  WordCard(
-    word: "LAVA",
-    tabooWords: ["Volcano", "Hot", "Flow", "Fire", "Red"],
-    category: "Doğa",
-  ),
-  WordCard(
-    word: "WILDFIRE",
-    tabooWords: ["Fire", "Smoke", "Tree", "Burn", "Disaster"],
     category: "Doğa",
   ),
   WordCard(
@@ -3863,21 +3344,6 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "ECOSYSTEM",
     tabooWords: ["Living", "Balance", "Nature", "Environment", "System"],
-    category: "Doğa",
-  ),
-  WordCard(
-    word: "SEASON",
-    tabooWords: ["Summer", "Winter", "Autumn", "Spring", "Time"],
-    category: "Doğa",
-  ),
-  WordCard(
-    word: "SUMMER",
-    tabooWords: ["Hot", "Sea", "Vacation", "Sun", "Season"],
-    category: "Doğa",
-  ),
-  WordCard(
-    word: "WINTER",
-    tabooWords: ["Cold", "Snow", "Coat", "Season", "Ice"],
     category: "Doğa",
   ),
   WordCard(
@@ -3940,11 +3406,6 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "CONSOLE",
     tabooWords: ["Game", "PlayStation", "Xbox", "Controller", "TV"],
-    category: "Teknoloji",
-  ),
-  WordCard(
-    word: "CLOUD",
-    tabooWords: ["Storage", "Online", "Data", "Server", "Internet"],
     category: "Teknoloji",
   ),
   WordCard(
@@ -4021,6 +3482,11 @@ final List<WordCard> initialDeckEn = [
     category: "Tarih",
   ),
   WordCard(
+    word: "REVOLUTION",
+    tabooWords: ["Change", "People", "Power", "Government", "War"],
+    category: "Tarih",
+  ),
+  WordCard(
     word: "REPUBLIC",
     tabooWords: ["Ataturk", "State", "Government", "Turkey", "1923"],
     category: "Tarih",
@@ -4031,58 +3497,23 @@ final List<WordCard> initialDeckEn = [
     category: "Tarih",
   ),
   WordCard(
-    word: "CONQUEST OF ISTANBUL",
-    tabooWords: ["1453", "Mehmed", "War", "Byzantium", "Istanbul"],
+    word: "CIVIL WAR",
+    tabooWords: ["Country", "People", "Army", "Fight", "History"],
     category: "Tarih",
   ),
   WordCard(
-    word: "MEHMED THE CONQUEROR",
-    tabooWords: ["Istanbul", "Conquest", "Ottoman", "Sultan", "1453"],
+    word: "BERLIN WALL",
+    tabooWords: ["Germany", "Cold War", "East", "West", "High"],
     category: "Tarih",
   ),
   WordCard(
-    word: "OTTOMAN SULTAN",
-    tabooWords: ["Ottoman", "Throne", "Palace", "Ruler", "State"],
+    word: "HOLOCAUST",
+    tabooWords: ["Nazi", "Jews", "Germany", "War", "Genocide"],
     category: "Tarih",
   ),
   WordCard(
-    word: "SULTAN",
-    tabooWords: ["Padishah", "Ottoman", "Ruler", "Throne", "State"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "PALACE",
-    tabooWords: ["Sultan", "Ottoman", "Life", "Building", "Throne"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "TOPKAPI PALACE",
-    tabooWords: ["Istanbul", "Ottoman", "Sultan", "Palace", "Museum"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "WAR OF INDEPENDENCE",
-    tabooWords: ["Ataturk", "War", "Turkey", "Independence", "Greece"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "CONSTITUTION",
-    tabooWords: ["Law", "State", "Rights", "Legal", "Article"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "PARLIAMENT",
-    tabooWords: ["TBMM", "Deputy", "Law", "Meeting", "State"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "TBMM",
-    tabooWords: ["Parliament", "Ankara", "Law", "People", "State"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "ANKARA",
-    tabooWords: ["Capital", "Turkey", "Parliament", "Ataturk", "City"],
+    word: "DISCOVERY OF AMERICA",
+    tabooWords: ["1492", "Columbus", "New World", "Spain", "Journey"],
     category: "Tarih",
   ),
   WordCard(
@@ -4101,41 +3532,6 @@ final List<WordCard> initialDeckEn = [
     category: "Tarih",
   ),
   WordCard(
-    word: "WAR",
-    tabooWords: ["Army", "Weapon", "Conflict", "Front", "History"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "ARMY",
-    tabooWords: ["Soldier", "War", "Weapon", "Front", "Unit"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "SOLDIER",
-    tabooWords: ["Army", "Weapon", "War", "Uniform", "Duty"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "FRONTLINE",
-    tabooWords: ["War", "Soldier", "Line", "Battle", "Field"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "TREATY",
-    tabooWords: ["Signature", "Peace", "State", "War", "Agreement"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "LAUSANNE",
-    tabooWords: ["Treaty", "Turkey", "1923", "Peace", "Border"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "SEVRES",
-    tabooWords: ["Treaty", "Ottoman", "Partition", "War", "Rejected"],
-    category: "Tarih",
-  ),
-  WordCard(
     word: "CONQUEST",
     tabooWords: ["Take", "War", "Land", "Victory", "Army"],
     category: "Tarih",
@@ -4143,6 +3539,11 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "VICTORY",
     tabooWords: ["Win", "War", "Success", "Army", "Celebration"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "BORDER",
+    tabooWords: ["Country", "Line", "Map", "Land", "Edge"],
     category: "Tarih",
   ),
   WordCard(
@@ -4156,13 +3557,28 @@ final List<WordCard> initialDeckEn = [
     category: "Tarih",
   ),
   WordCard(
-    word: "INSCRIPTION",
-    tabooWords: ["Stone", "History", "Ancient", "Writing", "Monument"],
+    word: "MONUMENT",
+    tabooWords: ["Statue", "History", "Structure", "Memory", "Stone"],
     category: "Tarih",
   ),
   WordCard(
-    word: "MONUMENT",
-    tabooWords: ["Statue", "History", "Structure", "Memory", "Stone"],
+    word: "MAGNA CARTA",
+    tabooWords: ["1215", "England", "King", "Rights", "Document"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "BLACK DEATH",
+    tabooWords: ["Plague", "Europe", "Medieval", "Disease", "Virus"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "INDUSTRIAL REVOLUTION",
+    tabooWords: ["Factory", "Machine", "England", "Production", "Steam"],
+    category: "Tarih",
+  ),
+  WordCard(
+    word: "FALL OF CONSTANTINOPLE",
+    tabooWords: ["1453", "Ottoman", "Byzantine", "Istanbul", "Conquest"],
     category: "Tarih",
   ),
   WordCard(
@@ -4201,6 +3617,16 @@ final List<WordCard> initialDeckEn = [
     category: "Tarih",
   ),
   WordCard(
+    word: "MEDIEVAL",
+    tabooWords: ["Castle", "King", "Old", "Europe", "History"],
+    category: "History",
+  ),
+  WordCard(
+    word: "COLD WAR",
+    tabooWords: ["USA", "USSR", "Nuclear", "Tension", "1947"],
+    category: "Tarih",
+  ),
+  WordCard(
     word: "CULTURE",
     tabooWords: [
       "Civilization",
@@ -4211,310 +3637,7 @@ final List<WordCard> initialDeckEn = [
     ],
     category: "Tarih",
   ),
-  WordCard(
-    word: "WRITING",
-    tabooWords: ["Letters", "History", "First", "Tablet", "Communication"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "CALENDAR",
-    tabooWords: ["Time", "Day", "Month", "Year", "Date"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "CHRONOLOGY",
-    tabooWords: ["Order", "Time", "History", "Event", "Arrange"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "EPIC",
-    tabooWords: ["Story", "Hero", "Ancient", "Oral", "History"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "EPITAPH",
-    tabooWords: ["Writing", "Stone", "History", "Monument", "Old"],
-    category: "Tarih",
-  ),
-
-  // Midnight Category
-  WordCard(
-    word: "FOREPLAY",
-    tabooWords: [
-      "Touching",
-      "Kissing",
-      "Warming Up",
-      "Beginning",
-      "Getting Wet",
-    ],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "FANTASY",
-    tabooWords: ["Imagination", "Role", "Desire", "Dream", "Scenario"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "LOWER LIP",
-    tabooWords: ["Kissing", "Mouth", "Biting", "Getting Close", "Licking"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "HORNY",
-    tabooWords: ["Wanting", "Desiring", "Arousal", "Burning", "Losing Control"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "MAKING LOVE",
-    tabooWords: ["Sexual", "Together", "Intimacy", "Skin", "Sex"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "FRENCH KISS",
-    tabooWords: ["Tongue", "Mouth", "Deep", "Kissing", "Passionate"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "AROUSAL",
-    tabooWords: [
-      "Getting Horny",
-      "Awakening",
-      "Provoking",
-      "Desire",
-      "Affecting",
-    ],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "SEXUAL TENSION",
-    tabooWords: [
-      "Anticipation",
-      "Not Touching",
-      "Eye Contact",
-      "Silence",
-      "Chemistry",
-    ],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "GETTING HARD",
-    tabooWords: ["Aroused", "Male", "Penis", "Erection", "Not Going Down"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "GETTING WET",
-    tabooWords: ["Female", "Aroused", "Pleasure", "Horny", "Soaked"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "CUMMING",
-    tabooWords: ["Climax", "Relaxing", "Happy Ending", "Trembling", "Moaning"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "ORGASM",
-    tabooWords: ["Climax", "Cumming", "Contracting", "Trembling", "Pleasure"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "LUST",
-    tabooWords: [
-      "Passion",
-      "Insatiability",
-      "Desire",
-      "Carnal Desire",
-      "Excess",
-    ],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "ROLE PLAY",
-    tabooWords: ["Character", "Fantasy", "Game", "Scenario", "Acting"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "FORBIDDEN RELATIONSHIP",
-    tabooWords: ["Secret", "Not Supposed To", "Risk", "Thrill", "Hidden"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "TEASE",
-    tabooWords: ["Arouse", "Provoke", "Desire", "Awaken", "Play"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "SEXUAL ATTRACTION",
-    tabooWords: ["Chemistry", "Electricity", "Desire", "Want", "Magnet"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "QUICK SEX",
-    tabooWords: [
-      "Rush",
-      "Not Holding Back",
-      "Sudden",
-      "Excited",
-      "Uncontrolled",
-    ],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "SLOW SEX",
-    tabooWords: ["Heavy", "Feeling", "Long", "Touch", "Patient"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "ONE NIGHT STAND",
-    tabooWords: ["Night", "Bed", "Secret", "Sudden", "Passionate"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "MORNING SEX",
-    tabooWords: ["Waking Up", "Starting The Day", "Bed", "Skin", "Sudden"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "PERFORMANCE ANXIETY",
-    tabooWords: ["Nerves", "First Time", "Stress", "Overthinking", "Pressure"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "MISSIONARY",
-    tabooWords: ["On Top", "Face To Face", "Bed", "Classic", "Position"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "DOGGY STYLE",
-    tabooWords: ["From Behind", "Bending", "Position", "Hips", "Deep"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "ON TOP",
-    tabooWords: ["Control", "Rhythm", "Movement", "Position", "Leading"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "FROM BEHIND",
-    tabooWords: ["Front", "Butt", "Hips", "Waist", "Grabbing"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "MOANING",
-    tabooWords: [
-      "Moaning Sounds",
-      "Voice",
-      "Shouting",
-      "Can’t Hold Back",
-      "Pleasure",
-    ],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "PASSIONATE SEX",
-    tabooWords: ["Passionate", "Fast", "Horny", "Uncontrolled", "Intense"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "SHOWER SEX",
-    tabooWords: ["Bathroom", "Wet", "Slippery", "Standing", "Close"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "SPOONING",
-    tabooWords: ["Side Lying", "Cuddling", "Close", "Comfortable", "Position"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "PINNING TO THE WALL",
-    tabooWords: ["Standing", "Support", "Close", "Sudden", "Position"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "ORAL",
-    tabooWords: ["Mouth", "Tongue", "Down There", "Pleasure", "Licking"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "ANAL",
-    tabooWords: ["From Behind", "Different", "Tight", "Risk", "Pleasure"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "SEXTING",
-    tabooWords: ["Messaging", "Texting", "Phone", "Implying", "Teasing"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "NUDE",
-    tabooWords: ["Naked", "Photo", "Phone", "Woman", "Secret"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "DICK PIC",
-    tabooWords: ["Photo", "Phone", "Male", "Sending", "Penis"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "BENDING OVER",
-    tabooWords: ["Bending", "From Behind", "Position", "Hips", "Pleasure"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "SPANKING",
-    tabooWords: ["Hand", "Butt", "Sound", "Light", "Play"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "BITING",
-    tabooWords: ["Teeth", "Skin", "Light", "Mark", "Arousal"],
-    category: "Gece Yarısı",
-  ),
-
-  WordCard(
-    word: "SUCKING",
-    tabooWords: ["Mouth", "Lips", "Slow", "Pleasure", "Oral"],
-    category: "Gece Yarısı",
-  ),
-
-  // Football (EN)
+  // Football
   WordCard(
     word: "GOAL",
     tabooWords: ["Net", "Score", "Ball", "Keeper", "Celebrate"],
@@ -4522,12 +3645,12 @@ final List<WordCard> initialDeckEn = [
   ),
   WordCard(
     word: "PENALTY",
-    tabooWords: ["Spot", "Referee", "Foul", "Kick", "Keeper"],
+    tabooWords: ["Spot", "Referee", "Hand", "Kick", "Keeper"],
     category: "Futbol",
   ),
   WordCard(
     word: "OFFSIDE",
-    tabooWords: ["Line", "Flag", "Assistant", "Defense", "Position"],
+    tabooWords: ["Line", "Flag", "Assistant", "Defense", "Catch"],
     category: "Futbol",
   ),
   WordCard(
@@ -4542,12 +3665,12 @@ final List<WordCard> initialDeckEn = [
   ),
   WordCard(
     word: "STRIKER",
-    tabooWords: ["Forward", "Goal", "Number 9", "Score", "Attack"],
+    tabooWords: ["Forward", "Goal", "Number 9", "Scorer", "Attacker"],
     category: "Futbol",
   ),
   WordCard(
     word: "DEFENDER",
-    tabooWords: ["Back", "Stop", "Tackle", "Block", "Backline"],
+    tabooWords: ["Goal", "Stop", "Tackle", "Block", "Backline"],
     category: "Futbol",
   ),
   WordCard(
@@ -4562,12 +3685,12 @@ final List<WordCard> initialDeckEn = [
   ),
   WordCard(
     word: "VAR",
-    tabooWords: ["Video", "Review", "Referee", "Offside", "Replay"],
+    tabooWords: ["Control", "Review", "Referee", "Technology", "Replay"],
     category: "Futbol",
   ),
   WordCard(
     word: "STANDS",
-    tabooWords: ["Fans", "Seats", "Stadium", "Chant", "Crowd"],
+    tabooWords: ["Fans", "Seats", "Yelling", "Chant", "Crowd"],
     category: "Futbol",
   ),
   WordCard(
@@ -4586,13 +3709,8 @@ final List<WordCard> initialDeckEn = [
     category: "Futbol",
   ),
   WordCard(
-    word: "CAPTAIN",
-    tabooWords: ["Armband", "Leader", "Team", "Toss", "Voice"],
-    category: "Futbol",
-  ),
-  WordCard(
-    word: "REMATCH",
-    tabooWords: ["Second Leg", "Revenge", "Aggregate", "Home", "Away"],
+    word: "TEAM CAPTAIN",
+    tabooWords: ["Armband", "Leader", "Pitch", "Toss", "Voice"],
     category: "Futbol",
   ),
   WordCard(
@@ -4602,7 +3720,7 @@ final List<WordCard> initialDeckEn = [
   ),
   WordCard(
     word: "FORMATION",
-    tabooWords: ["4-4-2", "Tactics", "Shape", "Lineup", "System"],
+    tabooWords: ["Park The Bus", "Tactics", "Shape", "Lineup", "System"],
     category: "Futbol",
   ),
   WordCard(
@@ -4612,7 +3730,7 @@ final List<WordCard> initialDeckEn = [
   ),
   WordCard(
     word: "PASS",
-    tabooWords: ["Assist", "Ball", "Short", "Long", "Teammate"],
+    tabooWords: ["Match", "Ball", "Short", "Long", "Teammate"],
     category: "Futbol",
   ),
   WordCard(
@@ -4633,6 +3751,11 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "YELLOW CARD",
     tabooWords: ["Warning", "Referee", "Foul", "First", "Caution"],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "HAT-TRICK",
+    tabooWords: ["Three", "Goal", "Scorer", "One Match", "Perfect"],
     category: "Futbol",
   ),
   WordCard(
@@ -4736,6 +3859,11 @@ final List<WordCard> initialDeckEn = [
     category: "Futbol",
   ),
   WordCard(
+    word: "CLUB CHAIRMAN",
+    tabooWords: ["Executive", "In Charge", "Transfer", "Resign", "Supporter"],
+    category: "Futbol",
+  ),
+  WordCard(
     word: "GOAL KICK",
     tabooWords: ["Keeper", "Six-yard", "Restart", "Out", "Kick"],
     category: "Futbol",
@@ -4745,13 +3873,28 @@ final List<WordCard> initialDeckEn = [
     tabooWords: ["Defender", "Middle", "Back Line", "Stopper", "Tackle"],
     category: "Futbol",
   ),
-
-  // 90s Nostalgia (EN)
   WordCard(
-    word: "TAMAGOTCHI",
-    tabooWords: ["Virtual", "Pet", "Egg", "Feed", "Toy"],
-    category: "90'lar Nostalji",
+    word: "CHAMPIONS LEAGUE",
+    tabooWords: ["UEFA", "Europe", "Final", "Big Clubs", "Trophy"],
+    category: "Futbol",
   ),
+  WordCard(
+    word: "SUPER CUP",
+    tabooWords: [
+      "Winner",
+      "Champions League",
+      "Final",
+      "European League",
+      "Trophy",
+    ],
+    category: "Futbol",
+  ),
+  WordCard(
+    word: "ASSIST",
+    tabooWords: ["Pass", "Middle", "Shot", "Goal", "Score"],
+    category: "Futbol",
+  ),
+  // 90s Nostalgia (EN)
   WordCard(
     word: "WALKMAN",
     tabooWords: ["Music", "Headphones", "Cassette", "Belt", "Portable"],
@@ -4763,18 +3906,8 @@ final List<WordCard> initialDeckEn = [
     category: "90'lar Nostalji",
   ),
   WordCard(
-    word: "VHS TAPE",
-    tabooWords: ["Video", "Player", "Rewind", "Movie", "Box"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "VCD",
-    tabooWords: ["Disc", "Video", "Player", "CD", "Image"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
     word: "FLOPPY DISK",
-    tabooWords: ["Save", "A: Drive", "Computer", "Square", "Files"],
+    tabooWords: ["Save", "Drive", "Computer", "Square", "Files"],
     category: "90'lar Nostalji",
   ),
   WordCard(
@@ -4795,16 +3928,6 @@ final List<WordCard> initialDeckEn = [
   WordCard(
     word: "ATARI",
     tabooWords: ["Console", "Joystick", "Cartridge", "8-bit", "Games"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "SEGA",
-    tabooWords: ["Genesis", "Console", "Sonic", "16-bit", "Joystick"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "CRT TV",
-    tabooWords: ["Box", "Antenna", "Heavy", "Tube", "Static"],
     category: "90'lar Nostalji",
   ),
   WordCard(
@@ -4924,16 +4047,6 @@ final List<WordCard> initialDeckEn = [
     category: "90'lar Nostalji",
   ),
   WordCard(
-    word: "MINIDISC",
-    tabooWords: ["Sony", "Disc", "Player", "Audio", "Small"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
-    word: "NAPSTER",
-    tabooWords: ["MP3", "Download", "Illegal", "Sharing", "Lawsuit"],
-    category: "90'lar Nostalji",
-  ),
-  WordCard(
     word: "BURNED CD",
     tabooWords: ["Copy", "Computer", "Music", "Blank", "Record"],
     category: "90'lar Nostalji",
@@ -4963,7 +4076,6 @@ final List<WordCard> initialDeckEn = [
     tabooWords: ["Two-way", "Radio", "Button", "Static", "Kids"],
     category: "90'lar Nostalji",
   ),
-
   // Hard Mode (EN)
   WordCard(
     word: "PHOTOSYNTHESIS",
@@ -5076,6 +4188,11 @@ final List<WordCard> initialDeckEn = [
     category: "Zor Seviye",
   ),
   WordCard(
+    word: "HIERARCHY",
+    tabooWords: ["Ranking", "Top", "Bottom", "Order", "Level"],
+    category: "Zor Seviye",
+  ),
+  WordCard(
     word: "CATACLYSM",
     tabooWords: ["Disaster", "Massive", "Event", "Change", "Destruction"],
     category: "Zor Seviye",
@@ -5134,5 +4251,162 @@ final List<WordCard> initialDeckEn = [
     word: "DARK MATTER",
     tabooWords: ["Space", "Invisible", "Gravity", "Universe", "Mystery"],
     category: "Zor Seviye",
+  ),
+  // Midnight Category
+  WordCard(
+    word: "FOREPLAY",
+    tabooWords: [
+      "Touching",
+      "Kissing",
+      "Warming Up",
+      "Beginning",
+      "Getting Wet",
+    ],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "FANTASY",
+    tabooWords: ["Imagination", "Role", "Desire", "Dream", "Scenario"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "HORNY",
+    tabooWords: ["Wanting", "Desiring", "Arousal", "Burning", "Losing Control"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "GETTING HARD",
+    tabooWords: ["Teasing", "Male", "Penis", "Erection", "Stood Upright"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "GETTING WET",
+    tabooWords: ["Woman", "Teasing", "Horny", "Dripping", "Soaking"],
+    category: "Gece Yarısı",
+  ),
+
+  WordCard(
+    word: "MAKE LOVE",
+    tabooWords: ["Sexual", "Together", "Intimacy", "Skin", "Sex"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "FRENCH KISS",
+    tabooWords: ["Tongue", "Mouth", "Deep", "Kissing", "Passionate"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "AROUSAL",
+    tabooWords: [
+      "Getting Horny",
+      "Awakening",
+      "Provoking",
+      "Desire",
+      "Affecting",
+    ],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "SEXUAL TENSION",
+    tabooWords: [
+      "Anticipation",
+      "Not Touching",
+      "Eye Contact",
+      "Silence",
+      "Chemistry",
+    ],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "CUMMING",
+    tabooWords: ["Climax", "Relaxing", "Happy Ending", "Trembling", "Moaning"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "ORGASM",
+    tabooWords: ["Climax", "Cumming", "Contracting", "Trembling", "Pleasure"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "ROLE PLAY",
+    tabooWords: ["Character", "Fantasy", "Game", "Scenario", "Acting"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "SEXUAL ATTRACTION",
+    tabooWords: ["Chemistry", "Electricity", "Desire", "Want", "Magnet"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "QUICKIE",
+    tabooWords: [
+      "Rush",
+      "Not Holding Back",
+      "Sudden",
+      "Excited",
+      "Uncontrolled",
+    ],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "ONE NIGHT STAND",
+    tabooWords: ["Night", "Bed", "Secret", "Sudden", "Passionate"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "PERFORMANCE ANXIETY",
+    tabooWords: ["Nerves", "First Time", "Stress", "Overthinking", "Pressure"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "MISSIONARY",
+    tabooWords: ["On Top", "Face To Face", "Bed", "Classic", "Position"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "MOANING",
+    tabooWords: [
+      "Moaning Sounds",
+      "Voice",
+      "Shouting",
+      "Can’t Hold Back",
+      "Pleasure",
+    ],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "SHOWER SEX",
+    tabooWords: ["Bath", "Wet", "Slippery", "On Foot", "Close"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "ORAL",
+    tabooWords: ["Mouth", "Tongue", "Down There", "Pleasure", "Licking"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "ANAL",
+    tabooWords: ["From Behind", "Different", "Tight", "Risk", "Pleasure"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "SEXTING",
+    tabooWords: ["Messaging", "Texting", "Phone", "Implying", "Teasing"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "NUDE",
+    tabooWords: ["Naked", "Photo", "Phone", "Woman", "Secret"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "DICK PIC",
+    tabooWords: ["Photo", "Phone", "Male", "Sending", "Penis"],
+    category: "Gece Yarısı",
+  ),
+  WordCard(
+    word: "SPANKING",
+    tabooWords: ["Hand", "Butt", "Sound", "Slap", "Flush"],
+    category: "Gece Yarısı",
   ),
 ];

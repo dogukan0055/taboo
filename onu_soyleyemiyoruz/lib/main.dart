@@ -347,6 +347,8 @@ void _showCardPreview(BuildContext context, WordCard card) {
       final Color dividerColor = isDark
           ? Colors.white24
           : const Color(0xFFE0E0E0);
+      final List<String> sortedTaboos = List.of(card.tabooWords)
+        ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
       return Stack(
         children: [
           Positioned.fill(
@@ -413,7 +415,7 @@ void _showCardPreview(BuildContext context, WordCard card) {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
                       child: Column(
-                        children: card.tabooWords
+                        children: sortedTaboos
                             .map(
                               (t) => Padding(
                                 padding: const EdgeInsets.symmetric(

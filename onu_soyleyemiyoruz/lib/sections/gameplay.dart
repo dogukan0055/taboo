@@ -703,6 +703,10 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     final Size screenSize = MediaQuery.of(context).size;
     final bool isTablet = screenSize.shortestSide >= 600;
     final double cardWidth = screenSize.width * (isTablet ? 0.4 : 0.6);
+    final List<String> sortedTabooWords = List.of(card.tabooWords)
+      ..sort(
+        (a, b) => a.toLowerCase().compareTo(b.toLowerCase()),
+      );
     return Align(
       alignment: Alignment.center,
       child: SizedBox(
@@ -789,7 +793,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                           flex: 4,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: card.tabooWords
+                            children: sortedTabooWords
                                 .map(
                                   (t) => Padding(
                                     padding: const EdgeInsets.symmetric(

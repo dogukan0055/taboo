@@ -404,6 +404,8 @@ class RoundReportScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final event = events[index];
         final card = event.card;
+        final List<String> sortedTaboos = List.of(card.tabooWords)
+          ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
         final Color topColor = isDark
             ? color.withValues(alpha: 0.7)
             : color.withValues(alpha: 0.9);
@@ -500,7 +502,7 @@ class RoundReportScreen extends StatelessWidget {
                     Expanded(
                       child: LayoutBuilder(
                         builder: (context, inner) {
-                          final int count = card.tabooWords.length;
+                          final int count = sortedTaboos.length;
                           final double gap = count > 1
                               ? (inner.maxHeight * 0.04).clamp(2.0, 6.0)
                               : 0;
@@ -521,7 +523,7 @@ class RoundReportScreen extends StatelessWidget {
                             children: [
                               for (
                                 int i = 0;
-                                i < card.tabooWords.length;
+                                i < sortedTaboos.length;
                                 i++
                               ) ...[
                                 SizedBox(
@@ -549,7 +551,7 @@ class RoundReportScreen extends StatelessWidget {
                                       child: FittedBox(
                                         fit: BoxFit.scaleDown,
                                         child: Text(
-                                          card.tabooWords[i],
+                                          sortedTaboos[i],
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.center,
@@ -563,7 +565,7 @@ class RoundReportScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                if (i < card.tabooWords.length - 1)
+                                if (i < sortedTaboos.length - 1)
                                   SizedBox(height: gap),
                               ],
                               if (event.timedOut)
