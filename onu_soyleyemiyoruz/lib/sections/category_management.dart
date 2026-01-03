@@ -269,13 +269,13 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                     child: GridView(
                       controller: _categoryScrollController,
                       padding: const EdgeInsets.all(16),
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 220,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                        childAspectRatio: 1.0,
-                      ),
+                  gridDelegate:
+                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 220,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 0.85,
+                  ),
                       children: game.availableCategories.map((cat) {
                         List<WordCard> words = wordsMap[cat] ?? [];
                         final access = game.categoryAccess(cat);
@@ -485,6 +485,7 @@ class _CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final game = Provider.of<GameProvider>(context, listen: false);
     final bool showUnlock = isLocked && onUnlock != null && unlockLabel != null;
+    final bool isAdUnlock = access == CategoryAccess.adUnlock;
     final Color accent = isLocked
         ? Colors.white38
         : isSelected
@@ -663,11 +664,11 @@ class _CategoryCard extends StatelessWidget {
                     Positioned(
                       top: compact ? 8 : 10,
                       right: compact ? 10 : 12,
-                      child: Icon(
-                        Icons.lock,
-                        size: actionIconSize + 4,
-                        color: Colors.white70,
-                      ),
+                  child: Icon(
+                    isAdUnlock ? Icons.ondemand_video : Icons.lock,
+                    size: actionIconSize + 4,
+                    color: Colors.white70,
+                  ),
                     ),
                   if (!isLocked && hasTimedUnlock && rewardRemaining != null)
                     Positioned(
@@ -791,7 +792,11 @@ class _CategoryCard extends StatelessWidget {
                               showUnlock
                                   ? unlockLabel ?? game.t("badge_locked")
                                   : game.t("words_button"),
-                              showUnlock ? Icons.lock : Icons.menu_book,
+                              showUnlock
+                                  ? (isAdUnlock
+                                      ? Icons.ondemand_video
+                                      : Icons.lock)
+                                  : Icons.menu_book,
                               showUnlock ? onUnlock : onOpen,
                             ),
                     ),

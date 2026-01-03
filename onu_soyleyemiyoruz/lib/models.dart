@@ -1437,23 +1437,13 @@ final List<WordCard> initialDeckTr = [
     category: "Tarih",
   ),
   WordCard(
-    word: "FATİH SULTAN MEHMET",
-    tabooWords: ["İstanbul", "Fetih", "Osmanlı", "Padişah", "1453"],
-    category: "Tarih",
-  ),
-  WordCard(
     word: "PADİŞAH",
-    tabooWords: ["Osmanlı", "Taht", "Saray", "Hükümdar", "Devlet"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "SULTAN",
-    tabooWords: ["Padişah", "Osmanlı", "Hükümdar", "Taht", "Devlet"],
+    tabooWords: ["Osmanlı", "Taht", "Saray", "Hükümdar", "Sibel Can"],
     category: "Tarih",
   ),
   WordCard(
     word: "SARAY",
-    tabooWords: ["Padişah", "Osmanlı", "Yaşam", "Bina", "Taht"],
+    tabooWords: ["Padişah", "Osmanlı", "Külliye", "Şatafat", "Taht"],
     category: "Tarih",
   ),
   WordCard(

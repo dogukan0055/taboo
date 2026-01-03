@@ -140,30 +140,30 @@ class RoundReportScreen extends StatelessWidget {
                   children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    vertical: 20,
-                    horizontal: 40,
+                    vertical: 16,
+                    horizontal: 32,
                   ),
                   color: scaffoldColor,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _statCol(
-                        game.t("stat_correct"),
-                        correctList.length,
-                        Colors.green,
-                        textColor,
+                      _buildSummaryStat(
+                        label: game.t("stat_correct"),
+                        value: correctList.length,
+                        color: Colors.green,
+                        textColor: textColor,
                       ),
-                      _statCol(
-                        game.t("stat_taboo"),
-                        tabooList.length,
-                        Colors.red,
-                        textColor,
+                      _buildSummaryStat(
+                        label: game.t("stat_taboo"),
+                        value: tabooList.length,
+                        color: Colors.red,
+                        textColor: textColor,
                       ),
-                      _statCol(
-                        game.t("stat_score"),
-                        correctList.length - tabooList.length,
-                        Colors.deepPurple,
-                        textColor,
+                      _buildSummaryStat(
+                        label: game.t("stat_score"),
+                        value: correctList.length - tabooList.length,
+                        color: Colors.deepPurple,
+                        textColor: textColor,
                       ),
                     ],
                   ),
@@ -330,7 +330,7 @@ class RoundReportScreen extends StatelessWidget {
         }
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const GameRecapTeamScreen()),
+          MaterialPageRoute(builder: (_) => const GameOverScreen()),
         );
       },
       child: Text(
@@ -347,6 +347,33 @@ class RoundReportScreen extends StatelessWidget {
     if (game.targetScore != -1) return true;
     if (game.roundSummaries.isEmpty) return false;
     return game.roundSummaries.last.turnInRound == 2;
+  }
+
+  Widget _buildSummaryStat({
+    required String label,
+    required int value,
+    required Color color,
+    required Color textColor,
+  }) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          "$value",
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w900,
+            color: textColor,
+          ),
+        ),
+      ],
+    );
   }
 
   // SIMPLE RECTANGLE CARD
@@ -570,20 +597,4 @@ class RoundReportScreen extends StatelessWidget {
     );
   }
 
-  Widget _statCol(String label, int val, Color c, Color valueColor) => Column(
-    children: [
-      Text(
-        label,
-        style: TextStyle(color: c, fontWeight: FontWeight.bold),
-      ),
-      Text(
-        "$val",
-        style: TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.w900,
-          color: valueColor,
-        ),
-      ),
-    ],
-  );
 }
