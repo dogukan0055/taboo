@@ -274,7 +274,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                     maxCrossAxisExtent: 220,
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
-                    childAspectRatio: 0.85,
+                    mainAxisExtent: 220,
                   ),
                       children: game.availableCategories.map((cat) {
                         List<WordCard> words = wordsMap[cat] ?? [];
@@ -1037,7 +1037,7 @@ class _CategoryWordsScreenState extends State<CategoryWordsScreen> {
                         maxCrossAxisExtent: 220,
                         mainAxisSpacing: 12,
                         crossAxisSpacing: 12,
-                        childAspectRatio: 0.9,
+                        childAspectRatio: 0.85,
                       ),
                       itemCount: words.length,
                       itemBuilder: (context, index) {

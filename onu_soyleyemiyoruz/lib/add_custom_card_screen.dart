@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -70,7 +71,11 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
     }
     final taboos = _tabooControllers.map((c) => c.text).toList();
     final error = _editing && widget.existingCard != null
-        ? game.updateCustomCard(widget.existingCard!, _wordController.text, taboos)
+        ? game.updateCustomCard(
+            widget.existingCard!,
+            _wordController.text,
+            taboos,
+          )
         : game.addCustomCard(_wordController.text, taboos);
     if (error != null) {
       _showSnack(messenger, error, isError: true);
@@ -100,12 +105,14 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
     final game = Provider.of<GameProvider>(context, listen: false);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final Color headerColor =
-        isDark ? const Color(0xFF2E1A4A) : const Color(0xFF7B1FA2);
+    final Color headerColor = isDark
+        ? const Color(0xFF2E1A4A)
+        : const Color(0xFF7B1FA2);
     final Color textColor = isDark ? Colors.white : Colors.black87;
     final Color hintColor = isDark ? Colors.white38 : Colors.black38;
-    final Color dividerColor =
-        isDark ? Colors.white24 : const Color(0xFFE0E0E0);
+    final Color dividerColor = isDark
+        ? Colors.white24
+        : const Color(0xFFE0E0E0);
     final taboosPreview = _tabooControllers
         .asMap()
         .entries
@@ -272,8 +279,13 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final bool isTablet = constraints.maxWidth >= 600;
-              final double formMaxWidth = isTablet ? 520 : 460;
+              final Size size = MediaQuery.of(context).size;
+              final bool isWide = size.shortestSide >= 600;
+              final double baseWidth = size.width * (isWide ? 0.6 : 0.7);
+              final double formMaxWidth = math.min(
+                baseWidth,
+                isWide ? 560 : 420,
+              );
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 keyboardDismissBehavior:
@@ -290,30 +302,38 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                           const SizedBox(height: 20),
                           if (_editing) ...[
                             ElevatedButton(
-                            onPressed: () => _handleSave(exitAfter: true),
+                              onPressed: () => _handleSave(exitAfter: true),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: saveColor,
                                 foregroundColor: saveTextColor,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                               ),
                               child: Text(
                                 game.t("save"),
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          const SizedBox(height: 10),
-                          OutlinedButton(
-                          onPressed: () async {
-                            await Provider.of<GameProvider>(context, listen: false)
-                                .playClick();
-                            if (!context.mounted) return;
-                            Navigator.pop(context);
-                          },
+                            const SizedBox(height: 10),
+                            OutlinedButton(
+                              onPressed: () async {
+                                await Provider.of<GameProvider>(
+                                  context,
+                                  listen: false,
+                                ).playClick();
+                                if (!context.mounted) return;
+                                Navigator.pop(context);
+                              },
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: Colors.white,
                                 backgroundColor: dangerColor,
                                 side: BorderSide(color: dangerBorderColor),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                               ),
                               child: Text(game.t("exit")),
                             ),
@@ -321,33 +341,41 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                             Row(
                               children: [
                                 Expanded(
-                                child: ElevatedButton(
-                                  onPressed: () => _handleSave(exitAfter: true),
+                                  child: ElevatedButton(
+                                    onPressed: () =>
+                                        _handleSave(exitAfter: true),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: saveColor,
                                       foregroundColor: saveTextColor,
-                                      padding:
-                                          const EdgeInsets.symmetric(vertical: 14),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
                                     ),
                                     child: Text(
                                       game.t("save_and_exit"),
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
-                                child: ElevatedButton(
-                                  onPressed: () => _handleSave(exitAfter: false),
+                                  child: ElevatedButton(
+                                    onPressed: () =>
+                                        _handleSave(exitAfter: false),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: continueColor,
                                       foregroundColor: continueTextColor,
-                                      padding:
-                                          const EdgeInsets.symmetric(vertical: 14),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
                                     ),
                                     child: Text(
                                       game.t("save_and_continue"),
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -356,17 +384,21 @@ class _AddCustomCardScreenState extends State<AddCustomCardScreen> {
                             ),
                             const SizedBox(height: 10),
                             OutlinedButton(
-                            onPressed: () async {
-                              await Provider.of<GameProvider>(context, listen: false)
-                                  .playClick();
-                              if (!context.mounted) return;
-                              Navigator.pop(context);
-                            },
+                              onPressed: () async {
+                                await Provider.of<GameProvider>(
+                                  context,
+                                  listen: false,
+                                ).playClick();
+                                if (!context.mounted) return;
+                                Navigator.pop(context);
+                              },
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: Colors.white,
                                 backgroundColor: dangerColor,
                                 side: BorderSide(color: dangerBorderColor),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                               ),
                               child: Text(game.t("exit_without_save")),
                             ),
@@ -426,12 +458,14 @@ void _showSnack(
     await Future.delayed(fadeOutDuration);
     messenger.hideCurrentSnackBar();
   }
+
   void handleAction() {
     if (actionHandled || dismissed || notifierDisposed) return;
     actionHandled = true;
     onAction?.call();
     fadeOutAndDismiss();
   }
+
   final controller = messenger.showSnackBar(
     SnackBar(
       duration: toastDuration + fadeOutDuration,
@@ -444,8 +478,7 @@ void _showSnack(
         valueListenable: opacity,
         builder: (context, value, child) {
           final animDuration = value >= 1 ? fadeInDuration : fadeOutDuration;
-          final double slideOffset =
-              (1 - value).clamp(0.0, 1.0).toDouble();
+          final double slideOffset = (1 - value).clamp(0.0, 1.0).toDouble();
           final double maxWidth = (MediaQuery.of(context).size.width - 32)
               .clamp(0.0, 360.0)
               .toDouble();

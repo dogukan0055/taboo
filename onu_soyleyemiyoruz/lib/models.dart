@@ -1447,28 +1447,18 @@ final List<WordCard> initialDeckTr = [
     category: "Tarih",
   ),
   WordCard(
-    word: "TOPKAPI SARAYI",
-    tabooWords: ["İstanbul", "Osmanlı", "Padişah", "Saray", "Müze"],
-    category: "Tarih",
-  ),
-  WordCard(
     word: "KURTULUŞ SAVAŞI",
-    tabooWords: ["Atatürk", "Savaş", "Türkiye", "Bağımsızlık", "Yunan"],
+    tabooWords: ["Atatürk", "Misak-ı Milli", "İtilaf", "Bağımsızlık", "Yunan"],
     category: "Tarih",
   ),
   WordCard(
     word: "ANAYASA",
-    tabooWords: ["Kanun", "Devlet", "Hak", "Yasa", "Madde"],
+    tabooWords: ["Kanun", "Cumhuriyet", "Hak", "Kural", "Madde"],
     category: "Tarih",
   ),
   WordCard(
     word: "MECLİS",
-    tabooWords: ["TBMM", "Milletvekili", "Yasa", "Toplantı", "Devlet"],
-    category: "Tarih",
-  ),
-  WordCard(
-    word: "TBMM",
-    tabooWords: ["Meclis", "Ankara", "Yasa", "Millet", "Devlet"],
+    tabooWords: ["TBMM", "Milletvekili", "Yasa", "Toplantı", "Ankara"],
     category: "Tarih",
   ),
   WordCard(
@@ -1477,13 +1467,8 @@ final List<WordCard> initialDeckTr = [
     category: "Tarih",
   ),
   WordCard(
-    word: "İMPARATORLUK",
-    tabooWords: ["Devlet", "Büyük", "Toprak", "Yönetim", "Osmanlı"],
-    category: "Tarih",
-  ),
-  WordCard(
     word: "KRAL",
-    tabooWords: ["Taht", "Krallık", "Hükümdar", "Taç", "Yönetmek"],
+    tabooWords: ["Taht", "Hünkar", "Hükümdar", "Taç", "Yönetmek"],
     category: "Tarih",
   ),
   WordCard(
