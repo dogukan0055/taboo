@@ -322,8 +322,8 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                       height: 1,
                       thickness: 1,
                       color: Colors.white24,
-                      indent: 16,
-                      endIndent: 16,
+                      indent: 40,
+                      endIndent: 40,
                     ),
                     const SizedBox(height: 12),
                     Padding(
@@ -515,8 +515,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
 
   Widget _buildScoreHeader(GameProvider game) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final double headerWidth =
-        min(MediaQuery.of(context).size.width - 20, 720);
+    final double headerWidth = min(MediaQuery.of(context).size.width - 20, 720);
     return Padding(
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       child: Center(
@@ -555,7 +554,10 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
-                          border: Border.all(color: Colors.deepPurple, width: 4),
+                          border: Border.all(
+                            color: Colors.deepPurple,
+                            width: 4,
+                          ),
                         ),
                         alignment: Alignment.center,
                         child: FadeTransition(
@@ -596,8 +598,11 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                         color: Colors.amber,
                         shape: BoxShape.circle,
                       ),
-                      child:
-                          const Icon(Icons.pause, color: Colors.black, size: 18),
+                      child: const Icon(
+                        Icons.pause,
+                        color: Colors.black,
+                        size: 18,
+                      ),
                     ),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -704,9 +709,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     final bool isTablet = screenSize.shortestSide >= 600;
     final double cardWidth = screenSize.width * (isTablet ? 0.5 : 0.75);
     final List<String> sortedTabooWords = List.of(card.tabooWords)
-      ..sort(
-        (a, b) => a.toLowerCase().compareTo(b.toLowerCase()),
-      );
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
     return Align(
       alignment: Alignment.center,
       child: SizedBox(
@@ -781,11 +784,11 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 0, bottom: 1),
+                          padding: const EdgeInsets.only(bottom: 40),
                           child: Divider(
                             thickness: 2,
-                            indent: 14,
-                            endIndent: 14,
+                            indent: 40,
+                            endIndent: 40,
                             color: dividerColor,
                           ),
                         ),
