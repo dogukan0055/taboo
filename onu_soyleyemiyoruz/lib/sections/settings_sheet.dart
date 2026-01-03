@@ -51,7 +51,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     var game = Provider.of<GameProvider>(context);
     final messenger = ScaffoldMessenger.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bool premiumOwned = game.hasPremiumBundle;
 
     if (game.adsRemovalJustGranted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -201,7 +200,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       game.toggleReducedMotion(val);
                     },
                   ),
-                  if (game.gameCenterSupported) ...[
+                  if (game.gameServicesSupported) ...[
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -231,11 +230,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           const SizedBox(height: 10),
                           ElevatedButton(
-                            onPressed: game.gameCenterSignedIn
+                            onPressed: game.gameServicesSignedIn
                                 ? null
                                 : () async {
                                     await game.playClick();
-                                    final ok = await game.connectGameCenter();
+                                    final ok =
+                                        await game.connectGameCenter();
                                     if (!context.mounted) return;
                                     if (!ok) {
                                       _showSnack(
@@ -246,13 +246,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: game.gameCenterSignedIn
+                              backgroundColor: game.gameServicesSignedIn
                                   ? Colors.grey
                                   : Colors.deepPurple,
                               padding: const EdgeInsets.all(12),
                             ),
                             child: Text(
-                              game.gameCenterSignedIn
+                              game.gameServicesSignedIn
                                   ? game.t("game_center_connected")
                                   : game.t("game_center_connect"),
                               style: const TextStyle(
@@ -642,8 +642,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     children: [
                                       Text(
                                         game.isEnglish
-                                            ? "Premium Bundle"
-                                            : "Premium Paket",
+                                            ? "Remove Ads"
+                                            : "Reklamları Kaldır",
                                         style: TextStyle(
                                           color: textColor,
                                           fontWeight: FontWeight.w800,
@@ -653,8 +653,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       const SizedBox(height: 6),
                                       Text(
                                         game.isEnglish
-                                            ? "Unlock all premium categories + remove ads!"
-                                            : "Tüm premium kategorilere ek olarak reklam yok!",
+                                            ? "Unlock every category and remove ads."
+                                            : "Tüm kategorileri aç, reklamları kaldır.",
                                         style: TextStyle(
                                           color: iconColor,
                                           fontWeight: FontWeight.w700,
@@ -679,143 +679,67 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ],
                                   ),
                                 ),
-                                if (premiumOwned ||
-                                    game.premiumBundlePrice != null)
-                                  Flexible(
-                                    child: Align(
-                                      alignment: Alignment.topRight,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 8,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: premiumOwned
+                                Flexible(
+                                  child: Align(
+                                    alignment: Alignment.topRight,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: game.adsRemoved
+                                            ? const Color(0xFF2E7D32).withValues(
+                                                alpha: isDark ? 0.18 : 0.12,
+                                              )
+                                            : adsAccentSoft,
+                                        borderRadius: BorderRadius.circular(14),
+                                        border: Border.all(
+                                          color: game.adsRemoved
                                               ? const Color(0xFF2E7D32)
-                                                  .withValues(
-                                                  alpha: isDark ? 0.18 : 0.12,
-                                                )
-                                              : adsAccentSoft,
-                                          borderRadius: BorderRadius.circular(
-                                            14,
-                                          ),
-                                          border: Border.all(
-                                            color: premiumOwned
-                                                ? const Color(0xFF2E7D32)
-                                                    .withValues(alpha: 0.45)
-                                                : adsAccent.withValues(
-                                                    alpha: 0.35,
-                                                  ),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              premiumOwned
-                                                  ? Icons.check_circle
-                                                  : Icons.local_offer,
-                                              size: 16,
-                                              color: premiumOwned
-                                                  ? const Color(0xFF2E7D32)
-                                                  : adsAccent,
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Flexible(
-                                              child: Text(
-                                                premiumOwned
-                                                    ? game.t(
-                                                        "premium_bundle_owned",
-                                                      )
-                                                    : game.premiumBundlePrice!,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  color: premiumOwned
-                                                      ? const Color(0xFF2E7D32)
-                                                      : adsAccent,
-                                                  fontWeight: FontWeight.bold,
+                                                  .withValues(alpha: 0.45)
+                                              : adsAccent.withValues(
+                                                  alpha: 0.35,
                                                 ),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            game.adsRemoved
+                                                ? Icons.check_circle
+                                                : Icons.local_offer,
+                                            size: 16,
+                                            color: game.adsRemoved
+                                                ? const Color(0xFF2E7D32)
+                                                : adsAccent,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Flexible(
+                                            child: Text(
+                                              game.adsRemoved
+                                                  ? game.t("remove_ads_chip")
+                                                  : (game.removeAdsPrice ??
+                                                      "—"),
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                color: game.adsRemoved
+                                                    ? const Color(0xFF2E7D32)
+                                                    : adsAccent,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 12),
-                            if (!premiumOwned)
-                              ElevatedButton.icon(
-                                onPressed: !game.iapAvailable
-                                    ? null
-                                    : () async {
-                                        await game.playClick();
-                                        await game.buyPremiumBundle();
-                                      },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: adsAccent,
-                                  padding: const EdgeInsets.all(14),
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                ),
-                                icon: const Icon(
-                                  Icons.workspace_premium,
-                                  color: Colors.white,
-                                ),
-                                label: Text(
-                                  game.premiumBundlePrice != null
-                                      ? "${game.isEnglish ? "Buy Premium Bundle" : "Premium Paket Al"} • ${game.premiumBundlePrice!}"
-                                      : (game.isEnglish
-                                            ? "Buy Premium Bundle"
-                                            : "Premium Paket Al"),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              )
-                            else
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF2E7D32).withValues(
-                                      alpha: isDark ? 0.18 : 0.12,
-                                    ),
-                                    borderRadius: BorderRadius.circular(14),
-                                    border: Border.all(
-                                      color:
-                                          const Color(0xFF2E7D32).withValues(
-                                        alpha: 0.45,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.check_circle,
-                                        color: Color(0xFF2E7D32),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        game.t("premium_bundle_owned"),
-                                        style: const TextStyle(
-                                          color: Color(0xFF2E7D32),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                            const SizedBox.shrink(),
                           ],
                         ),
                       ),

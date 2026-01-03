@@ -702,7 +702,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         : const Color(0xFFE0E0E0);
     final Size screenSize = MediaQuery.of(context).size;
     final bool isTablet = screenSize.shortestSide >= 600;
-    final double cardWidth = screenSize.width * (isTablet ? 0.4 : 0.6);
+    final double cardWidth = screenSize.width * (isTablet ? 0.5 : 0.75);
     final List<String> sortedTabooWords = List.of(card.tabooWords)
       ..sort(
         (a, b) => a.toLowerCase().compareTo(b.toLowerCase()),
@@ -781,11 +781,11 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 0, bottom: 2),
+                          padding: const EdgeInsets.only(top: 0, bottom: 1),
                           child: Divider(
                             thickness: 2,
-                            indent: 8,
-                            endIndent: 8,
+                            indent: 14,
+                            endIndent: 14,
                             color: dividerColor,
                           ),
                         ),

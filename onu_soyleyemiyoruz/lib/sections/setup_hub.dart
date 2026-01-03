@@ -816,9 +816,18 @@ class TeamManagerPanel extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               game.playClick();
-              final err = game.editPlayer(currentName, c.text, isTeamA);
+              final newName = c.text;
+              final err = game.editPlayer(currentName, newName, isTeamA);
               if (err != null) {
                 _showSnack(messenger, err, isError: true);
+                return;
+              }
+              if (currentName.toLowerCase() == newName.toLowerCase()) {
+                _showSnack(
+                  messenger,
+                  game.t("player_not_changed"),
+                );
+                Navigator.pop(dialogContext);
                 return;
               }
               Navigator.pop(dialogContext);

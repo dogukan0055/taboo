@@ -112,7 +112,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
     final body = access == CategoryAccess.adUnlock
         ? game.t("unlock_category_body_ad", params: {"category": label})
         : game.t("unlock_category_body_premium", params: {"category": label});
-    final price = game.priceForCategory(category);
+    final price = null; // per new monetization, individual prices removed
     await showDialog(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.45),
@@ -270,11 +270,11 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                       controller: _categoryScrollController,
                       padding: const EdgeInsets.all(16),
                   gridDelegate:
-                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 220,
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
-                    mainAxisExtent: 220,
+                    mainAxisExtent: 210,
                   ),
                       children: game.availableCategories.map((cat) {
                         List<WordCard> words = wordsMap[cat] ?? [];

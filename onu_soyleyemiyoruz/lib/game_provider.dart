@@ -36,12 +36,7 @@ class GameProvider extends ChangeNotifier {
   static const String _teamBDefaultEn = "TEAM B";
   static const String _removeAdsProductId = "ads_remove";
   static const String _premiumBundleProductId = "premium_bundle";
-  static const Map<String, String> _premiumCategoryProductIds = {
-    "Futbol": _premiumBundleProductId,
-    "90'lar Nostalji": _premiumBundleProductId,
-    "Zor Seviye": _premiumBundleProductId,
-    "Gece Yarısı": _premiumBundleProductId,
-  };
+  static const Map<String, String> _premiumCategoryProductIds = {};
   // Replace these IDs with your App Store / Play Console achievement IDs.
   static const Map<_AchievementKey, _AchievementIds> _achievementIds = {
     _AchievementKey.fullHouse: _AchievementIds(
@@ -67,14 +62,9 @@ class GameProvider extends ChangeNotifier {
     "Tarih",
     "Sanat",
     "Teknoloji",
+    "Spor",
   };
-  static const Set<String> _adUnlockCategories = {"Spor", "Bilim", "Yemek"};
-  static const Set<String> _premiumCategories = {
-    "Futbol",
-    "90'lar Nostalji",
-    "Zor Seviye",
-    "Gece Yarısı",
-  };
+  static const Set<String> _adUnlockCategories = {"Bilim", "Yemek"};
   // --- Global Settings ---
   bool soundEnabled = true;
   bool musicEnabled = true;
@@ -139,6 +129,7 @@ class GameProvider extends ChangeNotifier {
     "Tarih",
     "Sanat",
     "Teknoloji",
+    "Spor",
   };
   Set<String> disabledCardIds = {};
   List<WordCard> customCards = [];
@@ -190,7 +181,7 @@ class GameProvider extends ChangeNotifier {
   bool _loadingRewarded = false;
   bool _showingInterstitial = false;
   bool _showingRewarded = false;
-  bool gameCenterSignedIn = false;
+  bool gameServicesSignedIn = false;
 
   int currentPasses = 0;
   final int maxPasses = 3;
@@ -276,11 +267,7 @@ class GameProvider extends ChangeNotifier {
       customCards = [];
     }
     _revalidateCategoryAccess();
-    if (!premiumBundleOwned &&
-        adsRemoved &&
-        _premiumCategories.every(_purchasedCategoryIds.contains)) {
-      premiumBundleOwned = true;
-    }
+    // Premium bundle deprecated; treat remove-ads as the only purchase.
     _syncDisabledWithCategories();
     final bool isEnglishNow = languageCode == "en";
     final String expectedTeamA = isEnglishNow
@@ -448,31 +435,14 @@ class GameProvider extends ChangeNotifier {
   void _grantPurchase(String productId) {
     if (productId == _removeAdsProductId) {
       adsRemoved = true;
-      _adUnlockedCategories.addAll(_adUnlockCategories);
-      for (final cat in _adUnlockCategories) {
-        _setCategoryEnabled(cat, true);
-      }
       _adsRemovalJustGranted = true;
-    } else if (productId == _premiumBundleProductId) {
-      adsRemoved = true;
-      premiumBundleOwned = true;
+      // Remove-ads now unlocks all categories permanently.
       _adUnlockedCategories.addAll(_adUnlockCategories);
-      for (final cat in _adUnlockCategories) {
-        _setCategoryEnabled(cat, true);
-      }
-      _adsRemovalJustGranted = true;
-      for (final cat in _premiumCategories) {
+      for (final cat in availableCategories) {
         _purchasedCategoryIds.add(cat);
         _setCategoryEnabled(cat, true);
       }
-      _notifyCategoryUnlock("Premium Bundle", permanent: true);
-    } else {
-      final cat = _categoryForProduct(productId);
-      if (cat != null) {
-        _purchasedCategoryIds.add(cat);
-        _setCategoryEnabled(cat, true);
-        _notifyCategoryUnlock(cat, permanent: true);
-      }
+      _notifyCategoryUnlock("all_categories", permanent: true);
     }
     _persist();
     notifyListeners();
@@ -485,13 +455,6 @@ class GameProvider extends ChangeNotifier {
   Future<void> simulateRemoveAdsPurchase() async {
     if (!kDebugMode) return;
     _grantPurchase(_removeAdsProductId);
-  }
-
-  String? _categoryForProduct(String productId) {
-    for (final entry in _premiumCategoryProductIds.entries) {
-      if (entry.value == productId) return entry.key;
-    }
-    return null;
   }
 
   String _formatPrice(ProductDetails product) => product.price;
@@ -509,15 +472,7 @@ class GameProvider extends ChangeNotifier {
     return _formatPrice(product);
   }
 
-  String? priceForCategory(String category) {
-    final productId = _premiumCategoryProductIds[category];
-    if (productId == null) return null;
-    return priceForProduct(productId);
-  }
-
   String? get removeAdsPrice => priceForProduct(_removeAdsProductId);
-  String? get premiumBundlePrice => priceForProduct(_premiumBundleProductId);
-  bool get hasPremiumBundle => premiumBundleOwned;
 
   String? get activeTimedRewardCategory {
     final now = DateTime.now();
@@ -666,18 +621,16 @@ class GameProvider extends ChangeNotifier {
     if (_adUnlockCategories.contains(category)) {
       return CategoryAccess.adUnlock;
     }
-    if (_premiumCategories.contains(category)) {
-      return CategoryAccess.premium;
-    }
-    return CategoryAccess.free;
+    return CategoryAccess.premium;
   }
 
   bool isCategoryUnlocked(String category) {
     _expireRewardIfNeeded(category);
     final access = categoryAccess(category);
     if (access == CategoryAccess.free) return true;
+    if (adsRemoved) return true;
     if (access == CategoryAccess.adUnlock) {
-      return adsRemoved || _adUnlockedCategories.contains(category);
+      return _adUnlockedCategories.contains(category);
     }
     final until = _rewardedCategoryUnlocks[category];
     final rewardActive = until != null && until.isAfter(DateTime.now());
@@ -803,35 +756,36 @@ class GameProvider extends ChangeNotifier {
     return round > 4 && round % 4 == 0;
   }
 
-  bool get gameCenterSupported => !kIsWeb && Platform.isIOS;
+  bool get gameServicesSupported =>
+      !kIsWeb && (Platform.isIOS || Platform.isAndroid);
 
   Achievement _achievement(_AchievementKey key) {
     final ids = _achievementIds[key]!;
     return Achievement(androidID: ids.android, iOSID: ids.ios);
   }
 
-  Future<bool> _ensureGameCenterSignedIn({bool interactive = false}) async {
-    if (!gameCenterSupported) return false;
-    if (gameCenterSignedIn) return true;
+  Future<bool> _ensureGameServicesSignedIn({bool interactive = false}) async {
+    if (!gameServicesSupported) return false;
+    if (gameServicesSignedIn) return true;
     if (!interactive) return false;
     try {
       await GamesServices.signIn();
-      gameCenterSignedIn = true;
+      gameServicesSignedIn = true;
       notifyListeners();
       return true;
     } catch (_) {
-      gameCenterSignedIn = false;
+      gameServicesSignedIn = false;
       return false;
     }
   }
 
   Future<bool> connectGameCenter() async {
-    return _ensureGameCenterSignedIn(interactive: true);
+    return _ensureGameServicesSignedIn(interactive: true);
   }
 
   Future<bool> openGameCenterAchievements() async {
-    if (!gameCenterSupported) return false;
-    final ok = await _ensureGameCenterSignedIn(interactive: true);
+    if (!gameServicesSupported) return false;
+    final ok = await _ensureGameServicesSignedIn(interactive: true);
     if (!ok) return false;
     try {
       await GamesServices.showAchievements();
@@ -842,14 +796,14 @@ class GameProvider extends ChangeNotifier {
   }
 
   Future<void> _unlockAchievement(_AchievementKey key) async {
-    if (!await _ensureGameCenterSignedIn()) return;
+    if (!await _ensureGameServicesSignedIn()) return;
     try {
       await GamesServices.unlock(achievement: _achievement(key));
     } catch (_) {}
   }
 
   Future<void> _maybeReportAchievements(RoundSummary summary) async {
-    if (!gameCenterSupported || !gameCenterSignedIn) return;
+    if (!gameServicesSupported || !gameServicesSignedIn) return;
     final bool hasMinimumTeams = teamA.length >= 2 && teamB.length >= 2;
     final int totalPlayers = teamA.length + teamB.length;
     if (hasMinimumTeams && totalPlayers >= 4) {
@@ -1086,6 +1040,7 @@ class GameProvider extends ChangeNotifier {
         "player_added": "{player} adlı oyuncu {team} takımına eklendi",
         "player_removed": "{player} adlı oyuncu {team} takımından çıkarıldı",
         "player_updated": "Oyuncu adı {player} olarak güncellendi",
+        "player_not_changed": "Oyuncu adı değiştirilmedi",
         "edit_player": "Oyuncuyu Düzenle",
         "category_word_count": "{active} / {total} Kelime",
         "custom_empty_warning": "Özel kategorisi boş. Önce kelime ekleyin.",
@@ -1264,7 +1219,7 @@ class GameProvider extends ChangeNotifier {
         "category_midnight_pack": "Ateşli Gece",
         "ads_section_title": "Satın Alımlar",
         "remove_ads": "Reklamları Kaldır",
-        "remove_ads_desc": "Reklamlar kapanır, Spor/Bilim/Yemek açılır",
+        "remove_ads_desc": "Reklamlar kapanır, bütün kategoriler açılır!",
         "remove_ads_owned": "Reklamlar kaldırıldı",
         "premium_bundle_owned": "Premium paket satın alındı",
         "restore_purchases": "Satın Alımları Geri Yükle",
@@ -1277,7 +1232,7 @@ class GameProvider extends ChangeNotifier {
         "unlock_category_body_ad":
             "{category} kategorisini açmak için reklam izle",
         "unlock_category_body_premium":
-            "{category} kategorisini 1 saatliğine açmak için reklam izle veya 4 premium kategoriye sahip olmak için satın al",
+            "{category} kategorisini 1 saatliğine açmak için reklam izle veya reklamları kaldırıp tüm kategorileri açmak için satın al",
         "unlock_success": "{category} açıldı",
         "unlock_failed": "Reklam şu an hazır değil",
         "unlock_redeemed_forever": "{category} kalıcı açıldı",
@@ -1355,6 +1310,7 @@ class GameProvider extends ChangeNotifier {
         "player_added": "{player} added to {team}",
         "player_removed": "{player} removed from {team}",
         "player_updated": "Player name updated to {player}",
+        "player_not_changed": "Player name not changed",
         "edit_player": "Edit Player",
         "category_word_count": "{active} / {total} Words",
         "custom_empty_warning": "Custom category is empty. Add words first.",
@@ -1529,7 +1485,7 @@ class GameProvider extends ChangeNotifier {
         "category_midnight_pack": "Naughty Night",
         "ads_section_title": "Purchases",
         "remove_ads": "Remove Ads",
-        "remove_ads_desc": "Ads off, Sports/Science/Food unlocked",
+        "remove_ads_desc": "Ads off, all categories on!",
         "remove_ads_owned": "Ads removed",
         "premium_bundle_owned": "Premium Bundle owned",
         "restore_purchases": "Restore Purchases",
@@ -1542,7 +1498,7 @@ class GameProvider extends ChangeNotifier {
         "unlock_category_body_ad":
             "Watch an ad to unlock the {category} category",
         "unlock_category_body_premium":
-            "Watch an ad to unlock {category} for 1 hour or buy the 4 premium category to unlock all for good.",
+            "Watch an ad to unlock {category} for 1 hour or buy remove-ads to unlock every category forever.",
         "unlock_success": "{category} unlocked",
         "unlock_failed": "Ad is not ready",
         "unlock_redeemed_forever": "{category} unlocked forever",
