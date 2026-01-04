@@ -109,32 +109,35 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                 ),
               ),
               Center(
-                child: AlertDialog(
-                  title: Text(game.t("exit_game_title")),
-                  content: Text(game.t("exit_game_body")),
-                  actions: [
-                    TextButton(
-                      onPressed: () async {
-                        await game.playClick();
-                        if (!context.mounted) return;
-                        Navigator.pop(dialogCtx);
-                      },
-                      child: Text(game.t("cancel")),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await game.playClick();
-                        if (!context.mounted) return;
-                        Navigator.pop(dialogCtx);
-                        game.abortCurrentRound();
-                        Navigator.of(context).pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: AlertDialog(
+                    title: Text(game.t("exit_game_title")),
+                    content: Text(game.t("exit_game_body")),
+                    actions: [
+                      TextButton(
+                        onPressed: () async {
+                          await game.playClick();
+                          if (!context.mounted) return;
+                          Navigator.pop(dialogCtx);
+                        },
+                        child: Text(game.t("cancel")),
                       ),
-                      child: Text(game.t("exit_game_action")),
-                    ),
-                  ],
+                      ElevatedButton(
+                        onPressed: () async {
+                          await game.playClick();
+                          if (!context.mounted) return;
+                          Navigator.pop(dialogCtx);
+                          game.abortCurrentRound();
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                        ),
+                        child: Text(game.t("exit_game_action")),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -277,7 +280,10 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             backgroundColor: Colors.transparent,
             insetPadding: const EdgeInsets.symmetric(horizontal: 24),
             child: SizedBox(
-              width: min(MediaQuery.of(context).size.width * 0.92, isTablet ? 680 : 600),
+              width: min(
+                MediaQuery.of(context).size.width * 0.92,
+                isTablet ? 680 : 600,
+              ),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
@@ -325,7 +331,8 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white70,
-                          fontSize: (fromBackground ? 12 : 14) + (isTablet ? 2 : 0),
+                          fontSize:
+                              (fromBackground ? 12 : 14) + (isTablet ? 2 : 0),
                         ),
                       ),
                     ),
@@ -417,12 +424,12 @@ class _GamePlayScreenState extends State<GamePlayScreen>
           ),
         ],
       ),
-  ).then((_) {
-    if (game.isPaused) {
-      game.resumeGame();
-    }
-  });
-}
+    ).then((_) {
+      if (game.isPaused) {
+        game.resumeGame();
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -505,7 +512,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
               }
               onTap();
             }
-      : null,
+          : null,
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -543,8 +550,10 @@ class _GamePlayScreenState extends State<GamePlayScreen>
 
   Widget _buildScoreHeader(GameProvider game, bool isTablet) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final double headerWidth =
-        min(MediaQuery.of(context).size.width - 20, isTablet ? 820 : 720);
+    final double headerWidth = min(
+      MediaQuery.of(context).size.width - 20,
+      isTablet ? 820 : 720,
+    );
     final double headerHeight = isTablet ? 110 : 90;
     final double timerSize = isTablet ? 86 : 70;
     final double timerFontSize = isTablet ? 32 : 28;
@@ -743,8 +752,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         : const Color(0xFFE0E0E0);
     final Size screenSize = MediaQuery.of(context).size;
     final bool isTablet = screenSize.shortestSide >= 600;
-    final double cardWidth = screenSize.width * (isTablet ? 0.6 : 0.78);
-    final double maxCardHeight = isTablet ? 520 : screenSize.height * 0.85;
+    final double cardWidth = screenSize.width * (isTablet ? 0.50 : 0.78);
+    final double maxCardHeight = isTablet ? 560 : screenSize.height * 0.85;
+    final double headerHeight = isTablet ? 78 : 68;
     final List<String> sortedTabooWords = List.of(card.tabooWords)
       ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
     return Align(
@@ -765,7 +775,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
           child: Column(
             children: [
               Container(
-                height: 60,
+                height: headerHeight,
                 decoration: BoxDecoration(
                   color: headerColor,
                   borderRadius: const BorderRadius.vertical(
@@ -958,11 +968,7 @@ class _BouncingButtonState extends State<BouncingButton>
                             ),
                           ],
                   ),
-                  child: Icon(
-                    widget.icon,
-                    color: Colors.white,
-                    size: 30 * s,
-                  ),
+                  child: Icon(widget.icon, color: Colors.white, size: 30 * s),
                 ),
                 if (widget.badgeText != null)
                   Positioned(

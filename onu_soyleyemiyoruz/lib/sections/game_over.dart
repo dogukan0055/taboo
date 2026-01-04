@@ -41,6 +41,9 @@ class _GameOverScreenState extends State<GameOverScreen>
   @override
   Widget build(BuildContext context) {
     final game = Provider.of<GameProvider>(context, listen: false);
+    final media = MediaQuery.of(context);
+    final bool isTablet = media.size.shortestSide >= 700;
+    final double scale = isTablet ? 1.25 : 1.0;
     final reduceMotion = game.reducedMotion;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final Color scoreCardColor = isDark
@@ -62,6 +65,7 @@ class _GameOverScreenState extends State<GameOverScreen>
       final rect = box.localToGlobal(Offset.zero) & box.size;
       return rect.isEmpty ? null : rect;
     }
+
     Future<void> shareSummary() async {
       final shareMessage = _buildShareMessage(game);
       final scoreLines =
@@ -107,272 +111,281 @@ class _GameOverScreenState extends State<GameOverScreen>
     }
 
     return Scaffold(
-      body: RepaintBoundary(
-        key: boundaryKey,
-        child: Stack(
-          children: [
-            GameBackground(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Center(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(20.0),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: MediaQuery.of(context).size.height * 0.7,
-                          maxWidth: 760,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.emoji_events,
-                              size: 100,
-                              color: Colors.amber,
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              game.t("game_over_title"),
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 24,
-                                letterSpacing: 5,
+      body: MediaQuery(
+        data: media.copyWith(
+          textScaler: TextScaler.linear(isTablet ? 1.2 : 1.0),
+        ),
+        child: RepaintBoundary(
+          key: boundaryKey,
+          child: Stack(
+            children: [
+              GameBackground(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Center(
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.all(20.0 * scale),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: media.size.height * 0.7,
+                            maxWidth: isTablet ? 900 : 760,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.emoji_events,
+                                size: 100 * scale,
+                                color: Colors.amber,
                               ),
-                            ),
-                            const SizedBox(height: 10),
-                            if (game.endMessage != null)
+                              SizedBox(height: 20 * scale),
                               Text(
-                                game.endMessage!,
-                                style: const TextStyle(
+                                game.t("game_over_title"),
+                                style: TextStyle(
                                   color: Colors.white70,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            if (game.endMessage != null)
-                              const SizedBox(height: 10),
-                            if (game.gameWinner != null)
-                              Text(
-                                game.t("winner_label"),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24 * scale,
+                                  letterSpacing: 5,
                                 ),
                               ),
-                            const SizedBox(height: 10),
-                            SizedBox(
-                              width: min(
-                                MediaQuery.of(context).size.width * 0.9,
-                                680,
-                              ),
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  game.gameWinner ?? game.t("tie_label"),
-                                  textAlign: TextAlign.center,
+                              SizedBox(height: 10 * scale),
+                              if (game.endMessage != null)
+                                Text(
+                                  game.endMessage!,
                                   style: TextStyle(
-                                    color: Colors.amber,
-                                    fontSize: 40,
-                                    fontWeight: FontWeight.w900,
-                                    shadows: reduceMotion
-                                        ? []
-                                        : const [
-                                            BoxShadow(
-                                              color: Colors.black,
-                                              blurRadius: 20,
-                                            ),
-                                          ],
+                                    color: Colors.white70,
+                                    fontSize: 16 * scale,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              if (game.endMessage != null)
+                                SizedBox(height: 10 * scale),
+                              if (game.gameWinner != null)
+                                Text(
+                                  game.t("winner_label"),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 32 * scale,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(height: 30),
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: scoreCardColor,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: scoreBorderColor),
-                                boxShadow: reduceMotion
-                                    ? []
-                                    : [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(
-                                            alpha: isDark ? 0.4 : 0.18,
-                                          ),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 6),
-                                        ),
-                                      ],
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Expanded(
-                                    child: _finalScoreItem(
-                                      game.teamAName,
-                                      game.teamAScore,
-                                      Colors.blue,
-                                      scoreTextColor,
-                                    ),
-                                  ),
-                                  Text(
-                                    "-",
+                              SizedBox(height: 10 * scale),
+                              SizedBox(
+                                width: min(
+                                  media.size.width * 0.9,
+                                  isTablet ? 760 : 680,
+                                ),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    game.gameWinner ?? game.t("tie_label"),
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
+                                      color: Colors.amber,
                                       fontSize: 40,
-                                      fontWeight: FontWeight.bold,
-                                      color: dividerColor,
+                                      fontWeight: FontWeight.w900,
+                                      shadows: reduceMotion
+                                          ? []
+                                          : const [
+                                              BoxShadow(
+                                                color: Colors.black,
+                                                blurRadius: 20,
+                                              ),
+                                            ],
                                     ),
                                   ),
-                                  Expanded(
-                                    child: _finalScoreItem(
-                                      game.teamBName,
-                                      game.teamBScore,
-                                      Colors.red,
-                                      scoreTextColor,
+                                ),
+                              ),
+                              SizedBox(height: 30 * scale),
+                              Container(
+                                padding: EdgeInsets.all(20 * scale),
+                                decoration: BoxDecoration(
+                                  color: scoreCardColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: scoreBorderColor),
+                                  boxShadow: reduceMotion
+                                      ? []
+                                      : [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(
+                                              alpha: isDark ? 0.4 : 0.18,
+                                            ),
+                                            blurRadius: 12,
+                                            offset: const Offset(0, 6),
+                                          ),
+                                        ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Expanded(
+                                      child: _finalScoreItem(
+                                        game.teamAName,
+                                        game.teamAScore,
+                                        Colors.blue,
+                                        scoreTextColor,
+                                        scale,
+                                      ),
                                     ),
+                                    Text(
+                                      "-",
+                                      style: TextStyle(
+                                        fontSize: 40 * scale,
+                                        fontWeight: FontWeight.bold,
+                                        color: dividerColor,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: _finalScoreItem(
+                                        game.teamBName,
+                                        game.teamBScore,
+                                        Colors.red,
+                                        scoreTextColor,
+                                        scale,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 24 * scale),
+                              ElevatedButton.icon(
+                                key: shareButtonKey,
+                                onPressed: () async {
+                                  await Provider.of<GameProvider>(
+                                    context,
+                                    listen: false,
+                                  ).playClick();
+                                  if (!context.mounted) return;
+                                  await shareSummary();
+                                },
+                                icon: const Icon(Icons.share),
+                                label: Text(
+                                  game.t("share"),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16 * scale,
                                   ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            ElevatedButton.icon(
-                              key: shareButtonKey,
-                              onPressed: () async {
-                                await Provider.of<GameProvider>(
-                                  context,
-                                  listen: false,
-                                ).playClick();
-                                if (!context.mounted) return;
-                                await shareSummary();
-                              },
-                              icon: const Icon(Icons.share),
-                              label: Text(
-                                game.t("share"),
-                                style:
-                                    const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.deepPurple,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 28,
-                                  vertical: 12,
                                 ),
-                              ),
-                            ),
-                            const SizedBox(height: 26),
-                            ElevatedButton(
-                              onPressed: () async {
-                                await Provider.of<GameProvider>(
-                                  context,
-                                  listen: false,
-                                ).playClick();
-                                if (!context.mounted) return;
-                                game.startGame();
-                                game.rollDice();
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (_) => const RoundStartScreen(),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.deepPurple,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 28 * scale,
+                                    vertical: 12 * scale,
                                   ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.amber,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 38,
-                                  vertical: 14,
                                 ),
                               ),
-                              child: Text(
-                                game.t("rematch"),
-                                style: const TextStyle(
-                                  color: Colors.deepPurple,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                              SizedBox(height: 26 * scale),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  await Provider.of<GameProvider>(
+                                    context,
+                                    listen: false,
+                                  ).playClick();
+                                  if (!context.mounted) return;
+                                  game.startGame();
+                                  game.rollDice();
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (_) => const RoundStartScreen(),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.amber,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 38 * scale,
+                                    vertical: 14 * scale,
+                                  ),
+                                ),
+                                child: Text(
+                                  game.t("rematch"),
+                                  style: TextStyle(
+                                    color: Colors.deepPurple,
+                                    fontSize: 18 * scale,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            ElevatedButton(
-                              onPressed: () async {
-                                await Provider.of<GameProvider>(
-                                  context,
-                                  listen: false,
-                                ).playClick();
-                                if (!context.mounted) return;
-                                Navigator.of(
-                                  context,
-                                ).popUntil((route) => route.isFirst);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 40,
-                                  vertical: 15,
+                              SizedBox(height: 12 * scale),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  await Provider.of<GameProvider>(
+                                    context,
+                                    listen: false,
+                                  ).playClick();
+                                  if (!context.mounted) return;
+                                  Navigator.of(
+                                    context,
+                                  ).popUntil((route) => route.isFirst);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 40 * scale,
+                                    vertical: 15 * scale,
+                                  ),
                                 ),
-                              ),
-                              child: Text(
-                                game.t("return_menu_button"),
-                                style: const TextStyle(
-                                  color: Colors.deepPurple,
-                                  fontSize: 18,
+                                child: Text(
+                                  game.t("return_menu_button"),
+                                  style: TextStyle(
+                                    color: Colors.deepPurple,
+                                    fontSize: 18 * scale,
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  IgnorePointer(
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: Text(
-                          appTitle,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.5),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 2,
-                            shadows: const [
-                              Shadow(
-                                color: Colors.black54,
-                                blurRadius: 6,
-                                offset: Offset(0, 2),
                               ),
                             ],
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            if (_showConfetti)
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: AnimatedBuilder(
-                    animation: _confettiCtrl,
-                    builder: (context, _) {
-                      return CustomPaint(
-                        painter: _ConfettiPainter(
-                          progress: _confettiCtrl.value,
-                          pieces: _confettiPieces,
+                    IgnorePointer(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            appTitle,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.5),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 2,
+                              shadows: const [
+                                Shadow(
+                                  color: Colors.black54,
+                                  blurRadius: 6,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-          ],
+              if (_showConfetti)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: AnimatedBuilder(
+                      animation: _confettiCtrl,
+                      builder: (context, _) {
+                        return CustomPaint(
+                          painter: _ConfettiPainter(
+                            progress: _confettiCtrl.value,
+                            pieces: _confettiPieces,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -399,6 +412,7 @@ class _GameOverScreenState extends State<GameOverScreen>
     int score,
     Color c,
     Color scoreColor,
+    double scale,
   ) {
     return Column(
       children: [
@@ -417,7 +431,7 @@ class _GameOverScreenState extends State<GameOverScreen>
         Text(
           "$score",
           style: TextStyle(
-            fontSize: 40,
+            fontSize: 40 * scale,
             fontWeight: FontWeight.w900,
             color: scoreColor,
           ),

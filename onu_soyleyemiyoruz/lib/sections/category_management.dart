@@ -129,88 +129,98 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
             : Colors.deepPurple.shade700;
         return BackdropFilter(
           filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: AlertDialog(
-            backgroundColor: dialogBg,
-            title: Text(
-              game.t("unlock_category_title"),
-              style: TextStyle(color: titleColor, fontWeight: FontWeight.bold),
-            ),
-            content: Text(body, style: TextStyle(color: contentColor)),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  game.playClick();
-                  Navigator.pop(dialogContext);
-                },
-                style: TextButton.styleFrom(foregroundColor: actionColor),
-                child: Text(game.t("cancel")),
-              ),
-              TextButton(
-                onPressed: () async {
-                  game.playClick();
-                  Navigator.pop(dialogContext);
-                  final activeTimed = game.activeTimedRewardCategory;
-                  if (access == CategoryAccess.premium && activeTimed != null) {
-                    _showSnack(
-                      messenger,
-                      game.t("reward_active_warning"),
-                      isError: true,
-                    );
-                    return;
-                  }
-                  final unlocked = await game.unlockCategoryWithReward(
-                    category,
-                  );
-                  if (!mounted) return;
-                  if (!unlocked) {
-                    _showSnack(
-                      messenger,
-                      game.t("unlock_failed"),
-                      isError: true,
-                    );
-                    return;
-                  }
-                  setState(() {
-                    _selectedCategories = Set.of(game.selectedCategories);
-                    _disabledIds = Set.of(game.disabledCardIds);
-                  });
-                  final bool timedUnlock =
-                      access == CategoryAccess.premium &&
-                      !game.recentUnlockedPermanent;
-                  _showSnack(
-                    messenger,
-                    timedUnlock
-                        ? game.t(
-                            "unlock_redeemed_1h",
-                            params: {"category": label},
-                          )
-                        : game.t("unlock_success", params: {"category": label}),
-                    isSuccess: true,
-                  );
-                  game.clearRecentUnlockedCategory();
-                  _ensureRewardTicker(game);
-                },
-                style: TextButton.styleFrom(foregroundColor: actionColor),
-                child: Text(
-                  access == CategoryAccess.adUnlock
-                      ? game.t("watch_ad_unlock")
-                      : game.t("watch_ad_1h"),
-                ),
-              ),
-              if (access == CategoryAccess.premium && game.iapAvailable)
-                ElevatedButton(
-                  onPressed: () async {
-                    game.playClick();
-                    Navigator.pop(dialogContext);
-                    await game.buyCategoryPack(category);
-                  },
-                  child: Text(
-                    price != null
-                        ? "${game.t("buy_unlock_forever")} • $price"
-                        : game.t("buy_unlock_forever"),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: AlertDialog(
+                backgroundColor: dialogBg,
+                title: Text(
+                  game.t("unlock_category_title"),
+                  style: TextStyle(
+                    color: titleColor,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-            ],
+                content: Text(body, style: TextStyle(color: contentColor)),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      game.playClick();
+                      Navigator.pop(dialogContext);
+                    },
+                    style: TextButton.styleFrom(foregroundColor: actionColor),
+                    child: Text(game.t("cancel")),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      game.playClick();
+                      Navigator.pop(dialogContext);
+                      final activeTimed = game.activeTimedRewardCategory;
+                      if (access == CategoryAccess.premium &&
+                          activeTimed != null) {
+                        _showSnack(
+                          messenger,
+                          game.t("reward_active_warning"),
+                          isError: true,
+                        );
+                        return;
+                      }
+                      final unlocked = await game.unlockCategoryWithReward(
+                        category,
+                      );
+                      if (!mounted) return;
+                      if (!unlocked) {
+                        _showSnack(
+                          messenger,
+                          game.t("unlock_failed"),
+                          isError: true,
+                        );
+                        return;
+                      }
+                      setState(() {
+                        _selectedCategories = Set.of(game.selectedCategories);
+                        _disabledIds = Set.of(game.disabledCardIds);
+                      });
+                      final bool timedUnlock =
+                          access == CategoryAccess.premium &&
+                          !game.recentUnlockedPermanent;
+                      _showSnack(
+                        messenger,
+                        timedUnlock
+                            ? game.t(
+                                "unlock_redeemed_1h",
+                                params: {"category": label},
+                              )
+                            : game.t("unlock_success",
+                                params: {"category": label}),
+                        isSuccess: true,
+                      );
+                      game.clearRecentUnlockedCategory();
+                      _ensureRewardTicker(game);
+                    },
+                    style: TextButton.styleFrom(foregroundColor: actionColor),
+                    child: Text(
+                      access == CategoryAccess.adUnlock
+                          ? game.t("watch_ad_unlock")
+                          : game.t("watch_ad_1h"),
+                    ),
+                  ),
+                  if (access == CategoryAccess.premium && game.iapAvailable)
+                    ElevatedButton(
+                      onPressed: () async {
+                        game.playClick();
+                        Navigator.pop(dialogContext);
+                        await game.buyCategoryPack(category);
+                      },
+                      child: Text(
+                        price != null
+                            ? "${game.t("buy_unlock_forever")} • $price"
+                            : game.t("buy_unlock_forever"),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         );
       },

@@ -112,6 +112,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ? Colors.black.withValues(alpha: 0.32)
                 : Colors.white.withValues(alpha: 0.82);
             final BorderRadius surfaceRadius = BorderRadius.circular(20);
+            final Color cardFill = isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.white.withValues(alpha: 0.7);
+            final BorderRadius cardRadius = BorderRadius.circular(16);
+            List<Widget> buildSettingsGroup(List<Widget> items) {
+              return [
+                Container(
+                  decoration: BoxDecoration(
+                    color: cardFill,
+                    borderRadius: cardRadius,
+                    border: Border.all(
+                      color: isDark
+                          ? Colors.white24
+                          : Colors.black.withValues(alpha: 0.06),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      for (int i = 0; i < items.length; i++) ...[
+                        items[i],
+                        if (i != items.length - 1)
+                          Divider(
+                            height: 1,
+                            thickness: 0.6,
+                            color: isDark ? Colors.white24 : Colors.black12,
+                          ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ];
+            }
+
             return Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: isWide ? 900 : 720),
@@ -153,85 +187,90 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 MediaQuery.of(context).padding.bottom,
                           ),
                           children: [
-                            SwitchListTile(
-                              title: Text(
-                                game.t("settings_music"),
-                                style: TextStyle(
-                                  color: textColor,
-                                  fontSize: labelFont,
+                            ...buildSettingsGroup([
+                              SwitchListTile(
+                                title: Text(
+                                  game.t("settings_music"),
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: labelFont,
+                                  ),
                                 ),
+                                secondary: game.musicEnabled
+                                    ? Icon(Icons.music_note, color: iconColor)
+                                    : Icon(Icons.music_off, color: iconColor),
+                                value: game.musicEnabled,
+                                onChanged: (val) async {
+                                  await game.playClick();
+                                  game.toggleMusic(val);
+                                },
                               ),
-                              secondary: game.musicEnabled
-                                  ? Icon(Icons.music_note, color: iconColor)
-                                  : Icon(Icons.music_off, color: iconColor),
-                              value: game.musicEnabled,
-                              onChanged: (val) async {
-                                await game.playClick();
-                                game.toggleMusic(val);
-                              },
-                            ),
-                            SwitchListTile(
-                              title: Text(
-                                game.t("settings_sfx"),
-                                style: TextStyle(
-                                  color: textColor,
-                                  fontSize: labelFont,
+                              SwitchListTile(
+                                title: Text(
+                                  game.t("settings_sfx"),
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: labelFont,
+                                  ),
                                 ),
+                                secondary: game.soundEnabled
+                                    ? Icon(
+                                        Icons.volume_up_outlined,
+                                        color: iconColor,
+                                      )
+                                    : Icon(
+                                        Icons.volume_off_outlined,
+                                        color: iconColor,
+                                      ),
+                                value: game.soundEnabled,
+                                onChanged: (val) async {
+                                  game.toggleSound(val);
+                                  if (val) {
+                                    await game.playClick(force: true);
+                                  }
+                                },
                               ),
-                              secondary: game.soundEnabled
-                                  ? Icon(
-                                      Icons.volume_up_outlined,
-                                      color: iconColor,
-                                    )
-                                  : Icon(
-                                      Icons.volume_off_outlined,
-                                      color: iconColor,
-                                    ),
-                              value: game.soundEnabled,
-                              onChanged: (val) async {
-                                game.toggleSound(val);
-                                if (val) {
-                                  await game.playClick(force: true);
-                                }
-                              },
-                            ),
-                            SwitchListTile(
-                              title: Text(
-                                game.t("settings_vibration"),
-                                style: TextStyle(
-                                  color: textColor,
-                                  fontSize: labelFont,
+                              SwitchListTile(
+                                title: Text(
+                                  game.t("settings_vibration"),
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: labelFont,
+                                  ),
                                 ),
+                                secondary: game.vibrationEnabled
+                                    ? Icon(Icons.vibration, color: iconColor)
+                                    : Icon(
+                                        Icons.phone_iphone,
+                                        color: iconColor,
+                                      ),
+                                value: game.vibrationEnabled,
+                                onChanged: (val) async {
+                                  await game.playClick();
+                                  game.toggleVibration(val);
+                                },
                               ),
-                              secondary: game.vibrationEnabled
-                                  ? Icon(Icons.vibration, color: iconColor)
-                                  : Icon(Icons.phone_iphone, color: iconColor),
-                              value: game.vibrationEnabled,
-                              onChanged: (val) async {
-                                await game.playClick();
-                                game.toggleVibration(val);
-                              },
-                            ),
-                            SwitchListTile(
-                              title: Text(
-                                game.t("settings_performance"),
-                                style: TextStyle(
-                                  color: textColor,
-                                  fontSize: labelFont,
+                              SwitchListTile(
+                                title: Text(
+                                  game.t("settings_performance"),
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: labelFont,
+                                  ),
                                 ),
+                                secondary: Icon(
+                                  Icons.speed,
+                                  color: game.reducedMotion
+                                      ? Colors.amber
+                                      : iconColor,
+                                ),
+                                value: game.reducedMotion,
+                                onChanged: (val) async {
+                                  await game.playClick();
+                                  game.toggleReducedMotion(val);
+                                },
                               ),
-                              secondary: Icon(
-                                Icons.speed,
-                                color: game.reducedMotion
-                                    ? Colors.amber
-                                    : iconColor,
-                              ),
-                              value: game.reducedMotion,
-                              onChanged: (val) async {
-                                await game.playClick();
-                                game.toggleReducedMotion(val);
-                              },
-                            ),
+                            ]),
                             if (game.gameServicesSupported) ...[
                               const SizedBox(height: 8),
                               Align(

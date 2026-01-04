@@ -42,7 +42,7 @@ packages:
     source: hosted
     version: "5.2.1"
   audioplayers_darwin:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
       name: audioplayers_darwin
       sha256: "0811d6924904ca13f9ef90d19081e4a87f7297ddc19fc3d31f60af1aaafee333"
