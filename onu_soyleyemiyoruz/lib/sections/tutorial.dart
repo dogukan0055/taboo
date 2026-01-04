@@ -88,6 +88,9 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
   @override
   Widget build(BuildContext context) {
     final game = Provider.of<GameProvider>(context);
+    final media = MediaQuery.of(context);
+    final bool isTablet = media.size.shortestSide >= 700;
+    final textScaler = TextScaler.linear(isTablet ? 1.35 : 1.0);
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -108,71 +111,74 @@ class _TutorialScreenBodyState extends State<_TutorialScreenBody> {
         ),
       ),
       body: GameBackground(
-        child: Scrollbar(
-          controller: _tutorialScrollController,
-          thumbVisibility: true,
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 640),
-              child: ListView(
-                controller: _tutorialScrollController,
-                padding: const EdgeInsets.all(20),
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white24),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          game.t("game_summary_title"),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+        child: MediaQuery(
+          data: media.copyWith(textScaler: textScaler),
+          child: Scrollbar(
+            controller: _tutorialScrollController,
+            thumbVisibility: true,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: isTablet ? 1100 : 640),
+                child: ListView(
+                  controller: _tutorialScrollController,
+                  padding: EdgeInsets.all(isTablet ? 28 : 24),
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.white24),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            game.t("game_summary_title"),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: isTablet ? 22 : 20,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          game.t("game_summary_body"),
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.9),
+                          const SizedBox(height: 8),
+                          Text(
+                            game.t("game_summary_body"),
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.9),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  _TutorialTipCard(
-                    icon: Icons.timer,
-                    title: game.t("tip_time_management_title"),
-                    description: game.t("tip_time_management_body"),
-                  ),
-                  _TutorialTipCard(
-                    icon: Icons.skip_next,
-                    title: game.t("tip_pass_right_title"),
-                    description: game.t("tip_pass_right_body"),
-                  ),
-                  _TutorialTipCard(
-                    icon: Icons.block,
-                    title: game.t("tip_taboo_penalty_title"),
-                    description: game.t("tip_taboo_penalty_body"),
-                  ),
-                  _TutorialTipCard(
-                    icon: Icons.record_voice_over,
-                    title: game.t("tip_narrator_cycle_title"),
-                    description: game.t("tip_narrator_cycle_body"),
-                  ),
-                  _TutorialTipCard(
-                    icon: Icons.feedback,
-                    title: game.t("tip_feedback_title"),
-                    description: game.t("tip_feedback_body"),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    _TutorialTipCard(
+                      icon: Icons.timer,
+                      title: game.t("tip_time_management_title"),
+                      description: game.t("tip_time_management_body"),
+                    ),
+                    _TutorialTipCard(
+                      icon: Icons.skip_next,
+                      title: game.t("tip_pass_right_title"),
+                      description: game.t("tip_pass_right_body"),
+                    ),
+                    _TutorialTipCard(
+                      icon: Icons.block,
+                      title: game.t("tip_taboo_penalty_title"),
+                      description: game.t("tip_taboo_penalty_body"),
+                    ),
+                    _TutorialTipCard(
+                      icon: Icons.record_voice_over,
+                      title: game.t("tip_narrator_cycle_title"),
+                      description: game.t("tip_narrator_cycle_body"),
+                    ),
+                    _TutorialTipCard(
+                      icon: Icons.feedback,
+                      title: game.t("tip_feedback_title"),
+                      description: game.t("tip_feedback_body"),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

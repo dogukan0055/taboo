@@ -70,6 +70,8 @@ class _GamePlayScreenState extends State<GamePlayScreen>
   @override
   Widget build(BuildContext context) {
     var game = Provider.of<GameProvider>(context);
+    final media = MediaQuery.of(context);
+    final bool isTablet = media.size.shortestSide >= 700;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     _reduceMotion = game.reducedMotion;
     final Color tabooColor = isDark ? Colors.red.shade700 : Colors.red;
@@ -145,7 +147,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             GameBackground(
               child: Column(
                 children: [
-                  _buildScoreHeader(game),
+                  _buildScoreHeader(game, isTablet),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
@@ -157,9 +159,12 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                       ),
                     ),
                   ),
-                  _buildFeedbackToggles(game),
+                  _buildFeedbackToggles(game, isTablet),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
+                    padding: EdgeInsets.only(
+                      bottom: isTablet ? 38 : 30,
+                      top: isTablet ? 6 : 0,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -168,6 +173,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                           color: tabooColor,
                           label: game.t("label_taboo"),
                           disabled: game.isCoolingDown,
+                          scale: isTablet ? 1.2 : 1.0,
                           onTap: () {
                             _showFloatingText(
                               game.t("floating_taboo"),
@@ -183,6 +189,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                                 label: game.t("label_pass"),
                                 badgeText: "${game.currentPasses}",
                                 disabled: game.isCoolingDown,
+                                scale: isTablet ? 1.2 : 1.0,
                                 onTap: () {
                                   _showFloatingText(
                                     game.t("floating_pass"),
@@ -199,6 +206,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                                   label: game.t("label_pass"),
                                   badgeText: "0",
                                   disabled: true,
+                                  scale: isTablet ? 1.2 : 1.0,
                                   onTap: () {},
                                 ),
                               ),
@@ -207,6 +215,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                           color: correctColor,
                           label: game.t("label_correct"),
                           disabled: game.isCoolingDown,
+                          scale: isTablet ? 1.2 : 1.0,
                           onTap: () {
                             _showFloatingText(
                               game.t("floating_correct"),
@@ -249,6 +258,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
   }
 
   void _onPausePressed(GameProvider game, {bool fromBackground = false}) {
+    final bool isTablet = MediaQuery.of(context).size.shortestSide >= 700;
     game.pauseGame();
     showDialog(
       context: context,
@@ -267,7 +277,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             backgroundColor: Colors.transparent,
             insetPadding: const EdgeInsets.symmetric(horizontal: 24),
             child: SizedBox(
-              width: min(MediaQuery.of(context).size.width * 0.9, 600),
+              width: min(MediaQuery.of(context).size.width * 0.92, isTablet ? 680 : 600),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
@@ -287,25 +297,27 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const SizedBox(height: 18),
-                    const Icon(
+                    SizedBox(height: isTablet ? 24 : 18),
+                    Icon(
                       Icons.pause_circle_outline,
                       color: Colors.amber,
-                      size: 46,
+                      size: isTablet ? 58 : 46,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Text(
                       game.t("paused_title"),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
-                        fontSize: 20,
+                        fontSize: isTablet ? 24 : 20,
                         letterSpacing: 1,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isTablet ? 26 : 20,
+                      ),
                       child: Text(
                         fromBackground
                             ? game.t("paused_background")
@@ -313,23 +325,23 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white70,
-                          fontSize: fromBackground ? 12 : 14,
+                          fontSize: (fromBackground ? 12 : 14) + (isTablet ? 2 : 0),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    const Divider(
+                    SizedBox(height: isTablet ? 20 : 16),
+                    Divider(
                       height: 1,
                       thickness: 1,
                       color: Colors.white24,
-                      indent: 40,
-                      endIndent: 40,
+                      indent: isTablet ? 46 : 40,
+                      endIndent: isTablet ? 46 : 40,
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: isTablet ? 16 : 12),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 4,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isTablet ? 20 : 16,
+                        vertical: isTablet ? 6 : 4,
                       ),
                       child: Column(
                         children: [
@@ -344,8 +356,8 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.amber,
                                 foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: isTablet ? 18 : 14,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -353,8 +365,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                               ),
                               child: Text(
                                 game.t("resume"),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
+                                  fontSize: isTablet ? 18 : 16,
                                 ),
                               ),
                             ),
@@ -377,8 +390,8 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                                   color: Colors.redAccent,
                                   width: 1.4,
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: isTablet ? 18 : 14,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -386,8 +399,9 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                               ),
                               child: Text(
                                 game.t("return_menu"),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
+                                  fontSize: isTablet ? 18 : 16,
                                 ),
                               ),
                             ),
@@ -403,12 +417,12 @@ class _GamePlayScreenState extends State<GamePlayScreen>
           ),
         ],
       ),
-    ).then((_) {
-      if (game.isPaused) {
-        game.resumeGame();
-      }
-    });
-  }
+  ).then((_) {
+    if (game.isPaused) {
+      game.resumeGame();
+    }
+  });
+}
 
   @override
   void dispose() {
@@ -417,13 +431,19 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     super.dispose();
   }
 
-  Widget _buildFeedbackToggles(GameProvider game) {
+  Widget _buildFeedbackToggles(GameProvider game, bool isTablet) {
+    final double scale = isTablet ? 1.25 : 1.0;
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 6),
+      padding: EdgeInsets.only(
+        left: 16 * scale,
+        right: 16 * scale,
+        bottom: 10 * scale,
+        top: isTablet ? 10 : 6,
+      ),
       child: Wrap(
         alignment: WrapAlignment.center,
-        spacing: 10,
-        runSpacing: 8,
+        spacing: isTablet ? 14 : 10,
+        runSpacing: isTablet ? 10 : 8,
         children: [
           _buildFeedbackToggle(
             icon: game.soundEnabled ? Icons.volume_up : Icons.volume_off,
@@ -436,6 +456,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
               game.toggleSound(!game.soundEnabled);
             },
             playClickOnTap: false,
+            scale: scale,
           ),
           _buildFeedbackToggle(
             icon: game.vibrationEnabled ? Icons.vibration : Icons.phone_android,
@@ -444,6 +465,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                 : game.t("vibration_off"),
             isActive: game.vibrationEnabled,
             onTap: () => game.toggleVibration(!game.vibrationEnabled),
+            scale: scale,
           ),
           _buildFeedbackToggle(
             icon: Icons.style,
@@ -454,6 +476,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             isActive: false,
             onTap: () {},
             enabled: false,
+            scale: scale,
           ),
         ],
       ),
@@ -468,6 +491,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     bool playClickOnTap = true,
     bool forceClick = false,
     bool enabled = true,
+    double scale = 1.0,
   }) {
     return InkWell(
       onTap: enabled
@@ -481,10 +505,13 @@ class _GamePlayScreenState extends State<GamePlayScreen>
               }
               onTap();
             }
-          : null,
+      : null,
       borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: EdgeInsets.symmetric(
+          horizontal: 12 * scale,
+          vertical: 8 * scale,
+        ),
         decoration: BoxDecoration(
           color: isActive
               ? Colors.white.withValues(alpha: 0.2)
@@ -498,13 +525,14 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 18, color: Colors.white),
-            const SizedBox(width: 6),
+            Icon(icon, size: 18 * scale, color: Colors.white),
+            SizedBox(width: 6 * scale),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontSize: 14 * scale,
               ),
             ),
           ],
@@ -513,9 +541,14 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     );
   }
 
-  Widget _buildScoreHeader(GameProvider game) {
+  Widget _buildScoreHeader(GameProvider game, bool isTablet) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final double headerWidth = min(MediaQuery.of(context).size.width - 20, 720);
+    final double headerWidth =
+        min(MediaQuery.of(context).size.width - 20, isTablet ? 820 : 720);
+    final double headerHeight = isTablet ? 110 : 90;
+    final double timerSize = isTablet ? 86 : 70;
+    final double timerFontSize = isTablet ? 32 : 28;
+    final double pauseButtonSize = isTablet ? 34 : 28;
     return Padding(
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       child: Center(
@@ -525,7 +558,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             clipBehavior: Clip.none,
             children: [
               Container(
-                height: 90,
+                height: headerHeight,
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.black.withValues(alpha: 0.6)
@@ -541,16 +574,17 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                         Colors.blueAccent,
                         game.isTeamATurn,
                         isDark: isDark,
+                        isTablet: isTablet,
                       ),
                     ),
                     Container(
-                      width: 82,
-                      height: 70,
+                      width: timerSize + 12,
+                      height: timerSize,
                       padding: const EdgeInsets.symmetric(horizontal: 6),
                       alignment: Alignment.center,
                       child: Container(
-                        width: 70,
-                        height: 70,
+                        width: timerSize,
+                        height: timerSize,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
@@ -564,8 +598,8 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                           opacity: _blink,
                           child: Text(
                             "${game.timeLeft}",
-                            style: const TextStyle(
-                              fontSize: 28,
+                            style: TextStyle(
+                              fontSize: timerFontSize,
                               fontWeight: FontWeight.bold,
                               color: Colors.deepPurple,
                             ),
@@ -580,6 +614,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                         Colors.redAccent,
                         !game.isTeamATurn,
                         isDark: isDark,
+                        isTablet: isTablet,
                       ),
                     ),
                   ],
@@ -592,16 +627,16 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                 child: Center(
                   child: IconButton(
                     icon: Container(
-                      width: 28,
-                      height: 28,
+                      width: pauseButtonSize,
+                      height: pauseButtonSize,
                       decoration: const BoxDecoration(
                         color: Colors.amber,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.pause,
                         color: Colors.black,
-                        size: 18,
+                        size: isTablet ? 22 : 20,
                       ),
                     ),
                     padding: EdgeInsets.zero,
@@ -626,6 +661,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
     Color color,
     bool isActive, {
     required bool isDark,
+    required bool isTablet,
   }) {
     final Color activeFill = Colors.black.withValues(
       alpha: isDark ? 0.5 : 0.35,
@@ -660,7 +696,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                  fontSize: 14,
+                  fontSize: isTablet ? 16 : 14,
                   shadows: const [
                     BoxShadow(
                       color: Colors.black54,
@@ -678,7 +714,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w900,
-              fontSize: 26,
+              fontSize: isTablet ? 32 : 26,
               shadows: isActive
                   ? [
                       if (!_reduceMotion)
@@ -707,7 +743,7 @@ class _GamePlayScreenState extends State<GamePlayScreen>
         : const Color(0xFFE0E0E0);
     final Size screenSize = MediaQuery.of(context).size;
     final bool isTablet = screenSize.shortestSide >= 600;
-    final double cardWidth = screenSize.width * (isTablet ? 0.55 : 0.78);
+    final double cardWidth = screenSize.width * (isTablet ? 0.6 : 0.78);
     final double maxCardHeight = isTablet ? 520 : screenSize.height * 0.85;
     final List<String> sortedTabooWords = List.of(card.tabooWords)
       ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
@@ -842,6 +878,7 @@ class BouncingButton extends StatefulWidget {
   final String? badgeText;
   final VoidCallback onTap;
   final bool disabled;
+  final double scale;
   const BouncingButton({
     super.key,
     required this.icon,
@@ -850,6 +887,7 @@ class BouncingButton extends StatefulWidget {
     required this.onTap,
     this.badgeText,
     this.disabled = false,
+    this.scale = 1.0,
   });
   @override
   State<BouncingButton> createState() => _BouncingButtonState();
@@ -875,6 +913,7 @@ class _BouncingButtonState extends State<BouncingButton>
       context,
       listen: false,
     ).reducedMotion;
+    final double s = widget.scale;
     return GestureDetector(
       onTapDown: (_) {
         if (widget.disabled) return;
@@ -902,7 +941,7 @@ class _BouncingButtonState extends State<BouncingButton>
               clipBehavior: Clip.none,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(20 * s),
                   decoration: BoxDecoration(
                     color: widget.disabled
                         ? widget.color.withValues(alpha: 0.5)
@@ -919,14 +958,18 @@ class _BouncingButtonState extends State<BouncingButton>
                             ),
                           ],
                   ),
-                  child: Icon(widget.icon, color: Colors.white, size: 30),
+                  child: Icon(
+                    widget.icon,
+                    color: Colors.white,
+                    size: 30 * s,
+                  ),
                 ),
                 if (widget.badgeText != null)
                   Positioned(
-                    right: 6,
-                    top: 6,
+                    right: 6 * s,
+                    top: 6 * s,
                     child: Container(
-                      padding: const EdgeInsets.all(6),
+                      padding: EdgeInsets.all(6 * s),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
@@ -943,12 +986,13 @@ class _BouncingButtonState extends State<BouncingButton>
                   ),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8 * s),
             Text(
               widget.label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontSize: 14 * s,
               ),
             ),
           ],

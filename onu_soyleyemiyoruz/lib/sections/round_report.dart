@@ -96,7 +96,7 @@ class RoundReportScreen extends StatelessWidget {
       },
       child: MediaQuery(
         data: media.copyWith(
-          textScaler: TextScaler.linear(isTablet ? 1.15 : 1.0),
+          textScaler: TextScaler.linear(isTablet ? 1.25 : 1.0),
         ),
         child: DefaultTabController(
           length: 3,
@@ -127,11 +127,13 @@ class RoundReportScreen extends StatelessWidget {
                 labelColor: textColor,
                 unselectedLabelColor: isDark ? Colors.white38 : Colors.grey,
                 indicatorColor: isDark ? Colors.amber[400]! : Colors.deepPurple,
-                labelStyle: const TextStyle(
-                  fontSize: 12,
+                labelStyle: TextStyle(
+                  fontSize: isTablet ? 14 : 12,
                   fontWeight: FontWeight.bold,
                 ),
-                unselectedLabelStyle: const TextStyle(fontSize: 12),
+                unselectedLabelStyle: TextStyle(
+                  fontSize: isTablet ? 13 : 12,
+                ),
                 tabs: [
                   Tab(text: game.t("tab_correct")),
                   Tab(text: game.t("tab_taboo")),
@@ -143,13 +145,13 @@ class RoundReportScreen extends StatelessWidget {
               top: false,
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 900),
+                  constraints: BoxConstraints(maxWidth: isTablet ? 1100 : 900),
                   child: Column(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                          horizontal: 32,
+                        padding: EdgeInsets.symmetric(
+                          vertical: isTablet ? 20 : 16,
+                          horizontal: isTablet ? 40 : 32,
                         ),
                         color: scaffoldColor,
                         child: Row(
@@ -160,18 +162,21 @@ class RoundReportScreen extends StatelessWidget {
                               value: correctList.length,
                               color: Colors.green,
                               textColor: textColor,
+                              isTablet: isTablet,
                             ),
                             _buildSummaryStat(
                               label: game.t("stat_taboo"),
                               value: tabooList.length,
                               color: Colors.red,
                               textColor: textColor,
+                              isTablet: isTablet,
                             ),
                             _buildSummaryStat(
                               label: game.t("stat_score"),
                               value: correctList.length - tabooList.length,
                               color: Colors.deepPurple,
                               textColor: textColor,
+                              isTablet: isTablet,
                             ),
                           ],
                         ),
@@ -209,6 +214,7 @@ class RoundReportScreen extends StatelessWidget {
                               Colors.green,
                               reduceMotion,
                               isDark,
+                              isTablet,
                             ),
                             _buildSimpleCardList(
                               game,
@@ -216,6 +222,7 @@ class RoundReportScreen extends StatelessWidget {
                               Colors.red,
                               reduceMotion,
                               isDark,
+                              isTablet,
                             ),
                             _buildSimpleCardList(
                               game,
@@ -223,6 +230,7 @@ class RoundReportScreen extends StatelessWidget {
                               Colors.blue,
                               reduceMotion,
                               isDark,
+                              isTablet,
                             ),
                           ],
                         ),
@@ -238,6 +246,7 @@ class RoundReportScreen extends StatelessWidget {
                                   game,
                                   dangerButtonColor,
                                   isManual: false,
+                                  isTablet: isTablet,
                                 )
                               : Row(
                                   children: [
@@ -246,7 +255,9 @@ class RoundReportScreen extends StatelessWidget {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: primaryButtonColor,
                                           foregroundColor: Colors.white,
-                                          padding: const EdgeInsets.all(18),
+                                          padding: EdgeInsets.all(
+                                            isTablet ? 22 : 18,
+                                          ),
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
                                               12,
@@ -276,8 +287,8 @@ class RoundReportScreen extends StatelessWidget {
                                         },
                                         child: Text(
                                           game.t("continue"),
-                                          style: const TextStyle(
-                                            fontSize: 18,
+                                          style: TextStyle(
+                                            fontSize: isTablet ? 20 : 18,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -291,6 +302,7 @@ class RoundReportScreen extends StatelessWidget {
                                           game,
                                           dangerButtonColor,
                                           isManual: true,
+                                          isTablet: isTablet,
                                           enabled: canManualEnd,
                                         ),
                                       ),
@@ -316,6 +328,7 @@ class RoundReportScreen extends StatelessWidget {
     Color dangerButtonColor, {
     required bool isManual,
     bool enabled = true,
+    required bool isTablet,
   }) {
     final Color disabledBg = dangerButtonColor.withValues(alpha: 0.4);
     final Color disabledFg = Colors.white70;
@@ -325,7 +338,7 @@ class RoundReportScreen extends StatelessWidget {
         foregroundColor: enabled ? Colors.white : disabledFg,
         disabledBackgroundColor: disabledBg,
         disabledForegroundColor: disabledFg,
-        padding: const EdgeInsets.all(18),
+        padding: EdgeInsets.all(isTablet ? 22 : 18),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       onPressed: !enabled
@@ -354,7 +367,10 @@ class RoundReportScreen extends StatelessWidget {
             },
       child: Text(
         game.t("end_game"),
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: isTablet ? 20 : 18,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -370,6 +386,7 @@ class RoundReportScreen extends StatelessWidget {
     required int value,
     required Color color,
     required Color textColor,
+    required bool isTablet,
   }) {
     return Column(
       children: [
@@ -380,7 +397,7 @@ class RoundReportScreen extends StatelessWidget {
         Text(
           "$value",
           style: TextStyle(
-            fontSize: 26,
+            fontSize: isTablet ? 30 : 26,
             fontWeight: FontWeight.w900,
             color: textColor,
           ),
@@ -396,6 +413,7 @@ class RoundReportScreen extends StatelessWidget {
     Color color,
     bool reduceMotion,
     bool isDark,
+    bool isTablet,
   ) {
     if (events.isEmpty) {
       return Center(
@@ -407,11 +425,11 @@ class RoundReportScreen extends StatelessWidget {
     }
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 220,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 0.8,
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: isTablet ? 280 : 220,
+        crossAxisSpacing: isTablet ? 14 : 10,
+        mainAxisSpacing: isTablet ? 14 : 10,
+        childAspectRatio: isTablet ? 0.78 : 0.8,
       ),
       itemCount: events.length,
       itemBuilder: (context, index) {
