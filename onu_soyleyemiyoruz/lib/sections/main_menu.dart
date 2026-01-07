@@ -38,16 +38,19 @@ class MainMenuScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 24),
-                          Text(
-                            game.t("menu_title"),
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            softWrap: false,
-                            style: TextStyle(
-                              fontSize: titleSize,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              height: 1.0,
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              game.t("menu_title"),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              softWrap: true,
+                              style: TextStyle(
+                                fontSize: titleSize,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                                height: 1.0,
+                              ),
                             ),
                           ),
                           const Spacer(),
@@ -84,12 +87,6 @@ class MainMenuScreen extends StatelessWidget {
                                 builder: (_) => const TutorialScreen(),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 15),
-                          _MenuButton(
-                            label: game.t("menu_exit"),
-                            color: Colors.red,
-                            onTap: () => SystemNavigator.pop(),
                           ),
                           const Spacer(),
                         ],

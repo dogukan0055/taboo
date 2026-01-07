@@ -520,7 +520,12 @@ void _showSnack(
                 children: [
                   Icon(icon, color: iconColor, size: 18),
                   const SizedBox(width: 8),
-                  Expanded(child: Text(message)),
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
                   if (actionLabel != null && onAction != null) ...[
                     const SizedBox(width: 6),
                     InkWell(

@@ -264,6 +264,17 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
         game.clearRecentUnlockedCategory();
       });
     }
+    if (game.adsRemovalJustGranted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _showSnack(
+          messenger,
+          game.t("purchase_remove_ads_success"),
+          isSuccess: true,
+        );
+        game.markAdsRemovalNotified();
+      });
+    }
     final reduceMotion = game.reducedMotion;
 
     return Scaffold(

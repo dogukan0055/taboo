@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'game_provider.dart';
 import 'models.dart';
 import 'add_custom_card_screen.dart';
@@ -258,7 +259,12 @@ void _showSnack(
                 children: [
                   Icon(icon, color: iconColor, size: 18),
                   const SizedBox(width: 8),
-                  Expanded(child: Text(message)),
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
                   if (actionLabel != null && onAction != null) ...[
                     const SizedBox(width: 6),
                     InkWell(

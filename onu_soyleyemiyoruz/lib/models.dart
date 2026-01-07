@@ -2199,7 +2199,7 @@ final List<WordCard> initialDeckTr = [
   ),
   WordCard(
     word: "ŞAPLAK",
-    tabooWords: ["El", "Kalça", "Ses", "Hafif", "Oyun"],
+    tabooWords: ["Vurmak", "Kalça", "Ses", "El", "Vurmak"],
     category: "Gece Yarısı",
   ),
 ];

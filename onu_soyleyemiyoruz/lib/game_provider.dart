@@ -182,6 +182,9 @@ class GameProvider extends ChangeNotifier {
   bool _showingInterstitial = false;
   bool _showingRewarded = false;
   bool gameServicesSignedIn = false;
+  bool _restoringPurchases = false;
+  Completer<bool>? _restoreCompleter;
+  Timer? _restoreTimeout;
   bool _gameServicesSignInAttempted = false;
 
   int currentPasses = 0;
@@ -427,6 +430,9 @@ class GameProvider extends ChangeNotifier {
       if (status == PurchaseStatus.purchased ||
           status == PurchaseStatus.restored) {
         _grantPurchase(purchase.productID);
+        if (_restoreCompleter != null && !_restoreCompleter!.isCompleted) {
+          _restoreCompleter!.complete(true);
+        }
       }
       if (purchase.pendingCompletePurchase) {
         InAppPurchase.instance.completePurchase(purchase);
@@ -543,9 +549,26 @@ class GameProvider extends ChangeNotifier {
     await InAppPurchase.instance.buyNonConsumable(purchaseParam: param);
   }
 
-  Future<void> restorePurchases() async {
-    if (!iapAvailable) return;
+  bool get restoringPurchases => _restoringPurchases;
+
+  Future<bool> restorePurchases() async {
+    if (!iapAvailable || _restoringPurchases) return false;
+    _restoringPurchases = true;
+    notifyListeners();
+    _restoreCompleter = Completer<bool>();
+    _restoreTimeout?.cancel();
+    _restoreTimeout = Timer(const Duration(seconds: 6), () {
+      if (_restoreCompleter != null && !_restoreCompleter!.isCompleted) {
+        _restoreCompleter!.complete(false);
+      }
+    });
     await InAppPurchase.instance.restorePurchases();
+    final bool restored = await _restoreCompleter!.future;
+    _restoreTimeout?.cancel();
+    _restoreCompleter = null;
+    _restoringPurchases = false;
+    notifyListeners();
+    return restored;
   }
 
   void _loadInterstitial() {
@@ -1260,6 +1283,8 @@ class GameProvider extends ChangeNotifier {
         "remove_ads": "Reklamları Kaldır",
         "remove_ads_desc": "Reklamlar kapanır, bütün kategoriler açılır!",
         "remove_ads_owned": "Reklamlar zaten kaldırıldı",
+        "restore_nothing": "Geri yüklenecek satın alma bulunamadı",
+        "restore_success": "Satın alma geri yüklendi",
         "premium_bundle_owned": "Premium paket satın alındı",
         "restore_purchases": "Satın Alımları Geri Yükle",
         "watch_ad_unlock": "Reklam izle",
@@ -1289,6 +1314,15 @@ class GameProvider extends ChangeNotifier {
         "ad_break_title": "Kısa Ara",
         "ad_break_body": "Reklam 5 saniye sonra geçilebilir",
         "ads_skip": "Geç",
+        "contact_headline": "Bizimle iletişime geçin",
+        "contact_subtitle":
+            "Soru, hata bildirimi veya geliştirme önerileriniz için bize e-posta gönderebilirsiniz. Cihaz, işletim sistemi ve sürüm bilgisini eklemek işleri hızlandırır.",
+        "contact_cta": "E-posta gönder",
+        "contact_body_template":
+            "Hi, it's X.\nI just wanted to let you know that...\n\nBest regards,\nX",
+        "contact_error": "E-posta uygulaması açılamadı. Lütfen tekrar deneyin.",
+        "purchase_remove_ads_success":
+            "Satın alma tamamlandı! Reklamlar kapandı, tüm kategoriler açıldı.",
         "game_center_title": "Game Center",
         "game_center_desc": "Başarımlarını Game Center ile eşitle",
         "game_center_connect": "Bağlan",
@@ -1526,6 +1560,8 @@ class GameProvider extends ChangeNotifier {
         "remove_ads": "Remove Ads",
         "remove_ads_desc": "Ads off, all categories on!",
         "remove_ads_owned": "Ads removed already",
+        "restore_nothing": "No purchases to restore",
+        "restore_success": "Purchases restored",
         "premium_bundle_owned": "Premium Bundle owned",
         "restore_purchases": "Restore Purchases",
         "watch_ad_unlock": "Watch ad",
@@ -1555,6 +1591,15 @@ class GameProvider extends ChangeNotifier {
         "ad_break_title": "Short Break",
         "ad_break_body": "You can skip in 5 seconds",
         "ads_skip": "Skip",
+        "contact_headline": "Reach us anytime",
+        "contact_subtitle":
+            "For bugs, improvements, or ideas, send us an email. Including your device, OS, and app version helps us fix things faster.",
+        "contact_cta": "Send email",
+        "contact_body_template":
+            "Hi, it's X.\nI just wanted to let you know that...\n\nBest regards,\nX",
+        "contact_error": "Email app could not be opened. Please try again.",
+        "purchase_remove_ads_success":
+            "Purchase successful! Ads removed and all categories unlocked.",
         "game_center_title": "Game Center",
         "game_center_desc": "Sync your achievements with Game Center",
         "game_center_connect": "Connect",
