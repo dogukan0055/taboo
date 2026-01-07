@@ -16,6 +16,8 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
   late final Map<String, IconData> _categoryIcons;
   Set<String> _activeRewardedCategories = {};
   Timer? _rewardTicker;
+  bool _unlockCooldown = false;
+  Timer? _unlockCooldownTimer;
 
   @override
   void initState() {
@@ -44,6 +46,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
   @override
   void dispose() {
     _rewardTicker?.cancel();
+    _unlockCooldownTimer?.cancel();
     _categoryScrollController.dispose();
     super.dispose();
   }
@@ -100,11 +103,23 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
     _startRewardTicker(game);
   }
 
+  bool _beginUnlockCooldown() {
+    if (_unlockCooldown) return false;
+    setState(() => _unlockCooldown = true);
+    _unlockCooldownTimer?.cancel();
+    _unlockCooldownTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      setState(() => _unlockCooldown = false);
+    });
+    return true;
+  }
+
   Future<void> _promptUnlockCategory(
     BuildContext context,
     GameProvider game,
     String category,
   ) async {
+    if (!_beginUnlockCooldown()) return;
     final access = game.categoryAccess(category);
     if (access == CategoryAccess.free) return;
     final messenger = ScaffoldMessenger.of(context);

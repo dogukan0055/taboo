@@ -84,8 +84,9 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                             trailingIcon: _teamsExpanded
                                 ? Icons.expand_less
                                 : Icons.expand_more,
-                            onTap: () =>
-                                setState(() => _teamsExpanded = !_teamsExpanded),
+                            onTap: () => setState(
+                              () => _teamsExpanded = !_teamsExpanded,
+                            ),
                           ),
                           if (reduceMotion)
                             (_teamsExpanded
@@ -96,7 +97,9 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                                     ),
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.08),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.08,
+                                      ),
                                       borderRadius: BorderRadius.circular(14),
                                       border: Border.all(color: Colors.white24),
                                     ),
@@ -113,7 +116,10 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                                   : CrossFadeState.showFirst,
                               firstChild: const SizedBox.shrink(),
                               secondChild: Container(
-                                margin: const EdgeInsets.only(top: 14, bottom: 6),
+                                margin: const EdgeInsets.only(
+                                  top: 14,
+                                  bottom: 6,
+                                ),
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withValues(alpha: 0.08),
@@ -133,7 +139,8 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const CategoryManagementScreen(),
+                                builder: (_) =>
+                                    const CategoryManagementScreen(),
                               ),
                             ),
                           ),
@@ -181,7 +188,8 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                                           );
                                     _showSnack(messenger, label);
                                   },
-                                  labelBuilder: (val) => val == -1 ? "∞" : "$val",
+                                  labelBuilder: (val) =>
+                                      val == -1 ? "∞" : "$val",
                                   reduceMotion: reduceMotion,
                                 ),
                               ],
@@ -207,7 +215,9 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                                     ? game.t("target_score_unlimited")
                                     : game.t(
                                         "target_score_chip",
-                                        params: {"score": "${game.targetScore}"},
+                                        params: {
+                                          "score": "${game.targetScore}",
+                                        },
                                       ),
                               ),
                             ],
@@ -225,7 +235,8 @@ class _SetupHubScreenState extends State<SetupHubScreen>
                             onPressed: () async {
                               await game.playClick();
                               if (!context.mounted) return;
-                              if (game.teamA.length < 2 || game.teamB.length < 2) {
+                              if (game.teamA.length < 2 ||
+                                  game.teamB.length < 2) {
                                 String msg = "";
                                 if (game.teamA.length < 2) {
                                   msg = game.t(
@@ -624,164 +635,294 @@ class TeamManagerPanel extends StatelessWidget {
     bool isTeamA,
   ) {
     final messenger = ScaffoldMessenger.of(context);
-    TextEditingController c = TextEditingController(
+    final TextEditingController c = TextEditingController(
       text: isTeamA ? game.teamAName : game.teamBName,
     );
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(game.t("team_name_title")),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: c,
-              maxLength: 20,
-              textCapitalization: TextCapitalization.words,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(game.nameAllowedChars),
-              ],
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                onPressed: () async {
-                  await game.playClick();
-                  await _applySuggestionEffectSetupHub(
-                    nextValue: () => game.randomTeamName(isTeamA),
-                    applyValue: (suggestion) {
-                      c.text = suggestion;
-                      c.selection = TextSelection.collapsed(
-                        offset: c.text.length,
+      builder: (dialogContext) {
+        bool suggesting = false;
+        bool hasSuggested = false;
+        DateTime? nextSuggestAt;
+        Timer? suggestCooldownTimer;
+        void disposeCooldown() => suggestCooldownTimer?.cancel();
+        return StatefulBuilder(
+          builder: (ctx, setState) {
+            bool cooldownActive() =>
+                nextSuggestAt != null && nextSuggestAt!.isAfter(DateTime.now());
+            void startCooldown() {
+              suggestCooldownTimer?.cancel();
+              nextSuggestAt = DateTime.now().add(const Duration(seconds: 3));
+              suggestCooldownTimer = Timer.periodic(
+                const Duration(milliseconds: 200),
+                (_) {
+                  if (!ctx.mounted || nextSuggestAt == null) return;
+                  final remainingMs = nextSuggestAt!
+                      .difference(DateTime.now())
+                      .inMilliseconds;
+                  if (remainingMs <= 0) {
+                    nextSuggestAt = null;
+                    suggestCooldownTimer?.cancel();
+                  }
+                  setState(() {});
+                },
+              );
+              setState(() {});
+            }
+
+            String suggestLabel() {
+              if (suggesting) {
+                return game.isEnglish
+                    ? "${game.t('suggest')}..."
+                    : "Öneriliyor...";
+              }
+              if (cooldownActive() && nextSuggestAt != null) {
+                final remaining =
+                    nextSuggestAt!.difference(DateTime.now()).inSeconds + 1;
+                final safeRemaining = remaining.clamp(1, 3);
+                final base = hasSuggested
+                    ? (game.isEnglish ? "Suggest Another" : "Başka Öner")
+                    : game.t('suggest');
+                return "$base ($safeRemaining)";
+              }
+              return hasSuggested
+                  ? (game.isEnglish ? "Suggest Another" : "Başka Öner")
+                  : game.t('suggest');
+            }
+
+            return PopScope(
+              onPopInvokedWithResult: (_, _) => disposeCooldown(),
+              child: AlertDialog(
+                title: Text(game.t('team_name_title')),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: c,
+                      maxLength: 20,
+                      textCapitalization: TextCapitalization.words,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          game.nameAllowedChars,
+                        ),
+                      ],
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: (suggesting || cooldownActive())
+                            ? null
+                            : () async {
+                                setState(() => suggesting = true);
+                                await game.playClick();
+                                await _applySuggestionEffectSetupHub(
+                                  nextValue: () => game.randomTeamName(isTeamA),
+                                  applyValue: (suggestion) {
+                                    c.text = suggestion;
+                                    c.selection = TextSelection.collapsed(
+                                      offset: c.text.length,
+                                    );
+                                  },
+                                  messenger: messenger,
+                                );
+                                hasSuggested = true;
+                                startCooldown();
+                                if (!ctx.mounted) return;
+                                setState(() => suggesting = false);
+                              },
+                        icon: const Icon(Icons.casino, size: 22),
+                        label: Text(suggestLabel()),
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      disposeCooldown();
+                      game.playClick();
+                      Navigator.pop(dialogContext);
+                    },
+                    child: Text(game.t('cancel')),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      disposeCooldown();
+                      game.playClick();
+                      final error = game.setTeamName(isTeamA, c.text);
+                      if (error != null) {
+                        _showSnack(messenger, error, isError: true);
+                        return;
+                      }
+                      final newName = isTeamA ? game.teamAName : game.teamBName;
+                      Navigator.pop(dialogContext);
+                      _showSnack(
+                        messenger,
+                        game.t('team_name_saved', params: {'name': newName}),
+                        isSuccess: true,
                       );
                     },
-                    messenger: messenger,
-                  );
-                },
-                icon: const Icon(Icons.casino, size: 22),
-                label: Text(game.t("suggest")),
+                    child: Text(game.t('save')),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              game.playClick();
-              Navigator.pop(dialogContext);
-            },
-            child: Text(game.t("cancel")),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              game.playClick();
-              final error = game.setTeamName(isTeamA, c.text);
-              if (error != null) {
-                _showSnack(messenger, error, isError: true);
-                return;
-              }
-              final newName = isTeamA ? game.teamAName : game.teamBName;
-              Navigator.pop(dialogContext);
-              _showSnack(
-                messenger,
-                game.t("team_name_saved", params: {"name": newName}),
-                isSuccess: true,
-              );
-            },
-            child: Text(game.t("save")),
-          ),
-        ],
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
   void _showAddPlayer(BuildContext context, GameProvider game, bool isTeamA) {
     final messenger = ScaffoldMessenger.of(context);
     if ((isTeamA ? game.teamA.length : game.teamB.length) >= 6) {
-      _showSnack(
-        messenger,
-        game.t("error_team_max_players"),
-        isError: true,
-      );
+      _showSnack(messenger, game.t('error_team_max_players'), isError: true);
       return;
     }
-    TextEditingController c = TextEditingController();
+    final TextEditingController c = TextEditingController();
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(
-          game.t(
-            "add_player_to_team",
-            params: {"team": isTeamA ? game.teamAName : game.teamBName},
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: c,
-              maxLength: 16,
-              textCapitalization: TextCapitalization.words,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(game.nameAllowedChars),
-              ],
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                onPressed: () async {
-                  await game.playClick();
-                  await _applySuggestionEffectSetupHub(
-                    nextValue: () => game.randomPlayerName(),
-                    applyValue: (suggestion) {
-                      c.text = suggestion;
-                      c.selection = TextSelection.collapsed(
-                        offset: c.text.length,
+      builder: (dialogContext) {
+        bool suggesting = false;
+        bool hasSuggested = false;
+        DateTime? nextSuggestAt;
+        Timer? suggestCooldownTimer;
+        void disposeCooldown() => suggestCooldownTimer?.cancel();
+        return StatefulBuilder(
+          builder: (ctx, setState) {
+            bool cooldownActive() =>
+                nextSuggestAt != null && nextSuggestAt!.isAfter(DateTime.now());
+            void startCooldown() {
+              suggestCooldownTimer?.cancel();
+              nextSuggestAt = DateTime.now().add(const Duration(seconds: 3));
+              suggestCooldownTimer = Timer.periodic(
+                const Duration(milliseconds: 200),
+                (_) {
+                  if (!ctx.mounted || nextSuggestAt == null) return;
+                  final remainingMs = nextSuggestAt!
+                      .difference(DateTime.now())
+                      .inMilliseconds;
+                  if (remainingMs <= 0) {
+                    nextSuggestAt = null;
+                    suggestCooldownTimer?.cancel();
+                  }
+                  setState(() {});
+                },
+              );
+              setState(() {});
+            }
+
+            String suggestLabel() {
+              if (suggesting) {
+                return game.isEnglish
+                    ? "${game.t('suggest')}..."
+                    : "Öneriliyor...";
+              }
+              if (cooldownActive() && nextSuggestAt != null) {
+                final remaining =
+                    nextSuggestAt!.difference(DateTime.now()).inSeconds + 1;
+                final safeRemaining = remaining.clamp(1, 3);
+                final base = hasSuggested
+                    ? (game.isEnglish ? "Suggest Another" : "Başka Öner")
+                    : game.t('suggest');
+                return "$base ($safeRemaining)";
+              }
+              return hasSuggested
+                  ? (game.isEnglish ? "Suggest Another" : "Başka Öner")
+                  : game.t('suggest');
+            }
+
+            return PopScope(
+              onPopInvokedWithResult: (_, _) => disposeCooldown(),
+              child: AlertDialog(
+                title: Text(
+                  game.t(
+                    'add_player_to_team',
+                    params: {'team': isTeamA ? game.teamAName : game.teamBName},
+                  ),
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: c,
+                      maxLength: 16,
+                      textCapitalization: TextCapitalization.words,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          game.nameAllowedChars,
+                        ),
+                      ],
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: (suggesting || cooldownActive())
+                            ? null
+                            : () async {
+                                setState(() => suggesting = true);
+                                await game.playClick();
+                                await _applySuggestionEffectSetupHub(
+                                  nextValue: () => game.randomPlayerName(),
+                                  applyValue: (suggestion) {
+                                    c.text = suggestion;
+                                    c.selection = TextSelection.collapsed(
+                                      offset: c.text.length,
+                                    );
+                                  },
+                                  messenger: messenger,
+                                );
+                                hasSuggested = true;
+                                startCooldown();
+                                if (!ctx.mounted) return;
+                                setState(() => suggesting = false);
+                              },
+                        icon: const Icon(Icons.casino, size: 22),
+                        label: Text(suggestLabel()),
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      disposeCooldown();
+                      game.playClick();
+                      Navigator.pop(dialogContext);
+                    },
+                    child: Text(game.t('cancel')),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      disposeCooldown();
+                      game.playClick();
+                      final err = game.addPlayer(c.text, isTeamA);
+                      if (err != null) {
+                        _showSnack(messenger, err, isError: true);
+                        return;
+                      }
+                      Navigator.pop(dialogContext);
+                      final upperName = game.languageUpper(c.text);
+                      _showSnack(
+                        messenger,
+                        game.t(
+                          'player_added',
+                          params: {
+                            'player': upperName,
+                            'team': isTeamA ? game.teamAName : game.teamBName,
+                          },
+                        ),
+                        isSuccess: true,
                       );
                     },
-                    messenger: messenger,
-                  );
-                },
-                icon: const Icon(Icons.casino, size: 22),
-                label: Text(game.t("suggest")),
+                    child: Text(game.t('add')),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              game.playClick();
-              Navigator.pop(dialogContext);
-            },
-            child: Text(game.t("cancel")),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              game.playClick();
-              final err = game.addPlayer(c.text, isTeamA);
-              if (err != null) {
-                _showSnack(messenger, err, isError: true);
-                return;
-              }
-              Navigator.pop(dialogContext);
-              final upperName = game.languageUpper(c.text);
-              _showSnack(
-                messenger,
-                game.t(
-                  "player_added",
-                  params: {
-                    "player": upperName,
-                    "team": isTeamA ? game.teamAName : game.teamBName,
-                  },
-                ),
-                isSuccess: true,
-              );
-            },
-            child: Text(game.t("add")),
-          ),
-        ],
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -823,10 +964,7 @@ class TeamManagerPanel extends StatelessWidget {
                 return;
               }
               if (currentName.toLowerCase() == newName.toLowerCase()) {
-                _showSnack(
-                  messenger,
-                  game.t("player_not_changed"),
-                );
+                _showSnack(messenger, game.t("player_not_changed"));
                 Navigator.pop(dialogContext);
                 return;
               }
