@@ -639,7 +639,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                               );
                                           final restoreButton =
                                               OutlinedButton.icon(
-                                                onPressed: game.iapAvailable
+                                                onPressed: game.iapAvailable &&
+                                                        !game.adsRemoved
                                                     ? () async {
                                                         await game.playClick();
                                                         await game

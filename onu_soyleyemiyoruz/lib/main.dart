@@ -163,6 +163,7 @@ void _showSnack(
   IconData? actionIcon,
   VoidCallback? onAction,
 }) {
+  // Prevent stacking multiple toasts; only one visible at a time.
   messenger.removeCurrentSnackBar();
   const Duration toastDuration = Duration(seconds: 3);
   const Duration fadeOutDuration = Duration(milliseconds: 350);

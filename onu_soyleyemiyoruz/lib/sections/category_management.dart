@@ -127,7 +127,7 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
     final body = access == CategoryAccess.adUnlock
         ? game.t("unlock_category_body_ad", params: {"category": label})
         : game.t("unlock_category_body_premium", params: {"category": label});
-    final price = null; // per new monetization, individual prices removed
+    final price = game.removeAdsPrice;
     await showDialog(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.45),
@@ -206,8 +206,10 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                                 "unlock_redeemed_1h",
                                 params: {"category": label},
                               )
-                            : game.t("unlock_success",
-                                params: {"category": label}),
+                            : game.t(
+                                "unlock_success",
+                                params: {"category": label},
+                              ),
                         isSuccess: true,
                       );
                       game.clearRecentUnlockedCategory();
@@ -225,7 +227,10 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                       onPressed: () async {
                         game.playClick();
                         Navigator.pop(dialogContext);
-                        await game.buyCategoryPack(category);
+                        final err = await game.buyRemoveAds();
+                        if (err != null && messenger.mounted) {
+                          _showSnack(messenger, err, isError: true);
+                        }
                       },
                       child: Text(
                         price != null
@@ -387,7 +392,10 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
                           onBuy: isLocked && access == CategoryAccess.premium
                               ? () async {
                                   await game.playClick();
-                                  await game.buyCategoryPack(cat);
+                                  final err = await game.buyRemoveAds();
+                                  if (err != null) {
+                                    _showSnack(messenger, err, isError: true);
+                                  }
                                 }
                               : null,
                           onOpen: () async {

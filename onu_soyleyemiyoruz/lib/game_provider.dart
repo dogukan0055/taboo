@@ -182,6 +182,7 @@ class GameProvider extends ChangeNotifier {
   bool _showingInterstitial = false;
   bool _showingRewarded = false;
   bool gameServicesSignedIn = false;
+  bool _gameServicesSignInAttempted = false;
 
   int currentPasses = 0;
   final int maxPasses = 3;
@@ -285,6 +286,7 @@ class GameProvider extends ChangeNotifier {
     if (teamAName == otherLangTeamA) teamAName = expectedTeamA;
     if (teamBName == otherLangTeamB) teamBName = expectedTeamB;
     await _initMonetization();
+    await _autoSignInGameServices();
     hydrated = true;
     notifyListeners();
     if (musicEnabled) {
@@ -439,10 +441,13 @@ class GameProvider extends ChangeNotifier {
       // Remove-ads now unlocks all categories permanently.
       _adUnlockedCategories.addAll(_adUnlockCategories);
       for (final cat in availableCategories) {
+        if (cat == "Özel") continue; // Leave custom category state untouched.
         _purchasedCategoryIds.add(cat);
         _setCategoryEnabled(cat, true);
       }
-      _notifyCategoryUnlock("all_categories", permanent: true);
+      // Avoid triggering category unlock snackbars; use adsRemovalJustGranted UI instead.
+      _recentUnlockedCategory = null;
+      _recentUnlockedPermanent = false;
     }
     _persist();
     notifyListeners();
@@ -809,6 +814,12 @@ class GameProvider extends ChangeNotifier {
 
   Future<bool> connectGameCenter() async {
     return _ensureGameServicesSignedIn(interactive: true);
+  }
+
+  Future<void> _autoSignInGameServices() async {
+    if (_gameServicesSignInAttempted) return;
+    _gameServicesSignInAttempted = true;
+    await _ensureGameServicesSignedIn(interactive: true);
   }
 
   Future<bool> openGameCenterAchievements() async {
@@ -1248,7 +1259,7 @@ class GameProvider extends ChangeNotifier {
         "ads_section_title": "Satın Alımlar",
         "remove_ads": "Reklamları Kaldır",
         "remove_ads_desc": "Reklamlar kapanır, bütün kategoriler açılır!",
-        "remove_ads_owned": "Reklamlar kaldırıldı",
+        "remove_ads_owned": "Reklamlar zaten kaldırıldı",
         "premium_bundle_owned": "Premium paket satın alındı",
         "restore_purchases": "Satın Alımları Geri Yükle",
         "watch_ad_unlock": "Reklam izle",
@@ -1514,7 +1525,7 @@ class GameProvider extends ChangeNotifier {
         "ads_section_title": "Purchases",
         "remove_ads": "Remove Ads",
         "remove_ads_desc": "Ads off, all categories on!",
-        "remove_ads_owned": "Ads removed",
+        "remove_ads_owned": "Ads removed already",
         "premium_bundle_owned": "Premium Bundle owned",
         "restore_purchases": "Restore Purchases",
         "watch_ad_unlock": "Watch ad",

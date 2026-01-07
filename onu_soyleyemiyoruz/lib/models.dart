@@ -3420,7 +3420,7 @@ final List<WordCard> initialDeckEn = [
   ),
   WordCard(
     word: "SEARCH ENGINE",
-    tabooWords: ["Google", "Yandex", "Find", "İnternet", "Type"],
+    tabooWords: ["Google", "Yandex", "Find", "Internet", "Type"],
     category: "Teknoloji",
   ),
   WordCard(
