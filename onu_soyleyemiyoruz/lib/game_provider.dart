@@ -34,7 +34,7 @@ class GameProvider extends ChangeNotifier {
   static const String _teamBDefaultTr = "TAKIM B";
   static const String _teamADefaultEn = "TEAM A";
   static const String _teamBDefaultEn = "TEAM B";
-  static const String _removeAdsProductId = "ads_remove";
+  static const String _removeAdsProductId = "remove_ads";
   static const String _premiumBundleProductId = "premium_bundle";
   static const Map<String, String> _premiumCategoryProductIds = {};
   // Replace these IDs with your App Store / Play Console achievement IDs.
@@ -484,12 +484,40 @@ class GameProvider extends ChangeNotifier {
     return null;
   }
 
-  Future<void> buyRemoveAds() async {
-    if (!iapAvailable) return;
-    final product = _productById(_removeAdsProductId);
-    if (product == null) return;
-    final param = PurchaseParam(productDetails: product);
-    await InAppPurchase.instance.buyNonConsumable(purchaseParam: param);
+  Future<String?> buyRemoveAds() async {
+    if (!_iapSupported) {
+      return isEnglish
+          ? "In-app purchases aren't supported on this device."
+          : "Bu cihaz uygulama içi satın almayı desteklemiyor.";
+    }
+    if (!iapAvailable) {
+      await _initMonetization(skipAds: true);
+      if (!iapAvailable) {
+        return isEnglish
+            ? "Purchases not available right now. Check your store login and try again."
+            : "Satın almalar şu anda kullanılabilir değil. Mağaza hesabınızı kontrol edip tekrar deneyin.";
+      }
+    }
+    _ensurePurchaseListener();
+    ProductDetails? product = _productById(_removeAdsProductId);
+    if (product == null) {
+      await _loadProducts();
+      product = _productById(_removeAdsProductId);
+      if (product == null) {
+        return isEnglish
+            ? "Remove-ads product (ads_remove) is missing for this app id."
+            : "Reklam kaldırma ürünü (ads_remove) bu uygulama için bulunamadı.";
+      }
+    }
+    try {
+      final param = PurchaseParam(productDetails: product);
+      await InAppPurchase.instance.buyNonConsumable(purchaseParam: param);
+      return null;
+    } catch (_) {
+      return isEnglish
+          ? "Purchase could not start. Please try again."
+          : "Satın alma başlatılamadı. Lütfen tekrar deneyin.";
+    }
   }
 
   Future<void> buyPremiumBundle() async {

@@ -597,13 +597,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                               !game.adsRemoved;
                                           final removeAdsButton =
                                               ElevatedButton.icon(
-                                                onPressed: !game.iapAvailable
-                                                    ? null
-                                                    : () async {
-                                                        await game.playClick();
-                                                        await game
-                                                            .buyRemoveAds();
-                                                      },
+                                                onPressed: () async {
+                                                  await game.playClick();
+                                                  final error = await game
+                                                      .buyRemoveAds();
+                                                  if (!context.mounted) return;
+                                                  if (error != null) {
+                                                    _showSnack(
+                                                      messenger,
+                                                      error,
+                                                      isError: true,
+                                                    );
+                                                  }
+                                                },
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor: adsAccent,
                                                   padding: const EdgeInsets.all(
