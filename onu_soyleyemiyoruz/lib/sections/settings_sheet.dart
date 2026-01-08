@@ -1,6 +1,6 @@
 part of '../main.dart';
 
-const String _supportEmail = "support@onusoyleyemiyoruz.com";
+const String _supportEmail = "dogukan.sihman97@gmail.com";
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -39,10 +39,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }) {
     messenger.showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
-        ),
+        content: Text(message, style: const TextStyle(color: Colors.white)),
         backgroundColor: isError
             ? Colors.red
             : isSuccess
@@ -57,17 +54,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     GameProvider game,
     ScaffoldMessengerState messenger,
   ) async {
-    final subject =
-        game.isEnglish ? "About Your App" : "Uygulamanız Hakkında";
+    final subject = game.isEnglish ? "About Your App" : "Uygulamanız Hakkında";
     final body = game.t("contact_body_template");
-    final uri = Uri(
-      scheme: "mailto",
-      path: _supportEmail,
-      queryParameters: {
-        "subject": subject,
-        "body": body,
-      },
-    );
+    final query =
+        "subject=${Uri.encodeComponent(subject)}"
+        "&body=${Uri.encodeComponent(body)}";
+    final uri = Uri.parse("mailto:$_supportEmail?$query");
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok) {
       _showSnack(messenger, game.t("contact_error"), isError: true);
@@ -786,88 +778,65 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 24),
-                            SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                await game.playClick();
-                                if (!context.mounted) return;
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.deepPurple,
-                                padding: const EdgeInsets.all(14),
-                              ),
-                              child: Text(
-                                game.t("close"),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.05)
-                                  : Colors.white.withValues(alpha: 0.8),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
+                            Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
                                 color: isDark
-                                    ? Colors.white24
-                                    : Colors.black12,
+                                    ? Colors.white.withValues(alpha: 0.05)
+                                    : Colors.white.withValues(alpha: 0.8),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: isDark
+                                      ? Colors.white24
+                                      : Colors.black12,
+                                ),
                               ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  game.t("contact_headline"),
-                                  style: TextStyle(
-                                    color: textColor,
-                                    fontWeight: FontWeight.w800,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    game.t("contact_headline"),
+                                    style: TextStyle(
+                                      color: textColor,
+                                      fontWeight: FontWeight.w800,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  game.t("contact_subtitle"),
-                                  style: TextStyle(
-                                    color: iconColor,
-                                    fontSize: 13,
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    game.t("contact_subtitle"),
+                                    style: TextStyle(
+                                      color: iconColor,
+                                      fontSize: 13,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        _supportEmail,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          _supportEmail,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    TextButton.icon(
-                                      onPressed: () async {
-                                        await game.playClick();
-                                        if (!context.mounted) return;
-                                        await _launchSupportEmail(
-                                          game,
-                                          messenger,
-                                        );
-                                      },
-                                      icon: const Icon(Icons.mail_outline),
-                                      label: Text(game.t("contact_cta")),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                      TextButton.icon(
+                                        onPressed: () async {
+                                          await game.playClick();
+                                          if (!context.mounted) return;
+                                          await _launchSupportEmail(
+                                            game,
+                                            messenger,
+                                          );
+                                        },
+                                        icon: const Icon(Icons.mail_outline),
+                                        label: Text(game.t("contact_cta")),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
                           ],
                         ),
                       ),

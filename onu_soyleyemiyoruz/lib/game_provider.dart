@@ -442,8 +442,10 @@ class GameProvider extends ChangeNotifier {
 
   void _grantPurchase(String productId) {
     if (productId == _removeAdsProductId) {
+      final bool wasAdsRemoved = adsRemoved;
       adsRemoved = true;
-      _adsRemovalJustGranted = true;
+      // Only surface the success UI the first time the purchase is applied.
+      _adsRemovalJustGranted = !wasAdsRemoved;
       // Remove-ads now unlocks all categories permanently.
       _adUnlockedCategories.addAll(_adUnlockCategories);
       for (final cat in availableCategories) {
@@ -1319,7 +1321,7 @@ class GameProvider extends ChangeNotifier {
             "Soru, hata bildirimi veya geliştirme önerileriniz için bize e-posta gönderebilirsiniz. Cihaz, işletim sistemi ve sürüm bilgisini eklemek işleri hızlandırır.",
         "contact_cta": "E-posta gönder",
         "contact_body_template":
-            "Hi, it's X.\nI just wanted to let you know that...\n\nBest regards,\nX",
+            "Merhabalar, adım X.\nSize ... söylemek için ulaşmıştım. Teşekkürler.\n\nSaygılarımla,\nX",
         "contact_error": "E-posta uygulaması açılamadı. Lütfen tekrar deneyin.",
         "purchase_remove_ads_success":
             "Satın alma tamamlandı! Reklamlar kapandı, tüm kategoriler açıldı.",
@@ -1596,7 +1598,7 @@ class GameProvider extends ChangeNotifier {
             "For bugs, improvements, or ideas, send us an email. Including your device, OS, and app version helps us fix things faster.",
         "contact_cta": "Send email",
         "contact_body_template":
-            "Hi, it's X.\nI just wanted to let you know that...\n\nBest regards,\nX",
+            "Hi, it's X.\nI just wanted to let you know that ... Thank you.\n\nBest regards,\nX",
         "contact_error": "Email app could not be opened. Please try again.",
         "purchase_remove_ads_success":
             "Purchase successful! Ads removed and all categories unlocked.",
