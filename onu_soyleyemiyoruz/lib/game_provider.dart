@@ -1059,6 +1059,18 @@ class GameProvider extends ChangeNotifier {
         "menu_settings": "AYARLAR",
         "menu_how_to_play": "NASIL OYNANIR?",
         "menu_exit": "ÇIKIŞ",
+        "whats_new_title": "Yenilikler",
+        "whats_new_item_1_title": "1.1 güncellemesi hazır",
+        "whats_new_item_1_body":
+            "İyileştirilmiş geri bildirim ve daha pürüzsüz bir ana menü.",
+        "whats_new_item_2_title": "Daha iyi geri bildirim",
+        "whats_new_item_2_body":
+            "Satın alımlar ve Game Center için durum mesajları, hızlı uyarılar.",
+        "whats_new_item_3_title": "Bizi destekleyin",
+        "whats_new_item_3_body":
+            "Ayarlar ekranından uygulamayı puanlayın veya arkadaşlarınızla paylaşın.",
+        "whats_new_hide": "Gizle",
+        "whats_new_show": "Yenilikleri göster",
         "theme_dark": "Tema: Koyu",
         "theme_light": "Tema: Açık",
         "lang_tr": "TR",
@@ -1323,6 +1335,23 @@ class GameProvider extends ChangeNotifier {
         "contact_body_template":
             "Merhabalar, adım X.\nSize ... söylemek için ulaşmıştım. Teşekkürler.\n\nSaygılarımla,\nX",
         "contact_error": "E-posta uygulaması açılamadı. Lütfen tekrar deneyin.",
+        "rate_app": "Uygulamayı değerlendir",
+        "share_app": "Arkadaşlarınla paylaş",
+        "rate_error": "Değerlendirme sayfası açılamadı.",
+        "share_error": "Paylaşım başlatılamadı.",
+        "share_app_message":
+            "Onu Söyleyemiyoruz! oyununu hemen dene: {url}\nRekabet başlasın!",
+        "iap_unavailable_toast":
+            "Satın almalar şu an kullanılamıyor. Mağaza bağlantısını kontrol edip tekrar dene.",
+        "iap_unavailable_hint":
+            "Satın alma hizmeti hazır değil. İnternet/mağaza bağlantısını kontrol edin.",
+        "restore_in_progress": "Geri yükleme devam ediyor...",
+        "restore_help_text":
+            "Satın alımları geri yüklemek için mağaza hesabınıza bağlı olun.",
+        "restore_not_needed": "Zaten satın alındı. Tekrar ödeme alınmaz.",
+        "price_unavailable": "Ücret hazır değil",
+        "game_center_unavailable":
+            "Game Center bu cihazda desteklenmiyor veya kapalı görünüyor.",
         "purchase_remove_ads_success":
             "Satın alma tamamlandı! Reklamlar kapandı, tüm kategoriler açıldı.",
         "game_center_title": "Game Center",
@@ -1340,6 +1369,17 @@ class GameProvider extends ChangeNotifier {
         "menu_settings": "SETTINGS",
         "menu_how_to_play": "HOW TO PLAY",
         "menu_exit": "EXIT",
+        "whats_new_title": "What’s new",
+        "whats_new_item_1_title": "Update 1.1 is live",
+        "whats_new_item_1_body": "Tighter feedback, and a smoother main menu.",
+        "whats_new_item_2_title": "Clearer feedback",
+        "whats_new_item_2_body":
+            "Status toasts for purchases and Game Center so nothing fails silently.",
+        "whats_new_item_3_title": "Support the game",
+        "whats_new_item_3_body":
+            "Rate the app or share with friends right from Settings.",
+        "whats_new_hide": "Hide",
+        "whats_new_show": "Show updates",
         "theme_dark": "Theme: Dark",
         "theme_light": "Theme: Light",
         "lang_tr": "TR",
@@ -1600,6 +1640,23 @@ class GameProvider extends ChangeNotifier {
         "contact_body_template":
             "Hi, it's X.\nI just wanted to let you know that ... Thank you.\n\nBest regards,\nX",
         "contact_error": "Email app could not be opened. Please try again.",
+        "rate_app": "Rate the app",
+        "share_app": "Share with friends",
+        "rate_error": "Could not open the review page.",
+        "share_error": "Share sheet could not be opened.",
+        "share_app_message":
+            "Let's play We Can't Say It! Download here: {url}\nWho can guess the most words?",
+        "iap_unavailable_toast":
+            "Purchases are unavailable right now. Check your store connection and try again.",
+        "iap_unavailable_hint":
+            "Purchase service is not ready. Please check internet/store login.",
+        "restore_in_progress": "Restore in progress...",
+        "restore_help_text":
+            "Be signed in to your store account to restore previous purchases.",
+        "restore_not_needed": "Already owned. You will not be charged again.",
+        "price_unavailable": "Price not available",
+        "game_center_unavailable":
+            "Game Center is not available or disabled on this device.",
         "purchase_remove_ads_success":
             "Purchase successful! Ads removed and all categories unlocked.",
         "game_center_title": "Game Center",

@@ -1,6 +1,11 @@
 part of '../main.dart';
 
-const String _supportEmail = "dogukan.sihman97@gmail.com";
+const String _supportEmail = "eastdevgames@gmail.com";
+// Replace with your real store URLs before shipping.
+const String _appStoreUrlTr =
+    "https://apps.apple.com/tr/app/we-cant-say-it/id6756984438";
+const String _appStoreUrlEn =
+    "https://apps.apple.com/us/app/we-cant-say-it/id6756984438";
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -54,7 +59,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     GameProvider game,
     ScaffoldMessengerState messenger,
   ) async {
-    final subject = game.isEnglish ? "About Your App" : "Uygulamanız Hakkında";
+    final subject = game.isEnglish
+        ? "About Your We Can't Say It App"
+        : "Onu Söyleyemiyoruz Adlı Uygulamanız Hakkında";
     final body = game.t("contact_body_template");
     final query =
         "subject=${Uri.encodeComponent(subject)}"
@@ -63,6 +70,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok) {
       _showSnack(messenger, game.t("contact_error"), isError: true);
+    }
+  }
+
+  String _storeUrl(GameProvider game) =>
+      game.isEnglish ? _appStoreUrlEn : _appStoreUrlTr;
+
+  Future<void> _rateApp(
+    GameProvider game,
+    ScaffoldMessengerState messenger,
+  ) async {
+    final uri = Uri.parse(_storeUrl(game));
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!ok) {
+      _showSnack(messenger, game.t("rate_error"), isError: true);
+    }
+  }
+
+  Future<void> _shareApp(
+    GameProvider game,
+    ScaffoldMessengerState messenger,
+  ) async {
+    try {
+      final url = _storeUrl(game);
+      await SharePlus.instance.share(
+        ShareParams(text: game.t("share_app_message", params: {"url": url})),
+      );
+    } catch (_) {
+      _showSnack(messenger, game.t("share_error"), isError: true);
     }
   }
 
@@ -378,6 +413,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ],
                                 ),
                               ),
+                            ] else ...[
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.06)
+                                      : Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.videogame_asset_off,
+                                      color: iconColor,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        game.t("game_center_unavailable"),
+                                        style: TextStyle(color: iconColor),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                             const SizedBox(height: 8),
                             Align(
@@ -586,10 +647,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                                 const SizedBox(width: 6),
                                                 Text(
                                                   game.adsRemoved
-                                                      ? game.t(
-                                                          "remove_ads_owned",
-                                                        )
-                                                      : game.removeAdsPrice!,
+                                                      ? "${game.t("remove_ads_owned")} • ${game.removeAdsPrice ?? game.t("price_unavailable")}"
+                                                      : (game.removeAdsPrice ??
+                                                            game.t(
+                                                              "price_unavailable",
+                                                            )),
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: TextStyle(
@@ -613,10 +675,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                               c.maxWidth < 400;
                                           final bool showRemoveAds =
                                               !game.adsRemoved;
+                                          final bool restoring =
+                                              game.restoringPurchases;
+                                          final bool iapReady =
+                                              game.iapAvailable;
                                           final removeAdsButton =
                                               ElevatedButton.icon(
                                                 onPressed: () async {
                                                   await game.playClick();
+                                                  if (!iapReady) {
+                                                    _showSnack(
+                                                      messenger,
+                                                      game.t(
+                                                        "iap_unavailable_toast",
+                                                      ),
+                                                    );
+                                                    return;
+                                                  }
                                                   final error = await game
                                                       .buyRemoveAds();
                                                   if (!context.mounted) return;
@@ -629,7 +704,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                                   }
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                  backgroundColor: adsAccent,
+                                                  backgroundColor: iapReady
+                                                      ? adsAccent
+                                                      : adsAccent.withValues(
+                                                          alpha: 0.45,
+                                                        ),
                                                   padding: const EdgeInsets.all(
                                                     14,
                                                   ),
@@ -655,41 +734,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                                   ),
                                                 ),
                                               );
+                                          final bool restoreEnabled =
+                                              iapReady &&
+                                              !game.adsRemoved &&
+                                              !restoring;
                                           final restoreButton = OutlinedButton.icon(
-                                            onPressed:
-                                                game.iapAvailable &&
-                                                    !game.adsRemoved &&
-                                                    !game.restoringPurchases
-                                                ? () async {
-                                                    await game.playClick();
-                                                    final restored = await game
-                                                        .restorePurchases();
-                                                    if (!context.mounted) {
-                                                      return;
-                                                    }
-                                                    if (restored) {
-                                                      _showSnack(
-                                                        messenger,
-                                                        game.t(
-                                                          "restore_success",
-                                                        ),
-                                                        isSuccess: true,
-                                                      );
-                                                    } else {
-                                                      _showSnack(
-                                                        messenger,
-                                                        game.t(
-                                                          "restore_nothing",
-                                                        ),
-                                                      );
-                                                    }
-                                                  }
-                                                : null,
+                                            onPressed: () async {
+                                              await game.playClick();
+                                              if (restoring) {
+                                                _showSnack(
+                                                  messenger,
+                                                  game.t("restore_in_progress"),
+                                                );
+                                                return;
+                                              }
+                                              if (!iapReady) {
+                                                _showSnack(
+                                                  messenger,
+                                                  game.t(
+                                                    "iap_unavailable_toast",
+                                                  ),
+                                                );
+                                                return;
+                                              }
+                                              if (game.adsRemoved) {
+                                                _showSnack(
+                                                  messenger,
+                                                  game.t("restore_not_needed"),
+                                                );
+                                                return;
+                                              }
+                                              final restored = await game
+                                                  .restorePurchases();
+                                              if (!context.mounted) {
+                                                return;
+                                              }
+                                              if (restored) {
+                                                _showSnack(
+                                                  messenger,
+                                                  game.t("restore_success"),
+                                                  isSuccess: true,
+                                                );
+                                              } else {
+                                                _showSnack(
+                                                  messenger,
+                                                  game.t("restore_nothing"),
+                                                );
+                                              }
+                                            },
                                             style: OutlinedButton.styleFrom(
                                               side: BorderSide(
-                                                color: iconColor.withValues(
-                                                  alpha: 0.6,
-                                                ),
+                                                color:
+                                                    (restoreEnabled
+                                                            ? iconColor
+                                                            : iconColor
+                                                                  .withValues(
+                                                                    alpha: 0.3,
+                                                                  ))
+                                                        .withValues(alpha: 0.9),
                                               ),
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -700,25 +802,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                                 borderRadius:
                                                     BorderRadius.circular(14),
                                               ),
-                                              foregroundColor: iconColor,
+                                              foregroundColor: restoreEnabled
+                                                  ? iconColor
+                                                  : iconColor.withValues(
+                                                      alpha: 0.6,
+                                                    ),
                                             ),
                                             icon: Icon(
                                               Icons.restore,
-                                              color: iconColor,
+                                              color: restoreEnabled
+                                                  ? iconColor
+                                                  : iconColor.withValues(
+                                                      alpha: 0.4,
+                                                    ),
                                             ),
                                             label: Text(
                                               game.restoringPurchases
                                                   ? "${game.t("restore_purchases")}..."
                                                   : game.t("restore_purchases"),
                                               style: TextStyle(
-                                                color: iconColor,
+                                                color: restoreEnabled
+                                                    ? iconColor
+                                                    : iconColor.withValues(
+                                                        alpha: 0.7,
+                                                      ),
                                               ),
                                             ),
                                           );
                                           if (!showRemoveAds) {
-                                            return SizedBox(
-                                              width: double.infinity,
-                                              child: restoreButton,
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: [
+                                                SizedBox(
+                                                  width: double.infinity,
+                                                  child: restoreButton,
+                                                ),
+                                              ],
                                             );
                                           }
                                           if (stackButtons) {
@@ -747,37 +867,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           );
                                         },
                                       ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        !game.iapAvailable
+                                            ? game.t("iap_unavailable_hint")
+                                            : game.adsRemoved
+                                            ? game.t("restore_not_needed")
+                                            : game.restoringPurchases
+                                            ? game.t("restore_in_progress")
+                                            : game.t("restore_help_text"),
+                                        style: TextStyle(
+                                          color: iconColor,
+                                          fontSize: 10,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
                               ),
                             ),
                             const SizedBox(height: 24),
-                            Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    adsCardColor,
-                                    adsCardColor.withValues(
-                                      alpha: isDark ? 0.92 : 0.98,
-                                    ),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: adsCardRadius,
-                                border: Border.all(color: adsBorder),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(
-                                      alpha: isDark ? 0.25 : 0.08,
-                                    ),
-                                    blurRadius: 14,
-                                    offset: const Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                            ),
+
                             Container(
                               padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
@@ -816,21 +926,77 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         child: Text(
                                           _supportEmail,
                                           style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 13,
+                                          ),
+                                          maxLines: 1,
+                                          softWrap: false,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Flexible(
+                                        fit: FlexFit.loose,
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          alignment: Alignment.centerRight,
+                                          child: TextButton.icon(
+                                            onPressed: () async {
+                                              await game.playClick();
+                                              if (!context.mounted) return;
+                                              await _launchSupportEmail(
+                                                game,
+                                                messenger,
+                                              );
+                                            },
+                                            style: TextButton.styleFrom(
+                                              tapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 8,
+                                              ),
+                                              minimumSize: Size.zero,
+                                            ),
+                                            icon: const Icon(
+                                              Icons.mail_outline,
+                                              size: 16,
+                                            ),
+                                            label: Text(
+                                              game.t("contact_cta"),
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      TextButton.icon(
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Wrap(
+                                    spacing: 10,
+                                    runSpacing: 8,
+                                    children: [
+                                      FilledButton.icon(
                                         onPressed: () async {
                                           await game.playClick();
                                           if (!context.mounted) return;
-                                          await _launchSupportEmail(
-                                            game,
-                                            messenger,
-                                          );
+                                          await _rateApp(game, messenger);
                                         },
-                                        icon: const Icon(Icons.mail_outline),
-                                        label: Text(game.t("contact_cta")),
+                                        icon: const Icon(Icons.star_rate),
+                                        label: Text(game.t("rate_app")),
+                                      ),
+                                      OutlinedButton.icon(
+                                        onPressed: () async {
+                                          await game.playClick();
+                                          if (!context.mounted) return;
+                                          await _shareApp(game, messenger);
+                                        },
+                                        icon: const Icon(Icons.share_outlined),
+                                        label: Text(game.t("share_app")),
                                       ),
                                     ],
                                   ),

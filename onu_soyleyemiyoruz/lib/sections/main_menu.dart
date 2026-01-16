@@ -22,74 +22,86 @@ class MainMenuScreen extends StatelessWidget {
                     (constraints.maxWidth * 0.07).clamp(32.0, 40.0);
                 return Padding(
                   padding: const EdgeInsets.all(30.0),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: maxWidth),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const Spacer(),
-                          Center(
-                            child: Image.asset(
-                              "assets/image/ingame_logo.png",
-                              height: logoHeight,
-                              fit: BoxFit.contain,
-                            ),
+                  child: SafeArea(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: maxWidth,
+                            minHeight: constraints.maxHeight -
+                                MediaQuery.of(context).padding.vertical -
+                                40,
                           ),
-                          const SizedBox(height: 24),
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              game.t("menu_title"),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              softWrap: true,
-                              style: TextStyle(
-                                fontSize: titleSize,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                height: 1.0,
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                          _MenuButton(
-                            label: game.t("menu_play"),
-                            color: Colors.green,
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const SetupHubScreen(),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-                          _MenuButton(
-                            label: game.t("menu_settings"),
-                            color: Colors.teal,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const SettingsScreen(),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const SizedBox(height: 8),
+                              Center(
+                                child: Image.asset(
+                                  "assets/image/ingame_logo.png",
+                                  height: logoHeight,
+                                  fit: BoxFit.contain,
                                 ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 15),
-                          _MenuButton(
-                            label: game.t("menu_how_to_play"),
-                            color: Colors.blue,
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const TutorialScreen(),
                               ),
-                            ),
+                              const SizedBox(height: 20),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  game.t("menu_title"),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  softWrap: true,
+                                  style: TextStyle(
+                                    fontSize: titleSize,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    height: 1.0,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 18),
+                              const _WhatsNewCarousel(),
+                              const SizedBox(height: 20),
+                              _MenuButton(
+                                label: game.t("menu_play"),
+                                color: Colors.green,
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const SetupHubScreen(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                              _MenuButton(
+                                label: game.t("menu_settings"),
+                                color: Colors.teal,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const SettingsScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 15),
+                              _MenuButton(
+                                label: game.t("menu_how_to_play"),
+                                color: Colors.blue,
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const TutorialScreen(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                            ],
                           ),
-                          const Spacer(),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -113,6 +125,177 @@ class MainMenuScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _WhatsNewCarousel extends StatefulWidget {
+  const _WhatsNewCarousel();
+
+  @override
+  State<_WhatsNewCarousel> createState() => _WhatsNewCarouselState();
+}
+
+class _WhatsNewCarouselState extends State<_WhatsNewCarousel> {
+  late final PageController _controller;
+  int _index = 0;
+  bool _collapsed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController(viewportFraction: 0.9);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final game = Provider.of<GameProvider>(context);
+    final items = [
+      (
+        title: game.t("whats_new_item_1_title"),
+        body: game.t("whats_new_item_1_body")
+      ),
+      (
+        title: game.t("whats_new_item_2_title"),
+        body: game.t("whats_new_item_2_body")
+      ),
+      (
+        title: game.t("whats_new_item_3_title"),
+        body: game.t("whats_new_item_3_body")
+      ),
+    ];
+    final Color base = Colors.white.withValues(alpha: 0.92);
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 220),
+      switchInCurve: Curves.easeOut,
+      switchOutCurve: Curves.easeIn,
+      child: _collapsed
+          ? Align(
+              key: const ValueKey("whats_new_collapsed"),
+              alignment: Alignment.center,
+              child: TextButton.icon(
+                onPressed: () => setState(() => _collapsed = false),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                ),
+                icon: const Icon(Icons.visibility_outlined),
+                label: Text(game.t("whats_new_show")),
+              ),
+            )
+          : Column(
+              key: const ValueKey("whats_new_expanded"),
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  game.t("whats_new_title"),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 150,
+                  child: PageView.builder(
+                    controller: _controller,
+                    onPageChanged: (i) => setState(() => _index = i),
+                    itemCount: items.length,
+                    itemBuilder: (context, i) {
+                      final item = items[i];
+                      return Padding(
+                        padding:
+                            EdgeInsets.only(right: i == items.length - 1 ? 0 : 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                base,
+                                base.withValues(alpha: 0.85),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.25),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.18),
+                                blurRadius: 10,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(14),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                item.title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 15,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                item.body,
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: () => setState(() => _collapsed = true),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white.withValues(alpha: 0.9),
+                    ),
+                    icon: const Icon(Icons.visibility_off_outlined),
+                    label: Text(game.t("whats_new_hide")),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    items.length,
+                    (i) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 220),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      height: 8,
+                      width: _index == i ? 18 : 8,
+                      decoration: BoxDecoration(
+                        color: _index == i
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
     );
   }
 }
